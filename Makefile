@@ -26,8 +26,3 @@ uninstall:
 
 examples:
 	cc -o examples/test examples/test.c `simple2d-config`
-
-testing:
-	cc src/simple2d.c -c -o build/simple2d.o
-	ar -vq build/libsimple2d.a build/simple2d.o
-	cc -o examples/test examples/test.c build/libsimple2d.a -Iinclude `sdl2-config --static-libs` -lSDL2_image -lSDL2_mixer -lSDL2_ttf
