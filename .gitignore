@@ -1,0 +1,5 @@
+build/
+examples/test
+tmp/
+_*
+*.DS_Store
