@@ -314,6 +314,10 @@ int S2D_Show(Window *window) {
   bool quit = false;
   while (!quit) {
     
+    // Clear Frame /////////////////////////////////////////////////////////////
+    
+    glClear(GL_COLOR_BUFFER_BIT);
+    
     // Set FPS /////////////////////////////////////////////////////////////////
     
     frames++;
@@ -367,9 +371,6 @@ int S2D_Show(Window *window) {
     window->loop_ms = loop_ms;
     window->delay_ms = delay_ms;
     window->fps = fps;
-    
-    // Clear frame
-    glClear(GL_COLOR_BUFFER_BIT);
     
     // Call update callback
     window->update();
