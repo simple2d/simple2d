@@ -40,6 +40,7 @@ typedef struct Text {
   TTF_Font *font;
   SDL_Surface *surface;
   SDL_Texture *texture;
+  char *msg;
 } Text;
 
 typedef struct Sound {
@@ -103,7 +104,7 @@ extern void S2D_FreeImage(Image *img);
 /*
  * Create text
  */
-extern Text S2D_CreateText(char *path);
+extern Text* S2D_CreateText(Window *window, char *font, char *msg, int size);
 
 /*
  * Draw text
@@ -111,6 +112,10 @@ extern Text S2D_CreateText(char *path);
 extern void S2D_DrawText(Text *text, int x, int y);
 
 /*
+ * Free the text
+ */
+extern void S2D_FreeText(Text *text);
+
+/*
  * Create a sound
  */
-extern Text S2D_CreateText(char *path);

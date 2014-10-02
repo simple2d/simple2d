@@ -158,6 +158,56 @@ void S2D_FreeImage(Image *img) {
 
 
 /*
+ * Create text
+ */
+Text* S2D_CreateText(Window *window, char *font, char *msg, int size) {
+  
+  Text *text = (Text*)malloc(sizeof(Text));
+  
+  SDL_Color color = { 255, 255, 255 };
+  
+  text->font = TTF_OpenFont(font, size);
+  text->msg = msg;
+  text->surface = TTF_RenderText_Blended(text->font, text->msg, color);
+  text->texture = SDL_CreateTextureFromSurface(window->renderer, text->surface);
+  
+  return text;
+}
+
+
+/*
+ * Draw text
+ */
+void S2D_DrawText(Text *text, int x, int y) {
+  
+  int w, h;
+  TTF_SizeText(text->font, text->msg, &w, &h);
+  
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  
+  SDL_GL_BindTexture(text->texture, NULL, NULL);
+  
+  glBegin(GL_QUADS);
+    glColor4f(1, 1, 1, 1);
+    glTexCoord2f(0, 0); glVertex2f(x, y);
+    glTexCoord2f(w, 0); glVertex2f(x + w, y);
+    glTexCoord2f(w, h); glVertex2f(x + w, y + h);
+    glTexCoord2f(0, h); glVertex2f(x, y + h);
+  glEnd();
+  
+  SDL_GL_UnbindTexture(text->texture);
+}
+
+
+/*
+ * Free the text
+ */
+void S2D_FreeText(Text *text) {
+  TTF_CloseFont(text->font);
+  SDL_DestroyTexture(text->texture);
+  SDL_FreeSurface(text->surface);
+}
  * Create a window
  */
 Window* S2D_CreateWindow(char* title, int width, int height, int fps_cap, bool vsync,
