@@ -5,7 +5,7 @@
 /*
  * Print SDL errors
  */
-static void error(char *error) {
+static void sdl_error(char *error) {
   printf("%s failed: %s\n", error, SDL_GetError());
   exit(1);
 }
@@ -100,7 +100,7 @@ Image* S2D_CreateImage(Window *window, char *path) {
   }
   
   img->texture = SDL_CreateTextureFromSurface(window->renderer, img->surface);
-  if (!img->texture) { error("SDL_CreateTextureFromSurface"); }
+  if (!img->texture) { sdl_error("SDL_CreateTextureFromSurface"); }
   
   return img;
 }
@@ -115,7 +115,7 @@ void S2D_DrawImage(Image *img, int x, int y) {
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   
   if (SDL_GL_BindTexture(img->texture, NULL, NULL)) {
-    puts("Simple2D Warning: image cannot be drawn");
+    sdl_error("SDL_GL_BindTexture");
   }
   
   int w = img->surface->w;
@@ -204,7 +204,7 @@ Sound* S2D_CreateSound(char *path) {
   
   sound->wave = Mix_LoadWAV(path);
   if (!sound->wave) {
-    printf("R2D Audio Error: %s\n", Mix_GetError());
+    printf("Mix_LoadWAV failed: %s\n", Mix_GetError());
   }
   
   return sound;
@@ -256,24 +256,24 @@ Window* S2D_CreateWindow(char* title, int width, int height,
     SDL_WINDOW_OPENGL                                // flags
   );
   
-  if (!window->sdl_window) { error("SDL_CreateWindow"); }
+  if (!window->sdl_window) { sdl_error("SDL_CreateWindow"); }
   
   // Enable VSync
   if (window->vsync) {
     if (!SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1")) {
-      printf("Simple2D Warning: VSync cannot be enabled!");
+      printf("Warning: VSync cannot be enabled");
     }
   }
   
   // OpenGL inits
   window->glcontext = SDL_GL_CreateContext(window->sdl_window);
-  if (!window->glcontext) { error("SDL_GL_CreateContext"); }
+  if (!window->glcontext) { sdl_error("SDL_GL_CreateContext"); }
   initGL(window->width, window->height);
   
   // Create SDL renderer for accelerated 2D
   window->renderer = SDL_CreateRenderer(window->sdl_window, -1,
                                         SDL_RENDERER_ACCELERATED);
-  if (!window->renderer) { error("SDL_CreateRenderer"); }
+  if (!window->renderer) { sdl_error("SDL_CreateRenderer"); }
   
   return window;
 }
