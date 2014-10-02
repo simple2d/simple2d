@@ -63,26 +63,26 @@ extern int S2D_Show(Window*);
  * Draw triangle
  */
 extern void S2D_DrawTriangle(
-  double x1,  double y1,
-  double c1r, double c1g, double c1b, double c1a,
-  double x2,  double y2,
-  double c2r, double c2g, double c2b, double c2a,
-  double x3,  double y3,
-  double c3r, double c3g, double c3b, double c3a
+  GLfloat x1,  GLfloat y1,
+  GLfloat c1r, GLfloat c1g, GLfloat c1b, GLfloat c1a,
+  GLfloat x2,  GLfloat y2,
+  GLfloat c2r, GLfloat c2g, GLfloat c2b, GLfloat c2a,
+  GLfloat x3,  GLfloat y3,
+  GLfloat c3r, GLfloat c3g, GLfloat c3b, GLfloat c3a
 );
 
 /*
  * Draw quad
  */
 extern void S2D_DrawQuad(
-  double x1,  double y1,
-  double c1r, double c1g, double c1b, double c1a,
-  double x2,  double y2,
-  double c2r, double c2g, double c2b, double c2a,
-  double x3,  double y3,
-  double c3r, double c3g, double c3b, double c3a,
-  double x4,  double y4,
-  double c4r, double c4g, double c4b, double c4a
+  GLfloat x1,  GLfloat y1,
+  GLfloat c1r, GLfloat c1g, GLfloat c1b, GLfloat c1a,
+  GLfloat x2,  GLfloat y2,
+  GLfloat c2r, GLfloat c2g, GLfloat c2b, GLfloat c2a,
+  GLfloat x3,  GLfloat y3,
+  GLfloat c3r, GLfloat c3g, GLfloat c3b, GLfloat c3a,
+  GLfloat x4,  GLfloat y4,
+  GLfloat c4r, GLfloat c4g, GLfloat c4b, GLfloat c4a
 );
 
 /*
