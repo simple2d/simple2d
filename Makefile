@@ -1,4 +1,4 @@
-.PHONY: build examples
+.PHONY: build tests
 
 all: build
 
@@ -24,5 +24,5 @@ uninstall:
 	rm /usr/local/lib/libsimple2d.a
 	rm /usr/local/bin/simple2d-config
 
-examples:
-	cc -o examples/test examples/test.c `simple2d-config`
+tests:
+	cc -o tests/testcard tests/testcard.c `simple2d-config`

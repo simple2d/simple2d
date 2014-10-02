@@ -1,5 +1,5 @@
 build/
-examples/test
+tests/testcard
 tmp/
 _*
 *.DS_Store

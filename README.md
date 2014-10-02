@@ -16,10 +16,10 @@ Compile and install Simple 2D using `make && make install`, then build your app 
 cc app.c `simple2d-config`
 ```
 
-## Examples
+## Usage
 
-Check out the [examples](/examples) directory to learn more. Build the examples using:
+Check out the [tests](/tests) directory to learn more. Build the tests using:
 
 ```bash
-make examples
+make tests
 ```
