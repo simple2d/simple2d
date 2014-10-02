@@ -119,3 +119,14 @@ extern void S2D_FreeText(Text *text);
 /*
  * Create a sound
  */
+extern Sound* S2D_CreateSound(char *path);
+
+/*
+ * Play the sound
+ */
+extern void S2D_PlaySound(Sound *sound);
+
+/*
+ * Free the sound
+ */
+extern void S2D_FreeSound(Sound *sound);

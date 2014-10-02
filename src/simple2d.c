@@ -208,6 +208,41 @@ void S2D_FreeText(Text *text) {
   SDL_DestroyTexture(text->texture);
   SDL_FreeSurface(text->surface);
 }
+
+
+/*
+ * Create a sound
+ */
+Sound* S2D_CreateSound(char *path) {
+  
+  Sound *sound = (Sound*)malloc(sizeof(Sound));
+  
+  sound->wave = Mix_LoadWAV(path);
+  if (!sound->wave) {
+    printf("R2D Audio Error: %s\n", Mix_GetError());
+  }
+  
+  return sound;
+}
+
+
+/*
+ * Play the sound
+ */
+void S2D_PlaySound(Sound *sound) {
+  Mix_PlayChannel(-1, sound->wave, 0);
+}
+
+
+/*
+ * Free the sound
+ */
+void S2D_FreeSound(Sound *sound) {
+  Mix_FreeChunk(sound->wave);
+}
+
+
+/*
  * Create a window
  */
 Window* S2D_CreateWindow(char* title, int width, int height, int fps_cap, bool vsync,
