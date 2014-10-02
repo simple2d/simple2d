@@ -15,6 +15,7 @@ static void error(char *error) {
  * Init window for OpenGL
  */
 bool initGL(width, height) {
+  
   GLenum error = GL_NO_ERROR;
   
   glViewport(0, 0, width, height);
@@ -44,7 +45,7 @@ bool initGL(width, height) {
 
 
 /*
- * Draw an OpenGL triangle
+ * Draw a triangle
  */
 void S2D_DrawTriangle(GLfloat x1,  GLfloat y1,
                       GLfloat c1r, GLfloat c1g, GLfloat c1b, GLfloat c1a,
@@ -57,22 +58,15 @@ void S2D_DrawTriangle(GLfloat x1,  GLfloat y1,
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   
   glBegin(GL_TRIANGLES);
-    
-    glColor4f(c1r, c1g, c1b, c1a);
-    glVertex2f(x1, y1);
-    
-    glColor4f(c2r, c2g, c2b, c2a);
-    glVertex2f(x2, y2);
-    
-    glColor4f(c3r, c3g, c3b, c3a);
-    glVertex2f(x3, y3);
-    
+    glColor4f(c1r, c1g, c1b, c1a); glVertex2f(x1, y1);
+    glColor4f(c2r, c2g, c2b, c2a); glVertex2f(x2, y2);
+    glColor4f(c3r, c3g, c3b, c3a); glVertex2f(x3, y3);
   glEnd();
 }
 
 
 /*
- * Draw a quad, using two OpenGL triangles
+ * Draw a quad, using two triangles
  */
 void S2D_DrawQuad(GLfloat x1,  GLfloat y1,
                   GLfloat c1r, GLfloat c1g, GLfloat c1b, GLfloat c1a,
@@ -96,6 +90,7 @@ void S2D_DrawQuad(GLfloat x1,  GLfloat y1,
  * Create an image
  */
 Image* S2D_CreateImage(Window *window, char *path) {
+  
   Image *img = (Image*)malloc(sizeof(Image));
   
   img->surface = IMG_Load(path);
@@ -112,7 +107,7 @@ Image* S2D_CreateImage(Window *window, char *path) {
 
 
 /*
- * Draw an image in OpenGL
+ * Draw an image
  */
 void S2D_DrawImage(Image *img, int x, int y) {
   
@@ -127,21 +122,11 @@ void S2D_DrawImage(Image *img, int x, int y) {
   int h = img->surface->h;
   
   glBegin(GL_QUADS);
-    
     glColor4f(1, 1, 1, 1);
-    
-    glTexCoord2f(0, 0);
-    glVertex2f(x, y);
-    
-    glTexCoord2f(w, 0);
-    glVertex2f(x + w, y);
-    
-    glTexCoord2f(w, h);
-    glVertex2f(x + w, y + h);
-    
-    glTexCoord2f(0, h);
-    glVertex2f(x, y + h);
-    
+    glTexCoord2f(0, 0); glVertex2f(x, y);
+    glTexCoord2f(w, 0); glVertex2f(x + w, y);
+    glTexCoord2f(w, h); glVertex2f(x + w, y + h);
+    glTexCoord2f(0, h); glVertex2f(x, y + h);
   glEnd();
   
   SDL_GL_UnbindTexture(img->texture);
@@ -245,8 +230,9 @@ void S2D_FreeSound(Sound *sound) {
 /*
  * Create a window
  */
-Window* S2D_CreateWindow(char* title, int width, int height, int fps_cap, bool vsync,
-                        Update update, On_key on_key, Key_down key_down) {
+Window* S2D_CreateWindow(char* title, int width, int height,
+                         int fps_cap, bool vsync,
+                         Update update, On_key on_key, Key_down key_down) {
   
   Window *window = (Window*)malloc(sizeof(Window));
   window->title = title;
@@ -285,7 +271,8 @@ Window* S2D_CreateWindow(char* title, int width, int height, int fps_cap, bool v
   initGL(window->width, window->height);
   
   // Create SDL renderer for accelerated 2D
-  window->renderer = SDL_CreateRenderer(window->sdl_window, -1, SDL_RENDERER_ACCELERATED);
+  window->renderer = SDL_CreateRenderer(window->sdl_window, -1,
+                                        SDL_RENDERER_ACCELERATED);
   if (!window->renderer) { error("SDL_CreateRenderer"); }
   
   return window;
