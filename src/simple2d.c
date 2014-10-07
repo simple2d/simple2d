@@ -329,7 +329,9 @@ int S2D_Show(Window *window) {
     while (SDL_PollEvent(&e)) {
       switch(e.type) {
         case SDL_KEYDOWN:
-          window->on_key(SDL_GetScancodeName(e.key.keysym.scancode));
+          if (window->on_key) {
+            window->on_key(SDL_GetScancodeName(e.key.keysym.scancode));
+          }
           break;
         case SDL_QUIT:
           quit = true;
@@ -341,8 +343,10 @@ int S2D_Show(Window *window) {
     key_state = SDL_GetKeyboardState(&num_keys);
     
     for (int i = 0; i < num_keys; i++) {
-      if (key_state[i] == 1) {
-        window->key_down(SDL_GetScancodeName(i));
+      if (window->key_down) {
+        if (key_state[i] == 1) {
+          window->key_down(SDL_GetScancodeName(i));
+        }
       }
     }
     
