@@ -152,6 +152,11 @@ Text* S2D_CreateText(Window *window, char *font, char *msg, int size) {
   SDL_Color color = { 255, 255, 255 };
   
   text->font = TTF_OpenFont(font, size);
+  if(!text->font) {
+    printf("TTF_OpenFont failed: %s\n", TTF_GetError());
+    exit(1);
+  }
+  
   text->msg = msg;
   text->surface = TTF_RenderText_Blended(text->font, text->msg, color);
   text->texture = SDL_CreateTextureFromSurface(window->renderer, text->surface);
