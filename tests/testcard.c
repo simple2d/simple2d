@@ -7,16 +7,15 @@ Image *img_png;
 Text *text;
 Text *key_down_text;
 Text *on_key_text;
+char *font = "./media/bitstream_vera/vera.ttf";
+int font_size = 24;
 
 void on_key(const char *key) {
   // printf("on_key: %s\n", key);
   
   S2D_FreeText(on_key_text);
   
-  on_key_text = S2D_CreateText(window,
-    "../tmp/fonts/myriadpro-regular-webfont.ttf",
-    key, 24
-  );
+  on_key_text = S2D_CreateText(window, font, key, font_size);
 }
 
 void key_down(const char *key) {
@@ -24,10 +23,7 @@ void key_down(const char *key) {
   
   S2D_FreeText(key_down_text);
   
-  key_down_text = S2D_CreateText(window,
-    "../tmp/fonts/myriadpro-regular-webfont.ttf",
-    key, 24
-  );
+  key_down_text = S2D_CreateText(window, font, key, font_size);
 }
 
 void render() {
@@ -113,18 +109,11 @@ int main(int argc, char const *argv[]) {
   
   img_jpg = S2D_CreateImage(window, "media/tile.jpg");
   img_png = S2D_CreateImage(window, "media/tile.png");
-  text = S2D_CreateText(window, "../tmp/fonts/myriadpro-regular-webfont.ttf",
-                        "Hello World", 24);
+  text = S2D_CreateText(window, font, "Hello World", font_size);
   
-  on_key_text = S2D_CreateText(window,
-    "../tmp/fonts/myriadpro-regular-webfont.ttf",
-    "On Key Text", 24
-  );
+  on_key_text = S2D_CreateText(window, font, "On Key Text", font_size);
   
-  key_down_text = S2D_CreateText(window,
-    "../tmp/fonts/myriadpro-regular-webfont.ttf",
-    "Key Down Text", 24
-  );
+  key_down_text = S2D_CreateText(window, font, "Key Down Text", font_size);
   
   S2D_Show(window);
   return 0;
