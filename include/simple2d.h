@@ -7,6 +7,7 @@
 #include <SDL2/SDL_ttf.h>
 
 typedef void (*Update)(void);
+typedef void (*Render)(void);
 typedef void (*On_key)(const char *);
 typedef void (*Key_down)(const char *);
 
@@ -20,6 +21,7 @@ typedef struct Window {
   int fps_cap;
   bool vsync;
   Update update;
+  Render render;
   On_key on_key;
   Key_down key_down;
   int cursor_x;
@@ -52,7 +54,7 @@ typedef struct Sound {
  */
 extern Window* S2D_CreateWindow(
   char *title, int width, int height,
-  int fps_cap, bool vsync, Update, On_key, Key_down
+  int fps_cap, bool vsync, Update, Render, On_key, Key_down
 );
 
 /*

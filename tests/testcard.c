@@ -30,7 +30,7 @@ void key_down(const char *key) {
   );
 }
 
-void update() {
+void render() {
   
   // Primary colors
   
@@ -109,7 +109,7 @@ void update() {
 }
 
 int main(int argc, char const *argv[]) {
-  window = S2D_CreateWindow("hello", 800, 600, 60, true, update, on_key, key_down);
+  window = S2D_CreateWindow("hello", 800, 600, 60, true, NULL, render, on_key, key_down);
   
   img_jpg = S2D_CreateImage(window, "media/tile.jpg");
   img_png = S2D_CreateImage(window, "media/tile.png");

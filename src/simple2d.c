@@ -232,7 +232,8 @@ void S2D_FreeSound(Sound *sound) {
  */
 Window* S2D_CreateWindow(char* title, int width, int height,
                          int fps_cap, bool vsync,
-                         Update update, On_key on_key, Key_down key_down) {
+                         Update update, Render render,
+                         On_key on_key, Key_down key_down) {
   
   Window *window = (Window*)malloc(sizeof(Window));
   window->title = title;
@@ -241,6 +242,7 @@ Window* S2D_CreateWindow(char* title, int width, int height,
   window->fps_cap = fps_cap;
   window->vsync = vsync;
   window->update = update;
+  window->render = render;
   window->on_key = on_key;
   window->key_down = key_down;
   
@@ -363,8 +365,9 @@ int S2D_Show(Window *window) {
     window->delay_ms = delay_ms;
     window->fps = fps;
     
-    // Call update callback
-    window->update();
+    // Call update and render callbacks
+    if (window->update) { window->update(); }
+    if (window->render) { window->render(); }
     
     // Draw frame
     SDL_GL_SwapWindow(window->sdl_window);
