@@ -1,10 +1,10 @@
-.PHONY: build tests
+CFLAGS=-std=c99
 
 all: build
 
 build:
 	mkdir -p build
-	cc src/simple2d.c -c -o build/simple2d.o
+	cc $(CFLAGS) src/simple2d.c -c -o build/simple2d.o
 	cp simple2d-config.sh build/simple2d-config
 	chmod 0777 build/simple2d-config
 	ar -vq build/libsimple2d.a build/simple2d.o
@@ -25,4 +25,6 @@ uninstall:
 	rm /usr/local/bin/simple2d-config
 
 tests:
-	cc -o tests/testcard tests/testcard.c `simple2d-config`
+	cc $(CFLAGS) -o tests/testcard tests/testcard.c `simple2d-config`
+
+.PHONY: build tests
