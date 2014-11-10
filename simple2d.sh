@@ -539,7 +539,7 @@ case $1 in
       LDFLAGS='-lGL'
     fi
     echo "-lsimple2d `sdl2-config --static-libs` ${LDFLAGS} -lSDL2_image -lSDL2_mixer -lSDL2_ttf";;
-  -v|--version|)
+  -v|--version)
     echo $VERSION;;
   *)
     print_usage;;
