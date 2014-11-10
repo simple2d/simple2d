@@ -142,7 +142,9 @@ have_sdl2_libs?() {
 # Install SDL on OS X
 install_sdl_osx() {
   
-  if ! have_sdl2_libs?; then
+  if have_sdl2_libs?; then
+    echo; info_msg "SDL already installed."
+  else
     echo "Install SDL2 libraries using Homebrew:"
     echo "  brew update"
     printf "  brew install "
@@ -279,20 +281,37 @@ install_s2d() {
   
   mkdir /tmp/s2d
   
-  fname="v$1"
+  if [[ $1 == 'master' ]]; then
+    prefix=''
+  else
+    prefix='v'
+  fi
   
   print_task "Downloading Simple 2D" "\n\n"
   # Linux and Raspberry Pi may not have curl installed by default
   if which curl > /dev/null; then
-    curl -L https://github.com/simple2d/simple2d/archive/$fname.zip -o /tmp/s2d/$fname.zip
+    curl -L https://github.com/simple2d/simple2d/archive/$prefix$1.zip -o /tmp/s2d/$prefix$1.zip
   else
-    wget -NP /tmp/s2d https://github.com/simple2d/simple2d/archive/$fname.zip
+    wget -NP /tmp/s2d https://github.com/simple2d/simple2d/archive/$prefix$1.zip
+  fi
+  
+  # Check if archive was downloaded properly
+  if [ ! -f "/tmp/s2d/$prefix$1.zip" ]; then
+    echo; error_msg "Simple 2D could not be downloaded."
+    exit
   fi
   
   echo; print_task "Unpacking"
-  unzip -q /tmp/s2d/$fname.zip -d /tmp/s2d
+  unzip -q /tmp/s2d/$prefix$1.zip -d /tmp/s2d
+  
+  # Check if archive was unpacked properly
+  if [[ $? != 0 ]]; then
+    echo; error_msg "The downloaded Simple 2D package is damaged. Could not unpack."
+    exit
+  fi
+  
   printf " done"
-  cd /tmp/s2d/simple2d-$fname
+  cd /tmp/s2d/simple2d-$1
   
   echo; print_task "Compiling" "\n\n"
   make
@@ -341,7 +360,12 @@ install() {
   start_timer
   
   install_sdl
-  install_s2d $VERSION
+  
+  if $install_edge; then
+    install_s2d 'master'
+  else
+    install_s2d $VERSION
+  fi
   
   end_timer
   
@@ -404,7 +428,9 @@ update() {
   }
   
   update_check_sdl() {
-    if ! have_sdl2_libs?; then
+    if have_sdl2_libs?; then
+      echo; info_msg "SDL already installed."
+    else
       echo -e "Run \`simple2d doctor\` for more information, or..."
       echo -e "Run \`simple2d install --sdl\` to install missing libraries.\n"
       exit
@@ -412,31 +438,32 @@ update() {
   }
   
   if $install_edge; then
-    update_check_sdl
-    echo; echo -e "This will update Simple 2D to the bleeding edge."
+    echo -e "This will update Simple 2D to the bleeding edge."
     prompt_to_continue "Continue?"
-    install_s2d "master"
-    success_msg "Updated Simple 2D to latest commit!"
-    echo "Go to:"
-    echo "  http://github.com/simple2d/simple2d/commits/master"
-    echo "to see revision history."; echo
-  else
     update_check_sdl
+    install_s2d 'master'
+    success_msg "Updated Simple 2D to latest commit!"
+    echo "  Go to:"
+    echo "    http://github.com/simple2d/simple2d/commits/master"
+    echo "  to see the revision history."; echo
+  else
     get_remote_str $VERSION_URL
     NEW_VERSION=$ret
     
     compare_versions $NEW_VERSION $VERSION
     
     if [[ $? == 1 ]]; then
-      echo; echo -e "A new version of Simple 2D is available."
+      echo -e "A new version of Simple 2D is available."
       prompt_to_continue "Install now?"
+      
+      update_check_sdl
       
       print_task "Updating Simple 2D" "\n"
       install_s2d $NEW_VERSION
       
       success_msg "Simple 2D has been updated to $NEW_VERSION!"
     else
-      echo; success_msg "Simple 2D is up to date."
+      success_msg "Simple 2D is up to date."
     fi
   fi
 }
