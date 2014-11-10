@@ -407,7 +407,7 @@ uninstall() {
   if [ -f ${files[0]} -o -f ${files[1]} -o -f ${files[2]} ]; then
     echo; error_msg "Simple 2D files could not be removed. Try using \`sudo\`?"
   else
-    echo; success_msg "Simple 2D uninstalled."
+    success_msg "Simple 2D uninstalled."
   fi
 }
 
