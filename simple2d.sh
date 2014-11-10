@@ -352,7 +352,7 @@ install() {
   echo -e "This will install Simple 2D to the following locations:
     /usr/local/include/simple2d.h
     /usr/local/lib/libsimple2d.a
-    /usr/local/bin/simple2d.sh"
+    /usr/local/bin/simple2d"
   echo
   
   prompt_to_continue "Continue?"
@@ -378,7 +378,7 @@ uninstall() {
   
   rm -f /usr/local/include/simple2d.h
   rm -f /usr/local/lib/libsimple2d.a
-  rm -f /usr/local/bin/simple2d.sh
+  rm -f /usr/local/bin/simple2d
   
   echo; success_msg "Simple 2D uninstalled."
 }
