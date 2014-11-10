@@ -279,7 +279,7 @@ install_sdl() {
 # Uninstall SDL
 uninstall_sdl() {
   
-  print_task "Uninstalling SDL" "\n\n"
+  echo; print_task "Uninstalling SDL" "\n\n"
   
   if [[ $platform == 'osx' ]]; then
     echo "If using Homebrew, use:"
@@ -391,6 +391,8 @@ install() {
 # Uninstall ####################################################################
 
 uninstall() {
+  
+  echo; prompt_to_continue "Uninstall Simple 2D?"
   
   # Use hard-coded, absolute paths for safety
   rm -f /usr/local/include/simple2d.h
@@ -579,7 +581,7 @@ case $1 in
       '')
         uninstall;;
       --sdl)
-        echo; uninstall_sdl;;
+        uninstall_sdl;;
       *)
         print_usage;;
     esac;;
