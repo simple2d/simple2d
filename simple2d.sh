@@ -279,18 +279,20 @@ install_s2d() {
   
   mkdir /tmp/s2d
   
+  fname="v$1"
+  
   print_task "Downloading Simple 2D" "\n\n"
   # Linux and Raspberry Pi may not have curl installed by default
   if which curl > /dev/null; then
-    curl -L https://github.com/simple2d/simple2d/archive/$1.zip -o /tmp/s2d/$1.zip
+    curl -L https://github.com/simple2d/simple2d/archive/$fname.zip -o /tmp/s2d/$fname.zip
   else
-    wget -NP /tmp/s2d https://github.com/simple2d/simple2d/archive/$1.zip
+    wget -NP /tmp/s2d https://github.com/simple2d/simple2d/archive/$fname.zip
   fi
   
   echo; print_task "Unpacking"
-  unzip -q /tmp/s2d/$1.zip -d /tmp/s2d
+  unzip -q /tmp/s2d/$fname.zip -d /tmp/s2d
   printf " done"
-  cd /tmp/s2d/simple2d-$1
+  cd /tmp/s2d/simple2d-$fname
   
   echo; print_task "Compiling" "\n\n"
   make
