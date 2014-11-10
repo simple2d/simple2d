@@ -276,6 +276,22 @@ install_sdl() {
   fi
 }
 
+# Uninstall SDL
+uninstall_sdl() {
+  
+  print_task "Uninstalling SDL" "\n\n"
+  
+  if [[ $platform == 'osx' ]]; then
+    echo "If using Homebrew, use:"
+    echo "  brew uninstall sdl2 sdl2_image sdl2_mixer sdl2_ttf"; echo
+  elif [[ $platform == 'linux' ]]; then
+    apt-get --purge remove libsdl2*
+  elif [[ $platform == 'rpi' ]]; then
+    # TODO: Implement this
+    echo "Not yet implemented, sorry!"; echo
+  fi
+}
+
 # Common Simple 2D installation steps
 install_s2d() {
   
@@ -376,11 +392,21 @@ install() {
 
 uninstall() {
   
+  # Use hard-coded, absolute paths for safety
   rm -f /usr/local/include/simple2d.h
   rm -f /usr/local/lib/libsimple2d.a
   rm -f /usr/local/bin/simple2d
   
-  echo; success_msg "Simple 2D uninstalled."
+  # Check if files were actually deleted
+  files=(/usr/local/include/simple2d.h
+         /usr/local/lib/libsimple2d.a
+         /usr/local/bin/simple2d)
+  
+  if [ -f ${files[0]} -o -f ${files[1]} -o -f ${files[2]} ]; then
+    echo; error_msg "Simple 2D files could not be removed. Try using \`sudo\`?"
+  else
+    echo; success_msg "Simple 2D uninstalled."
+  fi
 }
 
 # Update #######################################################################
@@ -525,7 +551,8 @@ Summary of commands and options:
   install       Installs the latest stable version.
     --edge      Installs latest build (possibly unstable).
     --sdl       Installs SDL only.
-  uninstall     Removes all Simple 2D files.
+  uninstall     Removes Simple 2D files only.
+    --sdl       Removes SDL only.
   update        Updates to latest stable version.
     --edge      Updates to latest build (possibly unstable).
   doctor        Checks the installation status, reports issues.
@@ -548,7 +575,14 @@ case $1 in
         print_usage;;
     esac;;
   uninstall)
-    uninstall;;
+    case $2 in
+      '')
+        uninstall;;
+      --sdl)
+        echo; uninstall_sdl;;
+      *)
+        print_usage;;
+    esac;;
   update)
     case $2 in
       '')
