@@ -6,13 +6,13 @@
  * Print SDL errors
  */
 static void sdl_error(char *error) {
-  printf("%s failed: %s\n", error, SDL_GetError());
+  printf("%s: %s\n", error, SDL_GetError());
   exit(1);
 }
 
 
 /*
- * Init window for OpenGL
+ * Initialize window for OpenGL
  */
 bool initGL(width, height) {
   
@@ -357,11 +357,12 @@ int S2D_Show(Window *window) {
       }
     }
     
-    // Update Application State ////////////////////////////////////////////////
+    // Update Window State /////////////////////////////////////////////////////
     
     // Store the cursor position
     SDL_GetMouseState(&cursor_x, &cursor_y);
     
+    // Store new values in the window
     window->cursor_x = cursor_x;
     window->cursor_y = cursor_y;
     window->frames = frames;
@@ -374,11 +375,11 @@ int S2D_Show(Window *window) {
     if (window->update) { window->update(); }
     if (window->render) { window->render(); }
     
-    // Draw frame
+    // Draw Frame //////////////////////////////////////////////////////////////
     SDL_GL_SwapWindow(window->sdl_window);
   }
   
-  // Clean up
+  // Quitting clean up
   IMG_Quit();
   Mix_Quit();
   SDL_GL_DeleteContext(window->glcontext);
