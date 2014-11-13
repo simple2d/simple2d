@@ -58,10 +58,10 @@ have_lib?() {
   print_task "Checking for $1"
   
   if $(ld -o /dev/null -l$1 2>&1 | grep -qE '(library not found|ld: cannot find)'); then
-    echo -e " no${NORMAL}"
+    echo " no"
     return 1
   else
-    echo -e " yes${NORMAL}"
+    echo " yes"
     return 0
   fi
 }
@@ -203,10 +203,31 @@ install_sdl_rpi() {
     prompt_to_continue "Install now?"
     
     # Install dependencies
-    print_task "Installing SDL2 dependencies"
+    print_task "Installing SDL2 dependencies" "\n\n"
     sudo apt-get update
-    sudo apt-get install -y libudev-dev libasound2-dev libdbus-1-dev  # for SDL2
-    sudo apt-get install -y libfreetype6-dev  # for SDL2_ttf
+    
+    libs=(
+      # SDL2
+      libudev-dev
+      libasound2-dev
+      libdbus-1-dev
+      
+      # SDL2_image
+      libjpeg8-dev
+      libpng12-dev
+      libtiff5-dev
+      libwebp-dev
+      
+      # SDL2_mixer
+      libogg-dev
+      libflac-dev
+      libsmpeg-dev
+      
+      # SDL2_ttf
+      libfreetype6-dev
+    )
+    
+    sudo apt-get install -y ${libs[*]}
     
     # Setting up variables
     url="http://www.libsdl.org"
@@ -228,7 +249,13 @@ install_sdl_rpi() {
       wget -N $1
       tar -xzf $2.tar.gz
       cd $2
-      ./configure && make && sudo make install
+      print_task "configuring" "\n\n"
+      ./configure
+      echo; print_task "Compiling"
+      make > /dev/null
+      echo -e " done"
+      print_task "Installing" "\n\n"
+      sudo make install
       rm /tmp/$2.tar.gz
       rm -rf /tmp/$2
     }
@@ -253,6 +280,7 @@ install_sdl_rpi() {
       install_sdl_lib $ttf_url $ttf
     fi
     
+    echo
     if ! have_sdl2_libs?; then
       error_msg "SDL libraries did not install correctly."
       exit
@@ -528,12 +556,12 @@ unamestr=$(uname)
 if [[ $unamestr == 'Darwin' ]]; then
   platform_display='Mac OS X'
   platform='osx'
-elif [[ $unamestr == 'Linux' ]]; then
-  platform_display='Linux'
-  platform='linux'
 elif [[ $(uname -m) == 'armv6l' && $unamestr == 'Linux' ]]; then
   platform_display='Raspberry Pi'
   platform='rpi'
+elif [[ $unamestr == 'Linux' ]]; then
+  platform_display='Linux'
+  platform='linux'
 fi
 
 # Look for supported platform
