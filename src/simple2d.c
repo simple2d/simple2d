@@ -1,4 +1,5 @@
 // simple2d.c
+
 #include "../include/simple2d.h"
 
 
@@ -12,39 +13,6 @@ static void sdl_error(char *error) {
 
 
 /*
- * Initialize window for OpenGL
- */
-bool initGL(width, height) {
-  
-  GLenum error = GL_NO_ERROR;
-  
-  glViewport(0, 0, width, height);
-  glOrtho(0, width, height, 0, -1.f, 1.f);
-  
-  // Initialize the projection matrix
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  
-  // Initialize the modelview matrix
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
-  
-  // Enable transparency
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  
-  // Check for errors
-  error = glGetError();
-  if (error != GL_NO_ERROR) {
-    printf( "OpenGL initialization failed! Error code: %i\n", error);
-    return false;
-  } else {
-    return true;
-  }
-}
-
-
-/*
  * Draw a triangle
  */
 void S2D_DrawTriangle(GLfloat x1,  GLfloat y1,
@@ -54,14 +22,15 @@ void S2D_DrawTriangle(GLfloat x1,  GLfloat y1,
                       GLfloat x3,  GLfloat y3,
                       GLfloat c3r, GLfloat c3g, GLfloat c3b, GLfloat c3a) {
   
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  
-  glBegin(GL_TRIANGLES);
-    glColor4f(c1r, c1g, c1b, c1a); glVertex2f(x1, y1);
-    glColor4f(c2r, c2g, c2b, c2a); glVertex2f(x2, y2);
-    glColor4f(c3r, c3g, c3b, c3a); glVertex2f(x3, y3);
-  glEnd();
+  #if GLES
+    draw_triangle_gles(x1, y1, c1r, c1g, c1b, c1a,
+                       x2, y2, c2r, c2g, c2b, c2a,
+                       x3, y3, c3r, c3g, c3b, c3a);
+  #else
+    draw_triangle_gl(x1, y1, c1r, c1g, c1b, c1a,
+                     x2, y2, c2r, c2g, c2b, c2a,
+                     x3, y3, c3r, c3g, c3b, c3a);
+  #endif
 }
 
 
@@ -77,12 +46,23 @@ void S2D_DrawQuad(GLfloat x1,  GLfloat y1,
                   GLfloat x4,  GLfloat y4,
                   GLfloat c4r, GLfloat c4g, GLfloat c4b, GLfloat c4a) {
   
-  S2D_DrawTriangle(x1, y1, c1r, c1g, c1b, c1a,
-                   x2, y2, c2r, c2g, c2b, c2a,
-                   x3, y3, c3r, c3g, c3b, c3a);
-  S2D_DrawTriangle(x3, y3, c3r, c3g, c3b, c3a,
-                   x4, y4, c4r, c4g, c4b, c4a,
-                   x1, y1, c1r, c1g, c1b, c1a);
+  #if GLES
+    draw_triangle_gles(x1, y1, c1r, c1g, c1b, c1a,
+                       x2, y2, c2r, c2g, c2b, c2a,
+                       x3, y3, c3r, c3g, c3b, c3a);
+    
+    draw_triangle_gles(x3, y3, c3r, c3g, c3b, c3a,
+                       x4, y4, c4r, c4g, c4b, c4a,
+                       x1, y1, c1r, c1g, c1b, c1a);
+  #else
+    draw_triangle_gl(x1, y1, c1r, c1g, c1b, c1a,
+                     x2, y2, c2r, c2g, c2b, c2a,
+                     x3, y3, c3r, c3g, c3b, c3a);
+    
+    draw_triangle_gl(x3, y3, c3r, c3g, c3b, c3a,
+                     x4, y4, c4r, c4g, c4b, c4a,
+                     x1, y1, c1r, c1g, c1b, c1a);
+  #endif
 };
 
 
@@ -111,23 +91,15 @@ Image* S2D_CreateImage(Window *window, char *path) {
  */
 void S2D_DrawImage(Image *img, int x, int y) {
   
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  
   if (SDL_GL_BindTexture(img->texture, NULL, NULL)) {
     sdl_error("SDL_GL_BindTexture");
   }
   
-  int w = img->surface->w;
-  int h = img->surface->h;
-  
-  glBegin(GL_QUADS);
-    glColor4f(1, 1, 1, 1);
-    glTexCoord2f(0, 0); glVertex2f(x, y);
-    glTexCoord2f(w, 0); glVertex2f(x + w, y);
-    glTexCoord2f(w, h); glVertex2f(x + w, y + h);
-    glTexCoord2f(0, h); glVertex2f(x, y + h);
-  glEnd();
+  #if GLES
+    draw_image_gles(img, x, y);
+  #else
+    draw_image_gl(img, x, y);
+  #endif
   
   SDL_GL_UnbindTexture(img->texture);
 }
@@ -169,24 +141,11 @@ Text* S2D_CreateText(Window *window, char *font, char *msg, int size) {
  * Draw text
  */
 void S2D_DrawText(Text *text, int x, int y) {
-  
-  int w, h;
-  TTF_SizeText(text->font, text->msg, &w, &h);
-  
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  
-  SDL_GL_BindTexture(text->texture, NULL, NULL);
-  
-  glBegin(GL_QUADS);
-    glColor4f(1, 1, 1, 1);
-    glTexCoord2f(0, 0); glVertex2f(x, y);
-    glTexCoord2f(w, 0); glVertex2f(x + w, y);
-    glTexCoord2f(w, h); glVertex2f(x + w, y + h);
-    glTexCoord2f(0, h); glVertex2f(x, y + h);
-  glEnd();
-  
-  SDL_GL_UnbindTexture(text->texture);
+  #if GLES
+    draw_text_gles(text, x, y);
+  #else
+    draw_text_gl(text, x, y);
+  #endif
 }
 
 
@@ -240,6 +199,12 @@ Window* S2D_CreateWindow(char* title, int width, int height,
                          Update update, Render render,
                          On_key on_key, Key_down key_down) {
   
+  #if GLES
+    hello_gles();
+  #else
+    hello_gl();
+  #endif
+  
   Window *window = (Window*)malloc(sizeof(Window));
   window->title = title;
   window->width = width;
@@ -275,7 +240,12 @@ Window* S2D_CreateWindow(char* title, int width, int height,
   // OpenGL inits
   window->glcontext = SDL_GL_CreateContext(window->sdl_window);
   if (!window->glcontext) { sdl_error("SDL_GL_CreateContext"); }
-  initGL(window->width, window->height);
+  
+  #if GLES
+    init_gles(window->width, window->height);
+  #else
+    init_gl(window->width, window->height);
+  #endif
   
   // Create SDL renderer for accelerated 2D
   window->renderer = SDL_CreateRenderer(window->sdl_window, -1,
@@ -310,6 +280,7 @@ int S2D_Show(Window *window) {
     
     // Clear Frame /////////////////////////////////////////////////////////////
     
+    glClearColor(0.2, 0.2, 0.2, 1.0);
     glClear(GL_COLOR_BUFFER_BIT);
     
     // Set FPS /////////////////////////////////////////////////////////////////
@@ -336,6 +307,9 @@ int S2D_Show(Window *window) {
     while (SDL_PollEvent(&e)) {
       switch(e.type) {
         case SDL_KEYDOWN:
+          if (e.key.keysym.scancode == SDL_SCANCODE_ESCAPE) {
+            quit = true;
+          }
           if (window->on_key) {
             window->on_key(SDL_GetScancodeName(e.key.keysym.scancode));
           }
