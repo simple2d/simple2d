@@ -219,9 +219,8 @@ install_sdl_rpi() {
       libwebp-dev
       
       # SDL2_mixer
-      libogg-dev
+      libvorbis-dev
       libflac-dev
-      libsmpeg-dev
       
       # SDL2_ttf
       libfreetype6-dev
@@ -238,6 +237,9 @@ install_sdl_rpi() {
     image="SDL2_image-2.0.0"
     image_url="${url}/projects/SDL_image/release/${image}.tar.gz"
     
+    smpeg="smpeg2-2.0.0"  # An SDL_mixer dependency, no package available
+    smpeg_url="${url}/projects/smpeg/release/${smpeg}.tar.gz"
+    
     mixer="SDL2_mixer-2.0.0"
     mixer_url="${url}/projects/SDL_mixer/release/${mixer}.tar.gz"
     
@@ -249,10 +251,10 @@ install_sdl_rpi() {
       wget -N $1
       tar -xzf $2.tar.gz
       cd $2
-      print_task "configuring" "\n\n"
+      print_task "Configuring" "\n\n"
       ./configure
       echo; print_task "Compiling"
-      make > /dev/null
+      make > /dev/null 2>&1
       echo -e " done"
       print_task "Installing" "\n\n"
       sudo make install
@@ -272,6 +274,7 @@ install_sdl_rpi() {
     
     if ! $have_mixer_lib ; then
       echo; print_task "Installing SDL2_mixer" "\n\n"
+      install_sdl_lib $smpeg_url $smpeg
       install_sdl_lib $mixer_url $mixer
     fi
     
@@ -628,8 +631,11 @@ case $1 in
   -l|--libs)
     if [[ $platform == 'linux' ]]; then
       LDFLAGS='-lGL'
+    elif [[ $platform == 'rpi' ]]; then
+      INCLUDES='-I/opt/vc/include/'
+      LDFLAGS='-lGLESv2'
     fi
-    echo "-lsimple2d `sdl2-config --static-libs` ${LDFLAGS} -lSDL2_image -lSDL2_mixer -lSDL2_ttf";;
+    echo "${INCLUDES} -lsimple2d `sdl2-config --static-libs` ${LDFLAGS} -lSDL2_image -lSDL2_mixer -lSDL2_ttf";;
   -v|--version)
     echo $VERSION;;
   *)
