@@ -5,25 +5,21 @@ Window *window;
 Image *img_jpg;
 Image *img_png;
 Text *text;
-Text *key_down_text;
 Text *on_key_text;
+Text *on_key_char;
+Text *key_down_text;
+Text *key_down_char;
 char *font = "./media/bitstream_vera/vera.ttf";
 int font_size = 24;
 
 void on_key(const char *key) {
-  // printf("on_key: %s\n", key);
-  
-  S2D_FreeText(on_key_text);
-  
-  on_key_text = S2D_CreateText(window, font, key, font_size);
+  S2D_FreeText(on_key_char);
+  on_key_char = S2D_CreateText(window, font, (char*)key, font_size);
 }
 
 void key_down(const char *key) {
-  // printf("key_down: %s\n", key);
-  
-  S2D_FreeText(key_down_text);
-  
-  key_down_text = S2D_CreateText(window, font, key, font_size);
+  S2D_FreeText(key_down_char);
+  key_down_char = S2D_CreateText(window, font, (char*)key, font_size);
 }
 
 void render() {
@@ -87,7 +83,9 @@ void render() {
   S2D_DrawText(text, 25, 400);
   
   S2D_DrawText(on_key_text, 25, 450);
+  S2D_DrawText(on_key_char, 125, 450);
   S2D_DrawText(key_down_text, 25, 500);
+  S2D_DrawText(key_down_char, 160, 500);
   
   // Follow cursor
   S2D_DrawQuad(window->cursor_x, window->cursor_y, 1, 1, 1, 1,
@@ -95,13 +93,15 @@ void render() {
                window->cursor_x + 10, window->cursor_y + 10, 1, 1, 1, 1,
                window->cursor_x, window->cursor_y + 10, 1, 1, 1, 1);
   
-  puts("--------------------");
-  printf("cursor: %i, %i\n", window->cursor_x, window->cursor_y);
-  printf("frames: %i\n", window->frames);
-  printf("total_ms: %i\n", window->total_ms);
-  printf("loop_ms: %i\n", window->loop_ms);
-  printf("delay_ms: %i\n", window->delay_ms);
-  printf("fps: %f\n", window->fps);
+  // if (window->frames % 100 == 0) {
+    puts("--------------------");
+    printf("cursor: %i, %i\n", window->cursor_x, window->cursor_y);
+    printf("frames: %i\n", window->frames);
+    printf("total_ms: %i\n", window->total_ms);
+    printf("loop_ms: %i\n", window->loop_ms);
+    printf("delay_ms: %i\n", window->delay_ms);
+    printf("fps: %f\n", window->fps);
+  // }
 }
 
 int main(int argc, char const *argv[]) {
@@ -111,9 +111,10 @@ int main(int argc, char const *argv[]) {
   img_png = S2D_CreateImage(window, "media/tile.png");
   text = S2D_CreateText(window, font, "Hello World", font_size);
   
-  on_key_text = S2D_CreateText(window, font, "On Key Text", font_size);
-  
-  key_down_text = S2D_CreateText(window, font, "Key Down Text", font_size);
+  on_key_text = S2D_CreateText(window, font, "On Key:", font_size);
+  on_key_char = S2D_CreateText(window, font, "", font_size);
+  key_down_text = S2D_CreateText(window, font, "Key Down:", font_size);
+  key_down_char = S2D_CreateText(window, font, "", font_size);
   
   S2D_Show(window);
   return 0;
