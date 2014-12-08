@@ -43,5 +43,6 @@ uninstall:
 
 tests:
 	cc $(CFLAGS) -o tests/testcard tests/testcard.c `simple2d --libs`
+	cc $(CFLAGS) -o tests/triangle tests/triangle.c `simple2d --libs`
 
 .PHONY: build tests
