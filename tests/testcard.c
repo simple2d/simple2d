@@ -107,8 +107,8 @@ void render() {
 int main(int argc, char const *argv[]) {
   window = S2D_CreateWindow("hello", 800, 600, 60, true, NULL, render, on_key, key_down);
   
-  img_jpg = S2D_CreateImage(window, "media/tile.jpg");
-  img_png = S2D_CreateImage(window, "media/tile.png");
+  img_jpg = S2D_CreateImage(window, "media/image.jpg");
+  img_png = S2D_CreateImage(window, "media/image.png");
   text = S2D_CreateText(window, font, "Hello World", font_size);
   
   on_key_text = S2D_CreateText(window, font, "On Key:", font_size);
