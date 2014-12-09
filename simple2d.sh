@@ -629,13 +629,15 @@ case $1 in
   doctor)
     doctor;;
   -l|--libs)
-    if [[ $platform == 'linux' ]]; then
+    if [[ $platform == 'osx' ]]; then
+      LDFLAGS='-Wl,-framework,OpenGL'
+    elif [[ $platform == 'linux' ]]; then
       LDFLAGS='-lGL'
     elif [[ $platform == 'rpi' ]]; then
       INCLUDES='-I/opt/vc/include/'
       LDFLAGS='-lGLESv2'
     fi
-    echo "${INCLUDES} -lsimple2d `sdl2-config --static-libs` ${LDFLAGS} -lSDL2_image -lSDL2_mixer -lSDL2_ttf";;
+    echo "${INCLUDES} -lsimple2d `sdl2-config --cflags --libs` ${LDFLAGS} -lSDL2_image -lSDL2_mixer -lSDL2_ttf";;
   -v|--version)
     echo $VERSION;;
   *)
