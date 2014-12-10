@@ -634,10 +634,9 @@ case $1 in
     elif [[ $platform == 'linux' ]]; then
       LDFLAGS='-lGL'
     elif [[ $platform == 'rpi' ]]; then
-      INCLUDES='-I/opt/vc/include/'
-      LDFLAGS='-lGLESv2'
+      LDFLAGS='-L/opt/vc/lib -lGLESv2'
     fi
-    echo "${INCLUDES} -lsimple2d `sdl2-config --cflags --libs` ${LDFLAGS} -lSDL2_image -lSDL2_mixer -lSDL2_ttf";;
+    echo "-lsimple2d `sdl2-config --cflags --libs` ${LDFLAGS} -lSDL2_image -lSDL2_mixer -lSDL2_ttf";;
   -v|--version)
     echo $VERSION;;
   *)
