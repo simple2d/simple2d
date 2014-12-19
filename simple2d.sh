@@ -37,10 +37,13 @@ platform_display='unknown'
 
 install_edge=false
 
-ret=''  # the return value used by some functions
+ret=''  # a return value used by some functions
 
 # Helper Functions #############################################################
 
+# Prompts to continue, or exits
+# params:
+#   $1  String  Message before y/n prompt
 prompt_to_continue() {
   read -p "  $1 (y/n) " ans
   if [[ $ans != "y" ]]; then
@@ -50,10 +53,17 @@ prompt_to_continue() {
   echo
 }
 
+# Prints the task in progress
+# params:
+#   $1  String  Name of task
+#   $2  String  Optional white space, e.g. "\n\n"
 print_task() {
   printf "${BLUE}==>${BOLD} $1...${NORMAL}$2"
 }
 
+# Checks if a library is installed
+# params:
+#   $1  String  Name of the library, e.g. SDL2, without the "-l"
 have_lib?() {
   print_task "Checking for $1"
   
@@ -66,7 +76,11 @@ have_lib?() {
   fi
 }
 
+# Gets the text from a remote resource
+# params:
+#   $1  String  URL of the resource
 get_remote_str() {
+  # TODO: If no network, then exit(1)
   if which curl > /dev/null; then
     ret=$(curl -fsSL $1)
   else
@@ -74,35 +88,48 @@ get_remote_str() {
   fi
 }
 
+# Starts the timer
 start_timer() {
   START_TIME=$SECONDS
 }
 
+# Ends the timer and prints the time elapsed since `start_timer()`
 end_timer() {
-  # Print the time elapsed
   ELAPSED_TIME=$(($SECONDS - $START_TIME))
   echo -e "${BOLD}Finished in $(($ELAPSED_TIME/60/60)) hr, $(($ELAPSED_TIME/60%60)) min, and $(($ELAPSED_TIME%60)) sec${NORMAL}\n"
 }
 
+# Prints an information message
+# params:
+#   $1  String  Message text
 info_msg() {
   echo -e "${INFO}Info:${NORMAL} $1\n"
 }
 
+# Prints a warning message
+# params:
+#   $1  String  Message text
 warning_msg() {
   echo -e "${WARN}Warning:${NORMAL} $1\n"
 }
 
+# Prints an error message
+# params:
+#   $1  String  Message text
 error_msg() {
   echo -e "${ERROR}Error:${NORMAL} $1\n"
 }
 
+# Prints a success message
+# params:
+#   $1  String  Message text
 success_msg() {
   echo -e "${SUCCESS}$1${NORMAL}\n"
 }
 
 # Installation #################################################################
 
-# Check for SDL2 libraries
+# Checks if SDL2 libraries are installed
 have_sdl2_libs?() {
   
   have_all_libs=true
@@ -139,7 +166,7 @@ have_sdl2_libs?() {
   fi
 }
 
-# Install SDL on OS X
+# Installs SDL on OS X
 install_sdl_osx() {
   
   if have_sdl2_libs?; then
@@ -170,7 +197,7 @@ install_sdl_osx() {
   fi
 }
 
-# Install SDL on Linux
+# Installs SDL on Linux
 install_sdl_linux() {
   
   if have_sdl2_libs?; then
@@ -193,7 +220,7 @@ install_sdl_linux() {
   fi
 }
 
-# Install SDL on Raspberry Pi
+# Installs SDL on Raspberry Pi
 install_sdl_rpi() {
   
   if have_sdl2_libs?; then
@@ -202,7 +229,7 @@ install_sdl_rpi() {
     warning_msg "Installing SDL can take up to an hour on the Raspberry Pi."
     prompt_to_continue "Install now?"
     
-    # Install dependencies
+    # Install library dependencies
     print_task "Installing SDL2 dependencies" "\n\n"
     sudo apt-get update
     
@@ -246,6 +273,11 @@ install_sdl_rpi() {
     ttf="SDL2_ttf-2.0.12"
     ttf_url="${url}/projects/SDL_ttf/release/${ttf}.tar.gz"
     
+    # Downloads, compiles, and installs an SDL library from source
+    # params:
+    #   $1  String  URL of the tar archive
+    #   $2  String  Name of the tar file
+    #   $3  String  ./configure flags
     install_sdl_lib () {
       cd /tmp
       wget -N $1
@@ -261,6 +293,8 @@ install_sdl_rpi() {
       rm /tmp/$2.tar.gz
       rm -rf /tmp/$2
     }
+    
+    # `$have_*_lib` variables set by `have_sdl2_libs?()`
     
     if ! $have_sdl2_lib ; then
       echo; print_task "Installing SDL2" "\n\n"
@@ -293,7 +327,7 @@ install_sdl_rpi() {
   fi
 }
 
-# Install SDL
+# Installs SDL
 install_sdl() {
   
   print_task "Installing SDL" "\n\n"
@@ -307,23 +341,10 @@ install_sdl() {
   fi
 }
 
-# Uninstall SDL
-uninstall_sdl() {
-  
-  echo; print_task "Uninstalling SDL" "\n\n"
-  
-  if [[ $platform == 'osx' ]]; then
-    echo "If using Homebrew, use:"
-    echo "  brew uninstall sdl2 sdl2_image sdl2_mixer sdl2_ttf"; echo
-  elif [[ $platform == 'linux' ]]; then
-    apt-get --purge remove libsdl2*
-  elif [[ $platform == 'rpi' ]]; then
-    # TODO: Implement this
-    echo "Not yet implemented, sorry!"; echo
-  fi
-}
-
-# Common Simple 2D installation steps
+# Installs Simple 2D
+# params:
+#   $1  String  ...
+# TODO: Figure out what these params are
 install_s2d() {
   
   mkdir /tmp/s2d
@@ -383,7 +404,7 @@ install_s2d() {
   echo
 }
 
-# Install Simple 2D
+# Main entry point to install Simple 2D
 install() {
   
   # Welcome message
@@ -421,6 +442,23 @@ install() {
 
 # Uninstall ####################################################################
 
+# Uninstalls SDL
+uninstall_sdl() {
+  
+  echo; print_task "Uninstalling SDL" "\n\n"
+  
+  if [[ $platform == 'osx' ]]; then
+    echo "If using Homebrew, use:"
+    echo "  brew uninstall sdl2 sdl2_image sdl2_mixer sdl2_ttf"; echo
+  elif [[ $platform == 'linux' ]]; then
+    apt-get --purge remove libsdl2*
+  elif [[ $platform == 'rpi' ]]; then
+    # TODO: Implement this
+    echo "Not yet implemented, sorry!"; echo
+  fi
+}
+
+# Uninstalls Simple 2D
 uninstall() {
   
   echo; prompt_to_continue "Uninstall Simple 2D?"
@@ -444,6 +482,7 @@ uninstall() {
 
 # Update #######################################################################
 
+# Updates Simple 2D to latest version or commit
 update() {
   
   # Is Simple 2D installed?
@@ -454,8 +493,17 @@ update() {
     exit
   fi
   
-  # From: stackoverflow.com/questions/4023830/bash-how-compare-two-strings-in-version-format
-  compare_versions () {
+  # Compares version numbers in the form `#.#.#`
+  # Adapted from:
+  #  stackoverflow.com/questions/4023830/bash-how-compare-two-strings-in-version-format
+  # params:
+  #   $1  String  First version number to compare
+  #   $2  String  Second version number to compare
+  # returns:
+  #   0  If $1 is equal to $2
+  #   1  If $1 is newer than $2
+  #   2  If $1 is older than $2
+  compare_versions() {
     if [[ $1 == $2 ]]
     then
       return 0
@@ -486,6 +534,7 @@ update() {
     return 0
   }
   
+  # Checks if SDL is installed
   update_check_sdl() {
     if have_sdl2_libs?; then
       echo; info_msg "SDL already installed."
@@ -529,6 +578,7 @@ update() {
 
 # Doctor #######################################################################
 
+# Runs the diagnostics
 doctor() {
   
   echo; print_task "Running diagnostics" "\n\n"
@@ -549,7 +599,7 @@ doctor() {
   if $errors; then
     echo -e "Issues found.\n"
   else
-    success_msg "No issues found!"    
+    success_msg "No issues found!"
   fi
 }
 
