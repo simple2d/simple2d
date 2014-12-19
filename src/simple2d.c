@@ -71,6 +71,10 @@ void S2D_DrawQuad(GLfloat x1,  GLfloat y1,
  */
 Image* S2D_CreateImage(Window *window, char *path) {
   
+  #if GLES
+    puts("S2D_DrawImage not yet implemented!");
+  #endif
+  
   Image *img = (Image*)malloc(sizeof(Image));
   
   img->surface = IMG_Load(path);
@@ -118,6 +122,10 @@ void S2D_FreeImage(Image *img) {
  * Create text
  */
 Text* S2D_CreateText(Window *window, char *font, char *msg, int size) {
+  
+  #if GLES
+    puts("S2D_DrawText not yet implemented!");
+  #endif
   
   Text *text = (Text*)malloc(sizeof(Text));
   
@@ -230,6 +238,17 @@ Window* S2D_CreateWindow(char* title, int width, int height,
   
   if (!window->sdl_window) { sdl_error("SDL_CreateWindow"); }
   
+  // The window created by SDL may not be of the requested size
+  // if unsupported - get the real size
+  window->s_width = window->width;
+  window->s_height = window->height;
+  SDL_GetWindowSize(window->sdl_window, &window->width, &window->height);
+  if ((window->width != window->s_width) ||
+     (window->height != window->s_height)) {
+    printf("Warning: Resolution %dx%d unsupported by driver, scaling to %dx%d\n",
+    window->s_width, window->s_height, window->width, window->height);
+  }
+  
   // Enable VSync
   if (window->vsync) {
     if (!SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1")) {
@@ -245,12 +264,13 @@ Window* S2D_CreateWindow(char* title, int width, int height,
     init_gles(window->width, window->height);
   #else
     init_gl(window->width, window->height);
+    
+    // TODO: Use glcontext instead?
+    // Create SDL renderer for accelerated 2D
+    window->renderer = SDL_CreateRenderer(window->sdl_window, -1,
+                                          SDL_RENDERER_ACCELERATED);
+    if (!window->renderer) { sdl_error("SDL_CreateRenderer"); }
   #endif
-  
-  // Create SDL renderer for accelerated 2D
-  window->renderer = SDL_CreateRenderer(window->sdl_window, -1,
-                                        SDL_RENDERER_ACCELERATED);
-  if (!window->renderer) { sdl_error("SDL_CreateRenderer"); }
   
   return window;
 }
@@ -337,13 +357,26 @@ int S2D_Show(Window *window) {
     SDL_GetMouseState(&cursor_x, &cursor_y);
     
     // Store new values in the window
-    window->cursor_x = cursor_x;
-    window->cursor_y = cursor_y;
-    window->frames = frames;
-    window->total_ms = total_ms;
-    window->loop_ms = loop_ms;
-    window->delay_ms = delay_ms;
-    window->fps = fps;
+    window->cursor_x   = cursor_x;
+    window->cursor_y   = cursor_y;
+    window->a_cursor_x = cursor_x;
+    window->a_cursor_y = cursor_y;
+    window->frames     = frames;
+    window->total_ms   = total_ms;
+    window->loop_ms    = loop_ms;
+    window->delay_ms   = delay_ms;
+    window->fps        = fps;
+    
+    // scale the cursor position, if necessary
+    if (window->s_width != window->width) {
+      window->cursor_x = (int)((double)window->a_cursor_x *
+        ((double)window->s_width / (double)window->width) + 0.5);
+    }
+    
+    if (window->s_height != window->height) {
+      window->cursor_y = (int)((double)window->a_cursor_y *
+        ((double)window->s_height / (double)window->height) + 0.5);
+    }
     
     // Call update and render callbacks
     if (window->update) { window->update(); }

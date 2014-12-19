@@ -34,16 +34,20 @@ typedef struct Window {
   SDL_Renderer *renderer;
   SDL_GLContext glcontext;
   char *title;
-  int width;
-  int height;
+  int width;     // actual window width
+  int height;    // actual window height
+  int s_width;   // scaled window width
+  int s_height;  // scaled window height
   int fps_cap;
   bool vsync;
   Update update;
   Render render;
   On_key on_key;
   Key_down key_down;
-  int cursor_x;
-  int cursor_y;
+  int cursor_x;    // scaled cursor x position
+  int cursor_y;    // scaled cursor y position
+  int a_cursor_x;  // actual cursor x position
+  int a_cursor_y;  // actual cursor y position
   Uint32 frames;
   Uint32 total_ms;
   Uint32 loop_ms;

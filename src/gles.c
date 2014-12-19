@@ -66,7 +66,7 @@ static GLuint LoadShader(GLenum type, const GLchar *shaderSrc) {
 /*
  * Initalize OpenGL ES
  */
-int init_gles(int width, int height) {
+int init_gles(int width, int height, int s_width, int s_height) {
   
   printf("GL_VENDOR: %s\n", glGetString(GL_VENDOR));
   printf("GL_RENDERER: %s\n", glGetString(GL_RENDERER));
@@ -159,27 +159,30 @@ int init_gles(int width, int height) {
   // Use the program object
   glUseProgram(programObject);
   
-  // Create and apply an orthographic projection matrix (2D projection)
-  GLfloat left   =  0.0f;
-  GLfloat right  =  (float)width / (float)height;
-  GLfloat bottom =  0.0f;
-  GLfloat top    =  1.0f;
-  GLfloat zNear  = -1.0f;
-  GLfloat zFar   =  1.0f;
+  // Compute scaling factors, if necessary
+  GLfloat scale_x = 1.0f;
+  GLfloat scale_y = 1.0f;
   
+  if (s_width != width) {
+    scale_x = (GLfloat)s_width / (GLfloat)width;
+  }
+  
+  if (s_height != height) {
+    scale_y = (GLfloat)s_height / (GLfloat)height;
+  }
+  
+  // Create and apply an orthographic projection matrix (2D projection)
+  // (matrix is given in column-first order)
+  int far_z = 128;
   GLfloat orthoMatrix[16] = {
-    2.0 / (right - left), 0, 0, 0,
-    0, 2.0 / (top - bottom), 0, 0,
-    0, 0, -2.0 / (zFar - zNear), 0,
-    
-    -(right + left) / (right - left),
-    -(top + bottom) / (top - bottom),
-    -(zFar + zNear) / (zFar - zNear),
-    1
+    2.0f / ((GLfloat)width * scale_x), 0, 0, 0,
+    0, -2.0f / ((GLfloat)height * scale_y), 0, 0,
+    0, 0, -2.0f / (GLfloat)(far_z), 0,
+    -1.0f, 1.0f, -1.0f, 1.0f
   };
   
   GLuint mMvpLocation = glGetUniformLocation(programObject, "u_mvpMatrix");
-  glUniformMatrix4fv(mMvpLocation, 1, false, orthoMatrix);
+  glUniformMatrix4fv(mMvpLocation, 1, GL_FALSE, orthoMatrix);
   
   return GL_TRUE;
 }
@@ -206,7 +209,7 @@ void draw_triangle_gles(GLfloat x1,  GLfloat y1,
       c3r, c3g, c3b, c3a };
   
   // Set the color
-  colorLocation = glGetAttribLocation(programObject, "v_color");
+  colorLocation = glGetAttribLocation(programObject, "a_color");
   glVertexAttribPointer(colorLocation, 4, GL_FLOAT, GL_FALSE, 0, vColors);
   glEnableVertexAttribArray(colorLocation);
   
@@ -223,7 +226,7 @@ void draw_triangle_gles(GLfloat x1,  GLfloat y1,
  * Draw image
  */
 void draw_image_gles(Image *img, int x, int y) {
-  puts("S2D_DrawImage not yet implemented!");
+  // TODO: Implement this
 }
 
 
@@ -231,5 +234,5 @@ void draw_image_gles(Image *img, int x, int y) {
  * Draw text
  */
 void draw_text_gles(Text *text, int x, int y) {
-  puts("S2D_DrawText not yet implemented!");
+  // TODO: Implement this
 }
