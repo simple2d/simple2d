@@ -88,6 +88,47 @@ get_remote_str() {
   fi
 }
 
+# Compares version numbers in the form `#.#.#`
+# Adapted from:
+#  stackoverflow.com/questions/4023830/bash-how-compare-two-strings-in-version-format
+# params:
+#   $1  String  First version number to compare
+#   $2  String  Second version number to compare
+# returns:
+#   0  If $1 is equal to $2
+#   1  If $1 is newer than $2
+#   2  If $1 is older than $2
+compare_versions() {
+  if [[ $1 == $2 ]]
+    then
+    return 0
+  fi
+  local IFS=.
+  local i ver1=($1) ver2=($2)
+  # fill empty fields in ver1 with zeros
+  for ((i=${#ver1[@]}; i<${#ver2[@]}; i++))
+  do
+    ver1[i]=0
+  done
+  for ((i=0; i<${#ver1[@]}; i++))
+  do
+    if [[ -z ${ver2[i]} ]]
+      then
+      # fill empty fields in ver2 with zeros
+      ver2[i]=0
+    fi
+    if ((10#${ver1[i]} > 10#${ver2[i]}))
+      then
+      return 1
+    fi
+    if ((10#${ver1[i]} < 10#${ver2[i]}))
+      then
+      return 2
+    fi
+  done
+  return 0
+}
+
 # Starts the timer
 start_timer() {
   START_TIME=$SECONDS
@@ -351,27 +392,27 @@ install_s2d() {
   mkdir /tmp/s2d
   
   if [[ $1 == 'master' ]]; then
-    prefix=''
+    f_name=$1
   else
-    prefix='v'
+    f_name="v$1"
   fi
   
   print_task "Downloading Simple 2D" "\n\n"
   # Linux and Raspberry Pi may not have curl installed by default
   if which curl > /dev/null; then
-    curl -L https://github.com/simple2d/simple2d/archive/$prefix$1.zip -o /tmp/s2d/$prefix$1.zip
+    curl -L https://github.com/simple2d/simple2d/archive/$f_name.zip -o /tmp/s2d/$f_name.zip
   else
-    wget -NP /tmp/s2d https://github.com/simple2d/simple2d/archive/$prefix$1.zip
+    wget -NP /tmp/s2d https://github.com/simple2d/simple2d/archive/$f_name.zip
   fi
   
   # Check if archive was downloaded properly
-  if [ ! -f "/tmp/s2d/$prefix$1.zip" ]; then
+  if [ ! -f "/tmp/s2d/$f_name.zip" ]; then
     echo; error_msg "Simple 2D could not be downloaded."
     exit
   fi
   
   echo; print_task "Unpacking"
-  unzip -q /tmp/s2d/$prefix$1.zip -d /tmp/s2d
+  unzip -q /tmp/s2d/$f_name.zip -d /tmp/s2d
   
   # Check if archive was unpacked properly
   if [[ $? != 0 ]]; then
@@ -494,47 +535,6 @@ update() {
     exit
   fi
   
-  # Compares version numbers in the form `#.#.#`
-  # Adapted from:
-  #  stackoverflow.com/questions/4023830/bash-how-compare-two-strings-in-version-format
-  # params:
-  #   $1  String  First version number to compare
-  #   $2  String  Second version number to compare
-  # returns:
-  #   0  If $1 is equal to $2
-  #   1  If $1 is newer than $2
-  #   2  If $1 is older than $2
-  compare_versions() {
-    if [[ $1 == $2 ]]
-    then
-      return 0
-    fi
-    local IFS=.
-    local i ver1=($1) ver2=($2)
-    # fill empty fields in ver1 with zeros
-    for ((i=${#ver1[@]}; i<${#ver2[@]}; i++))
-    do
-      ver1[i]=0
-    done
-    for ((i=0; i<${#ver1[@]}; i++))
-    do
-      if [[ -z ${ver2[i]} ]]
-      then
-        # fill empty fields in ver2 with zeros
-        ver2[i]=0
-      fi
-      if ((10#${ver1[i]} > 10#${ver2[i]}))
-      then
-        return 1
-      fi
-      if ((10#${ver1[i]} < 10#${ver2[i]}))
-      then
-        return 2
-      fi
-    done
-    return 0
-  }
-  
   # Checks if SDL is installed
   update_check_sdl() {
     if have_sdl2_libs?; then
@@ -558,18 +558,14 @@ update() {
   else
     get_remote_str $VERSION_URL
     NEW_VERSION=$ret
-    
     compare_versions $NEW_VERSION $VERSION
     
     if [[ $? == 1 ]]; then
       echo -e "A new version of Simple 2D is available."
       prompt_to_continue "Install now?"
-      
       update_check_sdl
-      
       print_task "Updating Simple 2D" "\n"
       install_s2d $NEW_VERSION
-      
       success_msg "Simple 2D has been updated to $NEW_VERSION!"
     else
       success_msg "Simple 2D is up to date."
