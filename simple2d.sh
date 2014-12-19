@@ -235,6 +235,7 @@ install_sdl_rpi() {
     
     libs=(
       # SDL2
+      # libx11-dev  # TODO: Get Simple 2D to work in an X11 window
       libudev-dev
       libasound2-dev
       libdbus-1-dev
@@ -284,7 +285,7 @@ install_sdl_rpi() {
       tar -xzf $2.tar.gz
       cd $2
       print_task "Configuring" "\n\n"
-      ./configure
+      ./configure $3
       echo; print_task "Compiling"
       make > /dev/null 2>&1
       echo -e " done"
@@ -298,7 +299,7 @@ install_sdl_rpi() {
     
     if ! $have_sdl2_lib ; then
       echo; print_task "Installing SDL2" "\n\n"
-      install_sdl_lib $sdl_url $sdl
+      install_sdl_lib $sdl_url $sdl "--disable-video-opengl --disable-video-x11"
     fi
     
     if ! $have_image_lib ; then
