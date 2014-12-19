@@ -11,5 +11,5 @@ make && make install
 Then build and run the [testcard](http://en.wikipedia.org/wiki/Testcard):
 
 ```
-make tests && ./tests/testcard
+make tests && cd tests/ && ./testcard
 ```
