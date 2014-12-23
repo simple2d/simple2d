@@ -163,6 +163,10 @@ void S2D_FreeImage(Image img);
  */
 Text S2D_CreateText(Window *window, char *font, char *msg, int size);
 
+/*
+* Sets the text message
+*/
+void S2D_SetText(Window *window, Text *txt, char *msg);
 
 /*
  * Draw text

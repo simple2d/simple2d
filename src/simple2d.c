@@ -145,6 +145,18 @@ Text S2D_CreateText(Window *window, char *font, char *msg, int size) {
 }
 
 
+/*
+* Sets the text message
+*/
+void S2D_SetText(Window *window, Text *txt, char *msg) {
+  SDL_DestroyTexture(txt->texture);
+  
+  SDL_Color color = { 255, 255, 255 };
+  txt->msg = msg;
+  SDL_Surface *surface;
+  surface = TTF_RenderText_Blended(txt->font, txt->msg, color);
+  txt->texture = SDL_CreateTextureFromSurface(window->renderer, surface);
+  TTF_SizeText(txt->font, txt->msg, &txt->w, &txt->h);
   
   SDL_FreeSurface(surface);
 }
