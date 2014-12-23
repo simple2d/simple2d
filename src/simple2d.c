@@ -130,6 +130,11 @@ Text S2D_CreateText(Window *window, char *font, char *msg, int size) {
     exit(1);
   }
   
+  SDL_Color color = { 255, 255, 255 };
+  txt.color.r = 1.0;
+  txt.color.g = 1.0;
+  txt.color.b = 1.0;
+  txt.color.a = 1.0;
   
   txt.msg = msg;
   SDL_Surface *surface;

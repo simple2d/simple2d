@@ -24,6 +24,13 @@
 #include <SDL2/SDL_mixer.h>
 #include <SDL2/SDL_ttf.h>
 
+typedef struct Color {
+  GLfloat r;
+  GLfloat g;
+  GLfloat b;
+  GLfloat a;
+} Color;
+
 typedef void (*Update)(void);
 typedef void (*Render)(void);
 typedef void (*On_key)(const char *);
@@ -69,6 +76,7 @@ typedef struct Text {
   int y;
   int w;
   int h;
+  Color color;
 } Text;
 
 typedef struct Sound {
