@@ -223,7 +223,6 @@ void S2D_FreeSound(Sound sound) {
  * Create a window
  */
 Window* S2D_CreateWindow(char* title, int width, int height,
-                         int fps_cap, bool vsync,
                          Update update, Render render,
                          On_key on_key, Key_down key_down) {
   
@@ -237,8 +236,8 @@ Window* S2D_CreateWindow(char* title, int width, int height,
   window->title = title;
   window->width = width;
   window->height = height;
-  window->fps_cap = fps_cap;
-  window->vsync = vsync;
+  window->fps_cap = 60;
+  window->vsync = true;
   window->update = update;
   window->render = render;
   window->on_key = on_key;
@@ -271,13 +270,6 @@ Window* S2D_CreateWindow(char* title, int width, int height,
      (window->height != window->s_height)) {
     printf("Warning: Resolution %dx%d unsupported by driver, scaling to %dx%d\n",
     window->s_width, window->s_height, window->width, window->height);
-  }
-  
-  // Enable VSync
-  if (window->vsync) {
-    if (!SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1")) {
-      printf("Warning: VSync cannot be enabled");
-    }
   }
   
   // OpenGL inits
@@ -316,6 +308,13 @@ int S2D_Show(Window *window) {
   Uint32 loop_ms;   // Elapsed time of loop
   int delay_ms;     // Amount of delay to achieve desired frame rate
   double fps;       // The actual frame rate
+  
+  // Enable VSync
+  if (window->vsync) {
+    if (!SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1")) {
+      printf("Warning: VSync cannot be enabled");
+    }
+  }
   
   // Main Event Loop ///////////////////////////////////////////////////////////
   

@@ -118,13 +118,13 @@ typedef struct Sound {
  */
 Window* S2D_CreateWindow(
   char *title, int width, int height,
-  int fps_cap, bool vsync, Update, Render, On_key, Key_down
+  Update, Render, On_key, Key_down
 );
 
 /*
  * Show the window
  */
-int S2D_Show(Window*);
+int S2D_Show(Window *window);
 
 /*
  * Draw triangle
