@@ -85,7 +85,7 @@ Image S2D_CreateImage(Window *window, char *path) {
   }
   
   img.texture = SDL_CreateTextureFromSurface(window->renderer, surface);
-  if (!img.texture) { sdl_error("SDL_CreateTextureFromSurface"); }
+  if (!img.texture) sdl_error("SDL_CreateTextureFromSurface");
   
   SDL_FreeSurface(surface);
   
@@ -262,6 +262,8 @@ Window* S2D_CreateWindow(char* title, int width, int height,
   #endif
   
   // Create SDL window
+  // TODO: Add `SDL_WINDOW_FULLSCREEN_DESKTOP` option to flags, or...
+  //       Call `SDL_SetWindowFullscreen` in update loop
   window->sdl_window = SDL_CreateWindow(
     window->title,                                   // title
     SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,  // window position
@@ -271,8 +273,8 @@ Window* S2D_CreateWindow(char* title, int width, int height,
   
   if (!window->sdl_window) { sdl_error("SDL_CreateWindow"); }
   
-  // The window created by SDL may not be of the requested size
-  // if unsupported - get the real size
+  // Window created by SDL might not actually be the requested size
+  // If not, retrieve and set the actual window size
   window->s_width = window->width;
   window->s_height = window->height;
   SDL_GetWindowSize(window->sdl_window, &window->width, &window->height);
@@ -295,7 +297,7 @@ Window* S2D_CreateWindow(char* title, int width, int height,
     // Create SDL renderer for accelerated 2D
     window->renderer = SDL_CreateRenderer(window->sdl_window, -1,
                                           SDL_RENDERER_ACCELERATED);
-    if (!window->renderer) { sdl_error("SDL_CreateRenderer"); }
+    if (!window->renderer) sdl_error("SDL_CreateRenderer");
   #endif
   
   return window;
