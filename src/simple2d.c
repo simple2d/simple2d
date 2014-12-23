@@ -243,6 +243,10 @@ Window* S2D_CreateWindow(char* title, int width, int height,
   window->render = render;
   window->on_key = on_key;
   window->key_down = key_down;
+  window->background.r = 0.0;
+  window->background.g = 0.0;
+  window->background.b = 0.0;
+  window->background.a = 1.0;
   
   // SDL inits
   SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
@@ -320,7 +324,12 @@ int S2D_Show(Window *window) {
     
     // Clear Frame /////////////////////////////////////////////////////////////
     
-    glClearColor(0.2, 0.2, 0.2, 1.0);
+    glClearColor(
+      window->background.r,
+      window->background.g,
+      window->background.b,
+      window->background.a
+    );
     glClear(GL_COLOR_BUFFER_BIT);
     
     // Set FPS /////////////////////////////////////////////////////////////////

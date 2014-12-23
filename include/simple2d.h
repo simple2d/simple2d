@@ -60,6 +60,7 @@ typedef struct Window {
   Uint32 loop_ms;
   Uint32 delay_ms;
   double fps;
+  Color background;
 } Window;
 
 typedef struct Image {
