@@ -99,17 +99,31 @@ void draw_image_gl(Image img) {
  */
 void draw_text_gl(Text txt) {
   
-  int w, h;
-  TTF_SizeText(text->font, text->msg, &w, &h);
+  int w, h, w_v, h_v;
   
+  TTF_SizeText(txt.font, txt.msg, &w, &h);
   
+  if (SDL_GL_BindTexture(txt.texture, NULL, NULL)) {
+    // This is currently returning `-1`, but still works somehow
+    // Uncomment this when returns `0`:
+    //   sdl_error("draw_text_gl -> SDL_GL_BindTexture");
+  }
+  
+  // If text width or height is 0, use calculated values
+  if (!txt.w || !txt.h) {
+    w_v = w;
+    h_v = h;
+  } else {
+    w_v = txt.w;
+    h_v = txt.h;
+  }
   
   glBegin(GL_QUADS);
-    glColor4f(1, 1, 1, 1);
-    glTexCoord2f(0, 0); glVertex2f(x, y);
-    glTexCoord2f(w, 0); glVertex2f(x + w, y);
-    glTexCoord2f(w, h); glVertex2f(x + w, y + h);
-    glTexCoord2f(0, h); glVertex2f(x, y + h);
+    glColor4f(txt.color.r, txt.color.g, txt.color.b, txt.color.a);
+    glTexCoord2f(0, 0); glVertex2f(txt.x, txt.y);
+    glTexCoord2f(w, 0); glVertex2f(txt.x + w_v, txt.y);
+    glTexCoord2f(w, h); glVertex2f(txt.x + w_v, txt.y + h_v);
+    glTexCoord2f(0, h); glVertex2f(txt.x, txt.y + h_v);
   glEnd();
   
   SDL_GL_UnbindTexture(txt.texture);
