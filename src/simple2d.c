@@ -69,22 +69,25 @@ void S2D_DrawQuad(GLfloat x1,  GLfloat y1,
 /*
  * Create an image
  */
-Image* S2D_CreateImage(Window *window, char *path) {
+Image S2D_CreateImage(Window *window, char *path) {
   
   #if GLES
     puts("S2D_DrawImage not yet implemented!");
   #endif
   
-  Image *img = (Image*)malloc(sizeof(Image));
+  Image img;
+  SDL_Surface *surface;
   
-  img->surface = IMG_Load(path);
-  if(!img->surface) {
+  surface = IMG_Load(path);
+  if(!surface) {
     printf("IMG_Load failed: %s\n", IMG_GetError());
     exit(1);
   }
   
-  img->texture = SDL_CreateTextureFromSurface(window->renderer, img->surface);
-  if (!img->texture) { sdl_error("SDL_CreateTextureFromSurface"); }
+  img.texture = SDL_CreateTextureFromSurface(window->renderer, surface);
+  if (!img.texture) { sdl_error("SDL_CreateTextureFromSurface"); }
+  
+  SDL_FreeSurface(surface);
   
   return img;
 }
@@ -93,66 +96,68 @@ Image* S2D_CreateImage(Window *window, char *path) {
 /*
  * Draw an image
  */
-void S2D_DrawImage(Image *img, int x, int y) {
-  
-  if (SDL_GL_BindTexture(img->texture, NULL, NULL)) {
-    sdl_error("SDL_GL_BindTexture");
-  }
-  
+void S2D_DrawImage(Image img) {
   #if GLES
-    draw_image_gles(img, x, y);
+    draw_image_gles(img);
   #else
-    draw_image_gl(img, x, y);
+    draw_image_gl(img);
   #endif
-  
-  SDL_GL_UnbindTexture(img->texture);
 }
 
 
 /*
  * Free an image
  */
-void S2D_FreeImage(Image *img) {
-  SDL_DestroyTexture(img->texture);
-  SDL_FreeSurface(img->surface);
+void S2D_FreeImage(Image img) {
+  SDL_DestroyTexture(img.texture);
 }
 
 
 /*
  * Create text
  */
-Text* S2D_CreateText(Window *window, char *font, char *msg, int size) {
+Text S2D_CreateText(Window *window, char *font, char *msg, int size) {
   
   #if GLES
     puts("S2D_DrawText not yet implemented!");
   #endif
   
-  Text *text = (Text*)malloc(sizeof(Text));
+  Text txt;
   
-  SDL_Color color = { 255, 255, 255 };
-  
-  text->font = TTF_OpenFont(font, size);
-  if(!text->font) {
+  txt.font = TTF_OpenFont(font, size);
+  if(!txt.font) {
     printf("TTF_OpenFont failed: %s\n", TTF_GetError());
     exit(1);
   }
   
-  text->msg = msg;
-  text->surface = TTF_RenderText_Blended(text->font, text->msg, color);
-  text->texture = SDL_CreateTextureFromSurface(window->renderer, text->surface);
   
-  return text;
+  txt.msg = msg;
+  SDL_Surface *surface;
+  surface = TTF_RenderText_Blended(txt.font, txt.msg, color);
+  txt.texture = SDL_CreateTextureFromSurface(window->renderer, surface);
+  
+  // Calculate the width and height of the text
+  TTF_SizeText(txt.font, txt.msg, &txt.w, &txt.h);
+  
+  SDL_FreeSurface(surface);
+  
+  return txt;
+}
+
+
+  
+  SDL_FreeSurface(surface);
 }
 
 
 /*
  * Draw text
  */
-void S2D_DrawText(Text *text, int x, int y) {
+void S2D_DrawText(Text txt) {
   #if GLES
-    draw_text_gles(text, x, y);
+    draw_text_gles(txt);
   #else
-    draw_text_gl(text, x, y);
+    draw_text_gl(txt);
   #endif
 }
 
@@ -160,22 +165,20 @@ void S2D_DrawText(Text *text, int x, int y) {
 /*
  * Free the text
  */
-void S2D_FreeText(Text *text) {
-  TTF_CloseFont(text->font);
-  SDL_DestroyTexture(text->texture);
-  SDL_FreeSurface(text->surface);
+void S2D_FreeText(Text txt) {
+  SDL_DestroyTexture(txt.texture);
+  TTF_CloseFont(txt.font);  
 }
 
 
 /*
  * Create a sound
  */
-Sound* S2D_CreateSound(char *path) {
+Sound S2D_CreateSound(char *path) {
+  Sound sound;
   
-  Sound *sound = (Sound*)malloc(sizeof(Sound));
-  
-  sound->wave = Mix_LoadWAV(path);
-  if (!sound->wave) {
+  sound.wave = Mix_LoadWAV(path);
+  if (!sound.wave) {
     printf("Mix_LoadWAV failed: %s\n", Mix_GetError());
   }
   
@@ -186,16 +189,16 @@ Sound* S2D_CreateSound(char *path) {
 /*
  * Play the sound
  */
-void S2D_PlaySound(Sound *sound) {
-  Mix_PlayChannel(-1, sound->wave, 0);
+void S2D_PlaySound(Sound sound) {
+  Mix_PlayChannel(-1, sound.wave, 0);
 }
 
 
 /*
  * Free the sound
  */
-void S2D_FreeSound(Sound *sound) {
-  Mix_FreeChunk(sound->wave);
+void S2D_FreeSound(Sound sound) {
+  Mix_FreeChunk(sound.wave);
 }
 
 

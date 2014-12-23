@@ -73,36 +73,36 @@ void draw_triangle_gl(GLfloat x1,  GLfloat y1,
 /*
  * Draw image
  */
-void draw_image_gl(Image *img, int x, int y) {
+void draw_image_gl(Image img) {
   
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  int w, h;
+  SDL_QueryTexture(img.texture, NULL, NULL, &w, &h);
   
-  int w = img->surface->w;
-  int h = img->surface->h;
+  if (SDL_GL_BindTexture(img.texture, NULL, NULL)) {
+    sdl_error("draw_image_gl -> SDL_GL_BindTexture");
+  }
   
   glBegin(GL_QUADS);
     glColor4f(1, 1, 1, 1);
-    glTexCoord2f(0, 0); glVertex2f(x, y);
-    glTexCoord2f(w, 0); glVertex2f(x + w, y);
-    glTexCoord2f(w, h); glVertex2f(x + w, y + h);
-    glTexCoord2f(0, h); glVertex2f(x, y + h);
+    glTexCoord2f(0, 0); glVertex2f(img.x, img.y);
+    glTexCoord2f(w, 0); glVertex2f(img.x + w, img.y);
+    glTexCoord2f(w, h); glVertex2f(img.x + w, img.y + h);
+    glTexCoord2f(0, h); glVertex2f(img.x, img.y + h);
   glEnd();
+  
+  SDL_GL_UnbindTexture(img.texture);
 }
 
 
 /*
  * Draw text
  */
-void draw_text_gl(Text *text, int x, int y) {
+void draw_text_gl(Text txt) {
   
   int w, h;
   TTF_SizeText(text->font, text->msg, &w, &h);
   
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   
-  SDL_GL_BindTexture(text->texture, NULL, NULL);
   
   glBegin(GL_QUADS);
     glColor4f(1, 1, 1, 1);
@@ -112,5 +112,5 @@ void draw_text_gl(Text *text, int x, int y) {
     glTexCoord2f(0, h); glVertex2f(x, y + h);
   glEnd();
   
-  SDL_GL_UnbindTexture(text->texture);
+  SDL_GL_UnbindTexture(txt.texture);
 }

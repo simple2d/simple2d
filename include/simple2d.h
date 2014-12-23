@@ -56,15 +56,19 @@ typedef struct Window {
 } Window;
 
 typedef struct Image {
-  SDL_Surface *surface;
   SDL_Texture *texture;
+  int x;
+  int y;
 } Image;
 
 typedef struct Text {
   TTF_Font *font;
-  SDL_Surface *surface;
   SDL_Texture *texture;
   char *msg;
+  int x;
+  int y;
+  int w;
+  int h;
 } Text;
 
 typedef struct Sound {
@@ -84,8 +88,8 @@ typedef struct Sound {
     GLfloat c2r, GLfloat c2g, GLfloat c2b, GLfloat c2a,
     GLfloat x3,  GLfloat y3,
     GLfloat c3r, GLfloat c3g, GLfloat c3b, GLfloat c3a);
-  void draw_image_gles(Image *img, int x, int y);
-  void draw_text_gles(Text *text, int x, int y);
+  void draw_image_gles(Image img);
+  void draw_text_gles(Text txt);
 #else
   void hello_gl();
   int init_gl(int width, int height);
@@ -96,8 +100,8 @@ typedef struct Sound {
     GLfloat c2r, GLfloat c2g, GLfloat c2b, GLfloat c2a,
     GLfloat x3,  GLfloat y3,
     GLfloat c3r, GLfloat c3g, GLfloat c3b, GLfloat c3a);
-  void draw_image_gl(Image *img, int x, int y);
-  void draw_text_gl(Text *text, int x, int y);
+  void draw_image_gl(Image img);
+  void draw_text_gl(Text txt);
 #endif
 
 /*
@@ -142,44 +146,45 @@ void S2D_DrawQuad(
 /*
  * Create an image
  */
-Image* S2D_CreateImage(Window *window, char *path);
+Image S2D_CreateImage(Window *window, char *path);
 
 /*
  * Draw an image
  */
-void S2D_DrawImage(Image *img, int x, int y);
+void S2D_DrawImage(Image img);
 
 /*
  * Free an image
  */
-void S2D_FreeImage(Image *img);
+void S2D_FreeImage(Image img);
 
 /*
  * Create text
  */
-Text* S2D_CreateText(Window *window, char *font, char *msg, int size);
+Text S2D_CreateText(Window *window, char *font, char *msg, int size);
+
 
 /*
  * Draw text
  */
-void S2D_DrawText(Text *text, int x, int y);
+void S2D_DrawText(Text txt);
 
 /*
  * Free the text
  */
-void S2D_FreeText(Text *text);
+void S2D_FreeText(Text txt);
 
 /*
  * Create a sound
  */
-Sound* S2D_CreateSound(char *path);
+Sound S2D_CreateSound(char *path);
 
 /*
  * Play the sound
  */
-void S2D_PlaySound(Sound *sound);
+void S2D_PlaySound(Sound sound);
 
 /*
  * Free the sound
  */
-void S2D_FreeSound(Sound *sound);
+void S2D_FreeSound(Sound sound);
