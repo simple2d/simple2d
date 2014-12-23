@@ -114,6 +114,11 @@ typedef struct Sound {
 #endif
 
 /*
+* Print SDL errors
+*/
+void sdl_error(char *error);
+
+/*
  * Show the window
  */
 Window* S2D_CreateWindow(

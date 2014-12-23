@@ -6,7 +6,7 @@
 /*
  * Print SDL errors
  */
-static void sdl_error(char *error) {
+void sdl_error(char *error) {
   printf("%s: %s\n", error, SDL_GetError());
   exit(1);
 }
