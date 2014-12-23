@@ -49,7 +49,7 @@ typedef struct Window {
   int a_cursor_x;  // actual cursor x position
   int a_cursor_y;  // actual cursor y position
   Uint32 frames;
-  Uint32 total_ms;
+  Uint32 elapsed_ms;
   Uint32 loop_ms;
   Uint32 delay_ms;
   double fps;

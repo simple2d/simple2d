@@ -289,9 +289,9 @@ int S2D_Show(Window *window) {
   const Uint8 *key_state;
   Uint32 frames = 0;       // Total frames since start
   Uint32 start_ms = SDL_GetTicks();  // Elapsed time since start
-  Uint32 begin_ms = start_ms;  // TIme at beginning of loop
+  Uint32 begin_ms = start_ms;  // Time at beginning of loop
   Uint32 end_ms;    // Time at end of loop
-  Uint32 total_ms;  // Total elapsed time
+  Uint32 elapsed_ms;  // Total elapsed time
   Uint32 loop_ms;   // Elapsed time of loop
   int delay_ms;     // Amount of delay to achieve desired frame rate
   double fps;       // The actual frame rate
@@ -311,8 +311,8 @@ int S2D_Show(Window *window) {
     frames++;
     end_ms = SDL_GetTicks();
     
-    total_ms = end_ms - start_ms;
-    fps = frames / (total_ms / 1000.0);
+    elapsed_ms = end_ms - start_ms;
+    fps = frames / (elapsed_ms / 1000.0);
     
     loop_ms = end_ms - begin_ms;
     delay_ms = (1000 / window->fps_cap) - loop_ms;
@@ -365,7 +365,7 @@ int S2D_Show(Window *window) {
     window->a_cursor_x = cursor_x;
     window->a_cursor_y = cursor_y;
     window->frames     = frames;
-    window->total_ms   = total_ms;
+    window->elapsed_ms = elapsed_ms;
     window->loop_ms    = loop_ms;
     window->delay_ms   = delay_ms;
     window->fps        = fps;
