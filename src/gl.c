@@ -24,11 +24,13 @@ int init_gl(int width, int height) {
   GLenum error = GL_NO_ERROR;
   
   glViewport(0, 0, width, height);
-  glOrtho(0, width, height, 0, -1.f, 1.f);
   
   // Initialize the projection matrix
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
+  
+  // Multiply the current matrix with the orthographic matrix
+  glOrtho(0.f, width, height, 0.f, -1.f, 1.f);
   
   // Initialize the modelview matrix
   glMatrixMode(GL_MODELVIEW);
