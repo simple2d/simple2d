@@ -293,12 +293,15 @@ Window* S2D_CreateWindow(char* title, int width, int height,
   #else
     init_gl(window->width, window->height);
     
-    // TODO: Use glcontext instead?
-    // Create SDL renderer for accelerated 2D
+    // Create 2D rendering context for converting SDL_Surface to SDL_Texture,
+    // using the `SDL_CreateTextureFromSurface` function
     window->renderer = SDL_CreateRenderer(window->sdl_window, -1,
-                                          SDL_RENDERER_ACCELERATED);
+                                          SDL_RENDERER_TARGETTEXTURE);
     if (!window->renderer) sdl_error("SDL_CreateRenderer");
   #endif
+  
+  // Use OpenGL context instead of SDL_Renderer
+  SDL_GL_MakeCurrent(window->sdl_window, window->glcontext);
   
   return window;
 }
