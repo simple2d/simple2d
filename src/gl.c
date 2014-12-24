@@ -61,9 +61,6 @@ void draw_triangle_gl(GLfloat x1,  GLfloat y1,
                       GLfloat x3,  GLfloat y3,
                       GLfloat c3r, GLfloat c3g, GLfloat c3b, GLfloat c3a) {
   
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  
   glBegin(GL_TRIANGLES);
     glColor4f(c1r, c1g, c1b, c1a); glVertex2f(x1, y1);
     glColor4f(c2r, c2g, c2b, c2a); glVertex2f(x2, y2);
@@ -91,8 +88,6 @@ void draw_image_gl(Image img) {
     glTexCoord2f(w, h); glVertex2f(img.x + w, img.y + h);
     glTexCoord2f(0, h); glVertex2f(img.x, img.y + h);
   glEnd();
-  
-  SDL_GL_UnbindTexture(img.texture);
 }
 
 
