@@ -256,9 +256,9 @@ Window* S2D_CreateWindow(char* title, int width, int height,
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
     
     // TODO: One day, we'll upgrade to modern GL
+    // SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
     // SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     // SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
-    // SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
   #endif
   
   // Create SDL window
@@ -271,7 +271,7 @@ Window* S2D_CreateWindow(char* title, int width, int height,
     SDL_WINDOW_OPENGL                                // flags
   );
   
-  if (!window->sdl_window) { sdl_error("SDL_CreateWindow"); }
+  if (!window->sdl_window) sdl_error("SDL_CreateWindow");
   
   // Window created by SDL might not actually be the requested size
   // If not, retrieve and set the actual window size
@@ -286,7 +286,7 @@ Window* S2D_CreateWindow(char* title, int width, int height,
   
   // OpenGL inits
   window->glcontext = SDL_GL_CreateContext(window->sdl_window);
-  if (!window->glcontext) { sdl_error("SDL_GL_CreateContext"); }
+  if (!window->glcontext) sdl_error("SDL_GL_CreateContext");
   
   #if GLES
     init_gles(window->width, window->height);
@@ -337,7 +337,6 @@ int S2D_Show(Window *window) {
   while (!quit) {
     
     // Clear Frame /////////////////////////////////////////////////////////////
-    
     glClearColor(
       window->background.r,
       window->background.g,
@@ -357,7 +356,7 @@ int S2D_Show(Window *window) {
     loop_ms = end_ms - begin_ms;
     delay_ms = (1000 / window->fps_cap) - loop_ms;
     
-    if (delay_ms < 0) { delay_ms = 0; }
+    if (delay_ms < 0) delay_ms = 0;
     
     // Note: loop_ms + delay_ms => should equal (1000 / fps_cap)
     
@@ -422,8 +421,8 @@ int S2D_Show(Window *window) {
     }
     
     // Call update and render callbacks
-    if (window->update) { window->update(); }
-    if (window->render) { window->render(); }
+    if (window->update) window->update();
+    if (window->render) window->render();
     
     // Draw Frame //////////////////////////////////////////////////////////////
     SDL_GL_SwapWindow(window->sdl_window);
