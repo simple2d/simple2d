@@ -2,24 +2,27 @@
 #include <simple2d.h>
 
 Window *window;
-Image *img_jpg;
-Image *img_png;
-Text *text;
-Text *on_key_text;
-Text *on_key_char;
-Text *key_down_text;
-Text *key_down_char;
+Image img_jpg;
+Image img_png;
+Text txt;
+Text on_key_text;
+Text on_key_char;
+Text key_down_text;
+Text key_down_char;
+Text fps;
+Text fps_val;
+char fps_str[7];
 char *font = "./media/bitstream_vera/vera.ttf";
 int font_size = 24;
 
 void on_key(const char *key) {
-  S2D_FreeText(on_key_char);
-  on_key_char = S2D_CreateText(window, font, (char*)key, font_size);
+  // Update text with key pressed
+  S2D_SetText(window, &on_key_char, (char*)key);
 }
 
 void key_down(const char *key) {
-  S2D_FreeText(key_down_char);
-  key_down_char = S2D_CreateText(window, font, (char*)key, font_size);
+  // Update text with key held down
+  S2D_SetText(window, &key_down_char, (char*)key);
 }
 
 void render() {
@@ -78,43 +81,90 @@ void render() {
                800, 225, 1, 1, 1, 1,
                0,   225, 1, 1, 1, 0);
   
-  S2D_DrawImage(img_jpg, 25,  200);
-  S2D_DrawImage(img_png, 675, 200);
-  S2D_DrawText(text, 25, 400);
+  // Images
   
-  S2D_DrawText(on_key_text, 25, 450);
-  S2D_DrawText(on_key_char, 125, 450);
-  S2D_DrawText(key_down_text, 25, 500);
-  S2D_DrawText(key_down_char, 160, 500);
+  img_jpg.x = 25;
+  img_jpg.y = 200;
+  S2D_DrawImage(img_jpg);
   
-  // Follow cursor
+  img_png.x = 675;
+  img_png.y = 200;
+  S2D_DrawImage(img_png);
+  
+  // Text
+  
+  txt.x = 25;
+  txt.y = 400;
+  txt.color.r = window->cursor_x / 400.0;
+  txt.color.g = window->cursor_y / 400.0;
+  txt.w = window->cursor_x;
+  txt.h = window->cursor_y;
+  S2D_DrawText(txt);
+  
+  // Input
+  
+  on_key_text.x = 25;
+  on_key_text.y = 450;
+  S2D_DrawText(on_key_text);
+  
+  on_key_char.x = 125;
+  on_key_char.y = 450;
+  S2D_DrawText(on_key_char);
+  
+  key_down_text.x = 25;
+  key_down_text.y = 500;
+  S2D_DrawText(key_down_text);
+  
+  key_down_char.x = 160;
+  key_down_char.y = 500;
+  S2D_DrawText(key_down_char);
+  
+  // Square following cursor
+  
   S2D_DrawQuad(window->cursor_x, window->cursor_y, 1, 1, 1, 1,
                window->cursor_x + 10, window->cursor_y, 1, 1, 1, 1,
                window->cursor_x + 10, window->cursor_y + 10, 1, 1, 1, 1,
                window->cursor_x, window->cursor_y + 10, 1, 1, 1, 1);
   
-  // if (window->frames % 100 == 0) {
-    puts("--------------------");
-    printf("cursor: %i, %i\n", window->cursor_x, window->cursor_y);
-    printf("frames: %i\n", window->frames);
-    printf("total_ms: %i\n", window->total_ms);
-    printf("loop_ms: %i\n", window->loop_ms);
-    printf("delay_ms: %i\n", window->delay_ms);
-    printf("fps: %f\n", window->fps);
-  // }
+  // Draw window stats
+  
+  S2D_DrawText(fps);
+  snprintf(fps_str, 7, "%f", window->fps);
+  S2D_SetText(window, &fps_val, fps_str);
+  S2D_DrawText(fps_val);
+  
+  // puts("--------------------");
+  // printf("cursor: %i, %i\n", window->cursor_x, window->cursor_y);
+  // printf("frames: %i\n", window->frames);
+  // printf("elapsed_ms: %i\n", window->elapsed_ms);
+  // printf("loop_ms: %i\n", window->loop_ms);
+  // printf("delay_ms: %i\n", window->delay_ms);
+  // printf("fps: %f\n", window->fps);
 }
 
 int main(int argc, char const *argv[]) {
-  window = S2D_CreateWindow("hello", 800, 600, 60, true, NULL, render, on_key, key_down);
+  window = S2D_CreateWindow("Testcard", 800, 600, NULL, render, on_key, key_down);
+  
+  window->background.r = 0.2;
+  window->background.g = 0.2;
+  window->background.b = 0.2;
   
   img_jpg = S2D_CreateImage(window, "media/image.jpg");
   img_png = S2D_CreateImage(window, "media/image.png");
-  text = S2D_CreateText(window, font, "Hello World", font_size);
+  txt = S2D_CreateText(window, font, "Hello World", font_size);
   
   on_key_text = S2D_CreateText(window, font, "On Key:", font_size);
   on_key_char = S2D_CreateText(window, font, "", font_size);
   key_down_text = S2D_CreateText(window, font, "Key Down:", font_size);
   key_down_char = S2D_CreateText(window, font, "", font_size);
+  
+  fps = S2D_CreateText(window, font, "FPS:", font_size);
+  fps.x = 630;
+  fps.y = 15;
+  
+  fps_val = S2D_CreateText(window, font, "", font_size);
+  fps_val.x = 690;
+  fps_val.y = 15;
   
   S2D_Show(window);
   return 0;

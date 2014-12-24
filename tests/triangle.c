@@ -11,11 +11,11 @@ void render() {
 }
 
 int main(int argc, char const *argv[]) {
-
+  
   window = S2D_CreateWindow(
-    "Hello", 640, 480, 60, true, NULL, render, NULL, NULL
+    "Hello Triangle", 640, 480, NULL, render, NULL, NULL
   );
-
+  
   S2D_Show(window);
   return 0;
 }
