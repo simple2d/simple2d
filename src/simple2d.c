@@ -264,20 +264,20 @@ Window* S2D_CreateWindow(char* title, int width, int height,
   // Create SDL window
   // TODO: Add `SDL_WINDOW_FULLSCREEN_DESKTOP` option to flags, or...
   //       Call `SDL_SetWindowFullscreen` in update loop
-  window->sdl_window = SDL_CreateWindow(
+  window->sdl = SDL_CreateWindow(
     window->title,                                   // title
     SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,  // window position
     window->width, window->height,                   // window size
     SDL_WINDOW_OPENGL                                // flags
   );
   
-  if (!window->sdl_window) sdl_error("SDL_CreateWindow");
+  if (!window->sdl) sdl_error("SDL_CreateWindow");
   
   // Window created by SDL might not actually be the requested size
   // If not, retrieve and set the actual window size
   window->s_width = window->width;
   window->s_height = window->height;
-  SDL_GetWindowSize(window->sdl_window, &window->width, &window->height);
+  SDL_GetWindowSize(window->sdl, &window->width, &window->height);
   if ((window->width != window->s_width) ||
      (window->height != window->s_height)) {
     printf("Warning: Resolution %dx%d unsupported by driver, scaling to %dx%d\n",
@@ -301,7 +301,7 @@ Window* S2D_CreateWindow(char* title, int width, int height,
   #endif
   
   // Use OpenGL context instead of SDL_Renderer
-  SDL_GL_MakeCurrent(window->sdl_window, window->glcontext);
+  SDL_GL_MakeCurrent(window->sdl, window->glcontext);
   
   return window;
 }
@@ -425,7 +425,7 @@ int S2D_Show(Window *window) {
     if (window->render) window->render();
     
     // Draw Frame //////////////////////////////////////////////////////////////
-    SDL_GL_SwapWindow(window->sdl_window);
+    SDL_GL_SwapWindow(window->sdl);
   }
   
   // Quitting clean up
@@ -433,7 +433,7 @@ int S2D_Show(Window *window) {
   Mix_Quit();
   SDL_GL_DeleteContext(window->glcontext);
   SDL_DestroyRenderer(window->renderer);
-  SDL_DestroyWindow(window->sdl_window);
+  SDL_DestroyWindow(window->sdl);
   SDL_Quit();
   
   return 0;

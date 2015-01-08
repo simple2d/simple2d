@@ -37,7 +37,7 @@ typedef void (*On_key)(const char *);
 typedef void (*Key_down)(const char *);
 
 typedef struct Window {
-  SDL_Window *sdl_window;
+  SDL_Window *sdl;
   SDL_Renderer *renderer;
   SDL_GLContext glcontext;
   char *title;
