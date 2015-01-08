@@ -400,6 +400,37 @@ int S2D_Show(Window *window) {
     }
   }
   
+  
+  printf("Number of Joysticks: %i\n", SDL_NumJoysticks());
+  
+  SDL_GameController *controller = NULL;
+  SDL_Joystick *joy = NULL;
+  
+  for (int i = 0; i < SDL_NumJoysticks(); ++i) {
+    if (SDL_IsGameController(i)) {
+      controller = SDL_GameControllerOpen(i);
+      if (controller) {
+        printf("Found a valid controller, named: %s\n", SDL_GameControllerName(controller));
+        break;
+      } else {
+        fprintf(stderr, "Could not open game controller %i: %s\n", i, SDL_GetError());
+      }
+    } else {
+      printf("Joystick %i is not supported by the game controller interface!\n", i);
+      joy = SDL_JoystickOpen(i);
+      if (joy) {
+        printf("Opened Joystick 0\n");
+        printf("Name: %s\n", SDL_JoystickName(joy));
+        printf("Number of Axes: %d\n", SDL_JoystickNumAxes(joy));
+        printf("Number of Buttons: %d\n", SDL_JoystickNumButtons(joy));
+        printf("Number of Balls: %d\n", SDL_JoystickNumBalls(joy));
+      } else {
+        printf("Couldn't open Joystick %i\n", i);
+      }
+      break;
+    }
+  }
+  
   // Main Event Loop ///////////////////////////////////////////////////////////
   
   bool quit = false;
@@ -444,6 +475,19 @@ int S2D_Show(Window *window) {
           if (window->on_key) {
             window->on_key(SDL_GetScancodeName(e.key.keysym.scancode));
           }
+          break;
+        case SDL_MOUSEBUTTONDOWN:
+          // TODO: Register the mouse click
+          printf("Mouse down at: %i, %i\n", e.button.x, e.button.y);
+          break;
+        case SDL_CONTROLLERBUTTONDOWN:
+          puts("SDL_CONTROLLERBUTTONDOWN");
+          break;
+        case SDL_JOYAXISMOTION:
+          printf("SDL_JOYAXISMOTION: axis=%i, value=%i\n", e.jaxis.axis, e.jaxis.value);
+          break;
+        case SDL_JOYBUTTONDOWN:
+          printf("SDL_JOYBUTTONDOWN: %i\n", e.jbutton.button);
           break;
         case SDL_QUIT:
           quit = true;
