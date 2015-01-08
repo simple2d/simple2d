@@ -19,9 +19,10 @@ ifeq ($(PLATFORM),rpi)
 	ar -vq build/libsimple2d.a build/simple2d.o build/gles.o
 	rm build/gles.o
 else
-	cc $(CFLAGS) $(INCLUDES) src/gl.c -c -o build/gl.o
-	ar -vq build/libsimple2d.a build/simple2d.o build/gl.o
-	rm build/gl.o
+	cc $(CFLAGS) $(INCLUDES) src/gl2.c -c -o build/gl2.o
+	cc $(CFLAGS) $(INCLUDES) src/gl3.c -c -o build/gl3.o
+	ar -vq build/libsimple2d.a build/simple2d.o build/gl2.o build/gl3.o
+	rm build/gl2.o build/gl3.o
 endif
 	rm build/simple2d.o
 

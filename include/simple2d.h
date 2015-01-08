@@ -10,13 +10,10 @@
 #include <stdbool.h>
 #include <SDL2/SDL.h>
 
-// Do we need this?
-//   #define GLEW_STATIC
-//   #include <GL/glew.h>
-
 #if GLES
   #include <SDL2/SDL_opengles2.h>
 #else
+  #define GL_GLEXT_PROTOTYPES 1
   #include <SDL2/SDL_opengl.h>
 #endif
 
@@ -100,23 +97,39 @@ typedef struct Sound {
   void draw_image_gles(Image img);
   void draw_text_gles(Text txt);
 #else
-  void hello_gl();
-  int init_gl(int width, int height);
-  void draw_triangle_gl(
+  void hello_gl2();
+  void hello_gl3();
+  int init_gl2(int width, int height);
+  int init_gl3(int width, int height);
+  void draw_triangle_gl2(
     GLfloat x1,  GLfloat y1,
     GLfloat c1r, GLfloat c1g, GLfloat c1b, GLfloat c1a,
     GLfloat x2,  GLfloat y2,
     GLfloat c2r, GLfloat c2g, GLfloat c2b, GLfloat c2a,
     GLfloat x3,  GLfloat y3,
     GLfloat c3r, GLfloat c3g, GLfloat c3b, GLfloat c3a);
-  void draw_image_gl(Image img);
-  void draw_text_gl(Text txt);
+  void draw_triangle_gl3(
+    GLfloat x1,  GLfloat y1,
+    GLfloat c1r, GLfloat c1g, GLfloat c1b, GLfloat c1a,
+    GLfloat x2,  GLfloat y2,
+    GLfloat c2r, GLfloat c2g, GLfloat c2b, GLfloat c2a,
+    GLfloat x3,  GLfloat y3,
+    GLfloat c3r, GLfloat c3g, GLfloat c3b, GLfloat c3a);
+  void draw_image_gl2(Image img);
+  void draw_image_gl3(Image img);
+  void draw_text_gl2(Text txt);
+  void draw_text_gl3(Text txt);
 #endif
 
 /*
-* Print SDL errors
-*/
+ * Print SDL errors
+ */
 void sdl_error(char *error);
+
+/*
+ * Print info about the current OpenGL context
+ */
+void print_gl_context();
 
 /*
  * Show the window

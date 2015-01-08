@@ -68,10 +68,7 @@ static GLuint LoadShader(GLenum type, const GLchar *shaderSrc) {
  */
 int init_gles(int width, int height, int s_width, int s_height) {
   
-  printf("GL_VENDOR: %s\n", glGetString(GL_VENDOR));
-  printf("GL_RENDERER: %s\n", glGetString(GL_RENDERER));
-  printf("GL_VERSION: %s\n", glGetString(GL_VERSION));
-  printf("GL_SHADING_LANGUAGE_VERSION: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
+  print_gl_context();
   
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -177,7 +174,7 @@ int init_gles(int width, int height, int s_width, int s_height) {
   GLfloat orthoMatrix[16] = {
     2.0f / ((GLfloat)width * scale_x), 0, 0, 0,
     0, -2.0f / ((GLfloat)height * scale_y), 0, 0,
-    0, 0, -2.0f / (GLfloat)(far_z), 0,
+    0, 0, -2.0f / (GLfloat)far_z, 0,
     -1.0f, 1.0f, -1.0f, 1.0f
   };
   

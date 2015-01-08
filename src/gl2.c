@@ -1,4 +1,4 @@
-// OpenGL
+// OpenGL 2.1
 
 #include "../include/simple2d.h"
 
@@ -6,20 +6,17 @@
 /*
  * Testing
  */
-void hello_gl() {
-  puts("Hello from OpenGL!");
+void hello_gl2() {
+  puts("Hello from OpenGL 2.1!");
 }
 
 
 /*
  * Initalize OpenGL
  */
-int init_gl(int width, int height) {
+int init_gl2(int width, int height) {
   
-  printf("GL_VENDOR: %s\n", glGetString(GL_VENDOR));
-  printf("GL_RENDERER: %s\n", glGetString(GL_RENDERER));
-  printf("GL_VERSION: %s\n", glGetString(GL_VERSION));
-  printf("GL_SHADING_LANGUAGE_VERSION: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
+  print_gl_context();
   
   GLenum error = GL_NO_ERROR;
   
@@ -54,7 +51,7 @@ int init_gl(int width, int height) {
 /*
  * Draw triangle
  */
-void draw_triangle_gl(GLfloat x1,  GLfloat y1,
+void draw_triangle_gl2(GLfloat x1,  GLfloat y1,
                       GLfloat c1r, GLfloat c1g, GLfloat c1b, GLfloat c1a,
                       GLfloat x2,  GLfloat y2,
                       GLfloat c2r, GLfloat c2g, GLfloat c2b, GLfloat c2a,
@@ -72,7 +69,7 @@ void draw_triangle_gl(GLfloat x1,  GLfloat y1,
 /*
  * Draw image
  */
-void draw_image_gl(Image img) {
+void draw_image_gl2(Image img) {
   
   int w, h;
   SDL_QueryTexture(img.texture, NULL, NULL, &w, &h);
@@ -94,7 +91,7 @@ void draw_image_gl(Image img) {
 /*
  * Draw text
  */
-void draw_text_gl(Text txt) {
+void draw_text_gl2(Text txt) {
   
   int w, h, w_v, h_v;
   

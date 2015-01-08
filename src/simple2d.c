@@ -2,6 +2,9 @@
 
 #include "../include/simple2d.h"
 
+static bool GL2 = false;
+static bool GL3 = false;
+
 
 /*
  * Print SDL errors
@@ -9,6 +12,17 @@
 void sdl_error(char *error) {
   printf("%s: %s\n", error, SDL_GetError());
   exit(1);
+}
+
+
+/*
+ * Print info about the current OpenGL context
+ */
+void print_gl_context() {
+  printf("GL_VENDOR: %s\n", glGetString(GL_VENDOR));
+  printf("GL_RENDERER: %s\n", glGetString(GL_RENDERER));
+  printf("GL_VERSION: %s\n", glGetString(GL_VERSION));
+  printf("GL_SHADING_LANGUAGE_VERSION: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
 }
 
 
@@ -27,9 +41,15 @@ void S2D_DrawTriangle(GLfloat x1,  GLfloat y1,
                        x2, y2, c2r, c2g, c2b, c2a,
                        x3, y3, c3r, c3g, c3b, c3a);
   #else
-    draw_triangle_gl(x1, y1, c1r, c1g, c1b, c1a,
-                     x2, y2, c2r, c2g, c2b, c2a,
-                     x3, y3, c3r, c3g, c3b, c3a);
+    if (GL2) {
+      draw_triangle_gl2(x1, y1, c1r, c1g, c1b, c1a,
+                       x2, y2, c2r, c2g, c2b, c2a,
+                       x3, y3, c3r, c3g, c3b, c3a);
+    } else {
+      draw_triangle_gl3(x1, y1, c1r, c1g, c1b, c1a,
+                       x2, y2, c2r, c2g, c2b, c2a,
+                       x3, y3, c3r, c3g, c3b, c3a);
+    }
   #endif
 }
 
@@ -55,13 +75,24 @@ void S2D_DrawQuad(GLfloat x1,  GLfloat y1,
                        x4, y4, c4r, c4g, c4b, c4a,
                        x1, y1, c1r, c1g, c1b, c1a);
   #else
-    draw_triangle_gl(x1, y1, c1r, c1g, c1b, c1a,
-                     x2, y2, c2r, c2g, c2b, c2a,
-                     x3, y3, c3r, c3g, c3b, c3a);
     
-    draw_triangle_gl(x3, y3, c3r, c3g, c3b, c3a,
-                     x4, y4, c4r, c4g, c4b, c4a,
-                     x1, y1, c1r, c1g, c1b, c1a);
+    if (GL2) {
+      draw_triangle_gl2(x1, y1, c1r, c1g, c1b, c1a,
+                       x2, y2, c2r, c2g, c2b, c2a,
+                       x3, y3, c3r, c3g, c3b, c3a);
+      
+      draw_triangle_gl2(x3, y3, c3r, c3g, c3b, c3a,
+                       x4, y4, c4r, c4g, c4b, c4a,
+                       x1, y1, c1r, c1g, c1b, c1a);      
+    } else {
+      draw_triangle_gl3(x1, y1, c1r, c1g, c1b, c1a,
+                       x2, y2, c2r, c2g, c2b, c2a,
+                       x3, y3, c3r, c3g, c3b, c3a);
+      
+      draw_triangle_gl3(x3, y3, c3r, c3g, c3b, c3a,
+                       x4, y4, c4r, c4g, c4b, c4a,
+                       x1, y1, c1r, c1g, c1b, c1a);
+    }
   #endif
 };
 
@@ -79,7 +110,7 @@ Image S2D_CreateImage(Window *window, char *path) {
   SDL_Surface *surface;
   
   surface = IMG_Load(path);
-  if(!surface) {
+  if (!surface) {
     printf("IMG_Load failed: %s\n", IMG_GetError());
     exit(1);
   }
@@ -100,7 +131,11 @@ void S2D_DrawImage(Image img) {
   #if GLES
     draw_image_gles(img);
   #else
-    draw_image_gl(img);
+    if (GL2) {
+      draw_image_gl2(img);
+    } else {
+      draw_image_gl3(img);
+    }
   #endif
 }
 
@@ -174,7 +209,11 @@ void S2D_DrawText(Text txt) {
   #if GLES
     draw_text_gles(txt);
   #else
-    draw_text_gl(txt);
+    if (GL2) {
+      draw_text_gl2(txt);
+    } else {
+      draw_text_gl3(txt);
+    }
   #endif
 }
 
@@ -226,12 +265,6 @@ Window* S2D_CreateWindow(char* title, int width, int height,
                          Update update, Render render,
                          On_key on_key, Key_down key_down) {
   
-  #if GLES
-    hello_gles();
-  #else
-    hello_gl();
-  #endif
-  
   Window *window = (Window*)malloc(sizeof(Window));
   window->title = title;
   window->width = width;
@@ -246,20 +279,12 @@ Window* S2D_CreateWindow(char* title, int width, int height,
   window->background.g = 0.0;
   window->background.b = 0.0;
   window->background.a = 1.0;
+  window->renderer = NULL;
   
   // SDL inits
   SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
   TTF_Init();
   
-  #if !GLES
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
-    
-    // TODO: One day, we'll upgrade to modern GL
-    // SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-    // SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-    // SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
-  #endif
   
   // Create SDL window
   // TODO: Add `SDL_WINDOW_FULLSCREEN_DESKTOP` option to flags, or...
@@ -284,24 +309,68 @@ Window* S2D_CreateWindow(char* title, int width, int height,
     window->s_width, window->s_height, window->width, window->height);
   }
   
+  // Init OpenGL / GLES ////////////////////////////////////////////////////////
+  
+  #if GLES
+    GLES = true;
+  #else
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+    // SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+    // SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+  #endif
+  
   // OpenGL inits
-  window->glcontext = SDL_GL_CreateContext(window->sdl_window);
-  if (!window->glcontext) sdl_error("SDL_GL_CreateContext");
+  window->glcontext = SDL_GL_CreateContext(window->sdl);
+  
+  if (window->glcontext) {
+    #if !GLES
+      GL3 = true;
+    #endif
+  } else {
+    // Try creating OpenGL 2.1 context fallback
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+    
+    window->glcontext = SDL_GL_CreateContext(window->sdl);
+    if (window->glcontext) {
+      GL2 = true;
+    } else {
+      // Could not create a GL context
+      sdl_error("SDL_GL_CreateContext");
+    }
+  }
   
   #if GLES
     init_gles(window->width, window->height);
   #else
-    init_gl(window->width, window->height);
-    
-    // Create 2D rendering context for converting SDL_Surface to SDL_Texture,
-    // using the `SDL_CreateTextureFromSurface` function
-    window->renderer = SDL_CreateRenderer(window->sdl_window, -1,
-                                          SDL_RENDERER_TARGETTEXTURE);
-    if (!window->renderer) sdl_error("SDL_CreateRenderer");
+    if (GL2) {
+      init_gl2(window->width, window->height);
+      
+      // Create 2D rendering context for converting SDL_Surface to SDL_Texture,
+      // using the `SDL_CreateTextureFromSurface` function
+      window->renderer = SDL_CreateRenderer(window->sdl, -1,
+                                            SDL_RENDERER_TARGETTEXTURE);
+      if (!window->renderer) sdl_error("SDL_CreateRenderer");
+    } else {
+      init_gl3(window->width, window->height);
+    }
   #endif
   
   // Use OpenGL context instead of SDL_Renderer
   SDL_GL_MakeCurrent(window->sdl, window->glcontext);
+  
+  // TODO: Remove when done testing
+  #if GLES
+    hello_gles();
+  #else
+    if (GL2) {
+      hello_gl2();
+    } else {
+      hello_gl3();
+    }
+  #endif
   
   return window;
 }
@@ -432,7 +501,7 @@ int S2D_Show(Window *window) {
   IMG_Quit();
   Mix_Quit();
   SDL_GL_DeleteContext(window->glcontext);
-  SDL_DestroyRenderer(window->renderer);
+  if (window->renderer) SDL_DestroyRenderer(window->renderer);
   SDL_DestroyWindow(window->sdl);
   SDL_Quit();
   
