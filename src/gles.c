@@ -15,55 +15,6 @@ void hello_gles() {
 
 
 /*
- * Creates a shader object, loads shader string, and compiles.
- */
-static GLuint LoadShader(GLenum type, const GLchar *shaderSrc) {
-  
-  GLuint shader;
-  GLint compiled;
-  
-  // Create the shader object
-  shader = glCreateShader(type);
-  
-  if (shader == 0) {
-    printf("Failed to create shader object: %d\n", glGetError());
-    return 0;
-  }
-  
-  // Load the shader source
-  glShaderSource(shader, 1, &shaderSrc, NULL);
-  
-  // Compile the shader
-  glCompileShader(shader);
-  
-  // Check the compile status
-  glGetShaderiv(shader, GL_COMPILE_STATUS, &compiled);
-  
-  if (!compiled) {
-    
-    GLint infoLen = 0;
-    
-    glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLen);
-    
-    if (infoLen > 1) {
-      
-      char* infoLog = malloc(sizeof(char)*infoLen);
-      
-      glGetShaderInfoLog(shader, infoLen, NULL, infoLog);
-      printf("Error compiling shader:\n%s\n", infoLog);
-      
-      free(infoLog);
-    }
-    
-    glDeleteShader(shader);
-    return 0;
-  }
-  
-  return shader;
-}
-
-
-/*
  * Initalize OpenGL ES
  */
 int init_gles(int width, int height, int s_width, int s_height) {
