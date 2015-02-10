@@ -300,8 +300,8 @@ void S2D_FreeText(Text txt) {
 Sound S2D_CreateSound(char *path) {
   Sound sound;
   
-  sound.wave = Mix_LoadWAV(path);
-  if (!sound.wave) {
+  sound.data = Mix_LoadWAV(path);
+  if (!sound.data) {
     printf("Mix_LoadWAV failed: %s\n", Mix_GetError());
   }
   
@@ -313,7 +313,7 @@ Sound S2D_CreateSound(char *path) {
  * Play the sound
  */
 void S2D_PlaySound(Sound sound) {
-  Mix_PlayChannel(-1, sound.wave, 0);
+  Mix_PlayChannel(-1, sound.data, 0);
 }
 
 
@@ -321,7 +321,74 @@ void S2D_PlaySound(Sound sound) {
  * Free the sound
  */
 void S2D_FreeSound(Sound sound) {
-  Mix_FreeChunk(sound.wave);
+  Mix_FreeChunk(sound.data);
+}
+
+
+/*
+ * Create the music
+ */
+Music S2D_CreateMusic(char *path) {
+  Music music;
+  
+  music.data = Mix_LoadMUS(path);
+  if (!music.data) {
+    printf("Mix_LoadMUS error: %s\n", Mix_GetError());
+  }
+  
+  return music;
+}
+
+
+/*
+ * Play the music
+ */
+void S2D_PlayMusic(Music music, int times) {
+  // times: 0 == once, -1 == forever
+  if (Mix_PlayMusic(music.data, times) == -1) {
+    // No music for you
+    printf("\033[4;31mS2D Error:\033[0m S2D_PlayMusic says %s\n", Mix_GetError());
+  }
+}
+
+
+/*
+ * Pause the playing music
+ */
+void S2D_PauseMusic() {
+  Mix_PauseMusic();
+}
+
+
+/*
+ * Resume the current music
+ */
+void S2D_ResumeMusic() {
+  Mix_ResumeMusic();
+}
+
+
+/*
+ * Stops the playing music; interrupts fader effects
+ */
+void S2D_StopMusic() {
+  Mix_HaltMusic();
+}
+
+
+/*
+ * Fade out the playing music
+ */
+void S2D_FadeOutMusic(int ms) {
+  Mix_FadeOutMusic(ms);
+}
+
+
+/*
+ * Free the music
+ */
+void S2D_FreeMusic(Music music) {
+  Mix_FreeMusic(music.data);
 }
 
 
@@ -358,7 +425,23 @@ Window* S2D_CreateWindow(char* title, int width, int height,
     exit(1);
   }
   
+  // Initialize SDL_mixer
+  int mix_flags = MIX_INIT_FLAC|MIX_INIT_OGG|MIX_INIT_MP3;
+  int mix_initted = Mix_Init(mix_flags);
+  if ((mix_initted&mix_flags) != mix_flags) {
+    printf("Mix_Init: Failed to initialize required audio support!\n");
+    printf("Mix_Init: %s\n", Mix_GetError());
+  }
   
+  int audio_rate = 44100;
+  Uint16 audio_format = AUDIO_S16SYS;
+  int audio_channels = 2;
+  int audio_buffers = 4096;
+  
+  if (Mix_OpenAudio(audio_rate, MIX_DEFAULT_FORMAT, audio_channels, audio_buffers) != 0) {
+    printf("Mix_OpenAudio: Unable to initialize audio: %s\n", Mix_GetError());
+    exit(1);
+  }
   
   // Create SDL window
   // TODO: Add `SDL_WINDOW_FULLSCREEN_DESKTOP` option to flags, or...
@@ -628,6 +711,7 @@ int S2D_Show(Window *window) {
   
   // Quitting clean up
   IMG_Quit();
+  Mix_CloseAudio();
   Mix_Quit();
   TTF_Quit();
   SDL_GL_DeleteContext(window->glcontext);

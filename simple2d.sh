@@ -226,7 +226,7 @@ install_sdl_osx() {
     fi
     
     if ! $have_mixer_lib ; then
-      printf "sdl2_mixer "
+      printf "libvorbis flac sdl2_mixer "
     fi
     
     if ! $have_ttf_lib ; then

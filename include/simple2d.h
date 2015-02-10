@@ -87,8 +87,12 @@ typedef struct Text {
 } Text;
 
 typedef struct Sound {
-  Mix_Chunk *wave;
+  Mix_Chunk *data;
 } Sound;
+
+typedef struct Music {
+  Mix_Music *data;
+} Music;
 
 /*
  * Shared OpenGL functions
@@ -231,3 +235,38 @@ void S2D_PlaySound(Sound sound);
  * Free the sound
  */
 void S2D_FreeSound(Sound sound);
+
+/*
+ * Create music
+ */
+Music S2D_CreateMusic(char *path);
+
+/*
+ * Play the music
+ */
+void S2D_PlayMusic(Music music, int times);
+
+/*
+ * Pause the playing music
+ */
+void S2D_PauseMusic();
+
+/*
+ * Resume the current music
+ */
+void S2D_ResumeMusic();
+
+/*
+ * Stops the playing music
+ */
+void S2D_StopMusic();
+
+/*
+ * Fade out the playing music
+ */
+void S2D_FadeOutMusic(int ms);
+
+/*
+ * Free the music
+ */
+void S2D_FreeMusic(Music music);
