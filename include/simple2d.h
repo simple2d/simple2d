@@ -28,10 +28,18 @@ typedef struct Color {
   GLfloat a;
 } Color;
 
+typedef struct Cursor {
+  int visible;
+  int x;       // scaled positions
+  int y;
+  int real_x;  // actual positions
+  int real_y;
+} Cursor;
+
 typedef void (*Update)(void);
 typedef void (*Render)(void);
 typedef void (*On_key)(const char *);
-typedef void (*Key_down)(const char *);
+typedef void (*On_key_down)(const char *);
 
 typedef struct Window {
   SDL_Window *sdl;
@@ -39,26 +47,23 @@ typedef struct Window {
   const int S2D_GL_MINOR_VERSION;
   SDL_GLContext glcontext;
   char *title;
-  int width;     // actual window width
-  int height;    // actual window height
-  int s_width;   // scaled window width
-  int s_height;  // scaled window height
+  int width;    // actual dimentions
+  int height;
+  int s_width;  // scaled dimentions
+  int s_height;
   int fps_cap;
   bool vsync;
+  Color background;
   Update update;
   Render render;
   On_key on_key;
-  Key_down key_down;
-  int cursor_x;    // scaled cursor x position
-  int cursor_y;    // scaled cursor y position
-  int a_cursor_x;  // actual cursor x position
-  int a_cursor_y;  // actual cursor y position
+  On_key_down on_key_down;
+  Cursor cursor;
   Uint32 frames;
   Uint32 elapsed_ms;
   Uint32 loop_ms;
   Uint32 delay_ms;
   double fps;
-  Color background;
 } Window;
 
 typedef struct Image {
@@ -144,10 +149,7 @@ void print_gl_context();
 /*
  * Show the window
  */
-Window* S2D_CreateWindow(
-  char *title, int width, int height,
-  Update, Render, On_key, Key_down
-);
+Window* S2D_CreateWindow(char *title, int width, int height, Update, Render);
 
 /*
  * Show the window

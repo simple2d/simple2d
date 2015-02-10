@@ -329,9 +329,9 @@ void S2D_FreeSound(Sound sound) {
  * Create a window
  */
 Window* S2D_CreateWindow(char* title, int width, int height,
-                         Update update, Render render,
-                         On_key on_key, Key_down key_down) {
+                         Update update, Render render) {
   
+  // Allocate window and set default values
   Window *window = (Window*)malloc(sizeof(Window));
   window->title = title;
   window->width = width;
@@ -340,21 +340,30 @@ Window* S2D_CreateWindow(char* title, int width, int height,
   window->vsync = true;
   window->update = update;
   window->render = render;
-  window->on_key = on_key;
-  window->key_down = key_down;
+  window->on_key = NULL;
+  window->on_key_down = NULL;
   window->background.r = 0.0;
   window->background.g = 0.0;
   window->background.b = 0.0;
   window->background.a = 1.0;
   
-  // SDL inits
-  SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
-  TTF_Init();
+  // SDL Initialization ////////////////////////////////////////////////////////
+  
+  // Initialize SDL
+  if (SDL_Init(SDL_INIT_EVERYTHING) != 0) sdl_error("SDL_Init");
+  
+  // Initialize SDL_ttf
+  if (TTF_Init() != 0) {
+    printf("TTF_Init: %s\n", TTF_GetError());
+    exit(1);
+  }
+  
   
   
   // Create SDL window
   // TODO: Add `SDL_WINDOW_FULLSCREEN_DESKTOP` option to flags, or...
   //       Call `SDL_SetWindowFullscreen` in update loop
+  // TODO: Add SDL_WINDOW_ALLOW_HIGHDPI flag
   window->sdl = SDL_CreateWindow(
     window->title,                                   // title
     SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,  // window position
@@ -465,33 +474,45 @@ int S2D_Show(Window *window) {
   }
   
   
+  // Detect Controllers and Joysticks //////////////////////////////////////////
+  
   printf("Number of Joysticks: %i\n", SDL_NumJoysticks());
   
+  // Variables for controllers and joysticks
   SDL_GameController *controller = NULL;
   SDL_Joystick *joy = NULL;
   
+  // Enumerate joysticks
   for (int i = 0; i < SDL_NumJoysticks(); ++i) {
+    
+    // Check to see if joystick supports SDL's game controller interface
     if (SDL_IsGameController(i)) {
       controller = SDL_GameControllerOpen(i);
       if (controller) {
         printf("Found a valid controller, named: %s\n", SDL_GameControllerName(controller));
-        break;
+        break;  // Break after first available controller
       } else {
         fprintf(stderr, "Could not open game controller %i: %s\n", i, SDL_GetError());
       }
+    
+    // Controller interface not supported, try to open as joystick
     } else {
       printf("Joystick %i is not supported by the game controller interface!\n", i);
       joy = SDL_JoystickOpen(i);
+      
+      // Joystick is valid
       if (joy) {
-        printf("Opened Joystick 0\n");
+        printf("Opened Joystick %i\n", i);
         printf("Name: %s\n", SDL_JoystickName(joy));
         printf("Number of Axes: %d\n", SDL_JoystickNumAxes(joy));
         printf("Number of Buttons: %d\n", SDL_JoystickNumButtons(joy));
         printf("Number of Balls: %d\n", SDL_JoystickNumBalls(joy));
+      
+      // Joystick not valid
       } else {
         printf("Couldn't open Joystick %i\n", i);
       }
-      break;
+      break;  // Break after first available joystick
     }
   }
   
@@ -522,7 +543,7 @@ int S2D_Show(Window *window) {
     
     if (delay_ms < 0) delay_ms = 0;
     
-    // Note: loop_ms + delay_ms => should equal (1000 / fps_cap)
+    // Note: `loop_ms + delay_ms` should equal `1000 / fps_cap`
     
     SDL_Delay(delay_ms);
     begin_ms = SDL_GetTicks();
@@ -531,7 +552,7 @@ int S2D_Show(Window *window) {
     
     SDL_Event e;
     while (SDL_PollEvent(&e)) {
-      switch(e.type) {
+      switch (e.type) {
         case SDL_KEYDOWN:
           if (e.key.keysym.scancode == SDL_SCANCODE_ESCAPE) {
             quit = true;
@@ -541,7 +562,7 @@ int S2D_Show(Window *window) {
           }
           break;
         case SDL_MOUSEBUTTONDOWN:
-          // TODO: Register the mouse click
+          // TODO: Register the mouse click, add callback
           printf("Mouse down at: %i, %i\n", e.button.x, e.button.y);
           break;
         case SDL_CONTROLLERBUTTONDOWN:
@@ -563,9 +584,9 @@ int S2D_Show(Window *window) {
     key_state = SDL_GetKeyboardState(&num_keys);
     
     for (int i = 0; i < num_keys; i++) {
-      if (window->key_down) {
+      if (window->on_key_down) {
         if (key_state[i] == 1) {
-          window->key_down(SDL_GetScancodeName(i));
+          window->on_key_down(SDL_GetScancodeName(i));
         }
       }
     }
@@ -576,24 +597,24 @@ int S2D_Show(Window *window) {
     SDL_GetMouseState(&cursor_x, &cursor_y);
     
     // Store new values in the window
-    window->cursor_x   = cursor_x;
-    window->cursor_y   = cursor_y;
-    window->a_cursor_x = cursor_x;
-    window->a_cursor_y = cursor_y;
-    window->frames     = frames;
-    window->elapsed_ms = elapsed_ms;
-    window->loop_ms    = loop_ms;
-    window->delay_ms   = delay_ms;
-    window->fps        = fps;
+    window->cursor.x      = cursor_x;
+    window->cursor.y      = cursor_y;
+    window->cursor.real_x = cursor_x;
+    window->cursor.real_y = cursor_y;
+    window->frames        = frames;
+    window->elapsed_ms    = elapsed_ms;
+    window->loop_ms       = loop_ms;
+    window->delay_ms      = delay_ms;
+    window->fps           = fps;
     
     // scale the cursor position, if necessary
     if (window->s_width != window->width) {
-      window->cursor_x = (int)((double)window->a_cursor_x *
+      window->cursor.x = (int)((double)window->cursor.real_x *
         ((double)window->s_width / (double)window->width) + 0.5);
     }
     
     if (window->s_height != window->height) {
-      window->cursor_y = (int)((double)window->a_cursor_y *
+      window->cursor.y = (int)((double)window->cursor.real_y *
         ((double)window->s_height / (double)window->height) + 0.5);
     }
     
