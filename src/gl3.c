@@ -5,21 +5,13 @@
 static GLuint shaderProgram;
 static GLuint texShaderProgram;
 
-/*
- * Testing
- */
-void hello_gl3() {
-  puts("Hello from OpenGL 3.3!");
-}
-
 
 /*
  * Initalize OpenGL
  */
-int init_gl3(int width, int height) {
+int gl3_init(int width, int height) {
   
-  // TODO: For testing
-  print_gl_context();
+  gl_print_context();
   
   // Enable transparency
   glEnable(GL_BLEND);
@@ -76,8 +68,8 @@ int init_gl3(int width, int height) {
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
   
   // Load shaders
-  GLuint vertexShader = glLoadShader(GL_VERTEX_SHADER, vertexSource, "GL3 Vertex");
-  GLuint fragmentShader = glLoadShader(GL_FRAGMENT_SHADER, fragmentSource, "GL3 Fragment");
+  GLuint vertexShader = gl_load_shader(GL_VERTEX_SHADER, vertexSource, "GL3 Vertex");
+  GLuint fragmentShader = gl_load_shader(GL_FRAGMENT_SHADER, fragmentSource, "GL3 Fragment");
   
   // Link the vertex and fragment shader into a shader program
   shaderProgram = glCreateProgram();
@@ -94,7 +86,7 @@ int init_gl3(int width, int height) {
   }
   
   // Load texture shaders
-  GLuint texFragmentShader = glLoadShader(GL_FRAGMENT_SHADER, texFragmentSource, "GL3 Texture Fragment");
+  GLuint texFragmentShader = gl_load_shader(GL_FRAGMENT_SHADER, texFragmentSource, "GL3 Texture Fragment");
   
   texShaderProgram = glCreateProgram();
   glAttachShader(texShaderProgram, vertexShader);
@@ -156,7 +148,7 @@ int init_gl3(int width, int height) {
 /*
  * Draw triangle
  */
-void draw_triangle_gl3(GLfloat x1,  GLfloat y1,
+void gl3_draw_triangle(GLfloat x1,  GLfloat y1,
                        GLfloat c1r, GLfloat c1g, GLfloat c1b, GLfloat c1a,
                        GLfloat x2,  GLfloat y2,
                        GLfloat c2r, GLfloat c2g, GLfloat c2b, GLfloat c2a,
@@ -176,32 +168,19 @@ void draw_triangle_gl3(GLfloat x1,  GLfloat y1,
 }
 
 
-/*
- * Draw image
- */
-void draw_image_gl3(Image img) {
-  
-  GLfloat x1 = img.x;
-  GLfloat y1 = img.y;
-  
-  GLfloat x2 = img.x + img.w;
-  GLfloat y2 = img.y;
-  
-  GLfloat x3 = img.x + img.w;
-  GLfloat y3 = img.y + img.h;
-  
-  GLfloat x4 = img.x;
-  GLfloat y4 = img.y + img.h;
+static void gl3_draw_texture(int x, int y, int w, int h, 
+                             GLfloat r, GLfloat g, GLfloat b, GLfloat a,
+                             GLuint texture_id) {
   
   GLfloat vertices[] =
-    // x,  y,   r,   g,   b,   a,  tx,  ty
-    { x1, y1, 1.f, 1.f, 1.f, 1.f, 0.f, 0.f,    // Top-left
-      x2, y2, 1.f, 1.f, 1.f, 1.f, 1.f, 0.f,    // Top-right
-      x3, y3, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f,    // Bottom-right
-      x4, y4, 1.f, 1.f, 1.f, 1.f, 0.f, 1.f };  // Bottom-left
+    //    x,     y, r, g, b, a,  tx,  ty
+    {     x,     y, r, g, b, a, 0.f, 0.f,    // Top-left
+      x + w,     y, r, g, b, a, 1.f, 0.f,    // Top-right
+      x + w, y + h, r, g, b, a, 1.f, 1.f,    // Bottom-right
+          x, y + h, r, g, b, a, 0.f, 1.f };  // Bottom-left
   
   glUseProgram(texShaderProgram);
-  glBindTexture(GL_TEXTURE_2D, img.texture_id);
+  glBindTexture(GL_TEXTURE_2D, texture_id);
   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
   
   GLuint elements[] = {
@@ -214,8 +193,19 @@ void draw_image_gl3(Image img) {
 }
 
 
+
+/*
+ * Draw image
+ */
+void gl3_draw_image(Image img) {
+  gl3_draw_texture(img.x, img.y, img.w, img.h, 1.f, 1.f, 1.f, 1.f, img.texture_id);
+}
+
+
 /*
  * Draw text
  */
-void draw_text_gl3(Text txt) {
+void gl3_draw_text(Text txt) {
+  gl3_draw_texture(txt.x, txt.y, txt.w, txt.h, 
+                   txt.color.r, txt.color.g, txt.color.b, txt.color.a, txt.texture_id);
 }

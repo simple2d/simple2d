@@ -35,7 +35,8 @@ typedef void (*Key_down)(const char *);
 
 typedef struct Window {
   SDL_Window *sdl;
-  SDL_Renderer *renderer;
+  const int S2D_GL_MAJOR_VERSION;
+  const int S2D_GL_MINOR_VERSION;
   SDL_GLContext glcontext;
   char *title;
   int width;     // actual window width
@@ -61,20 +62,23 @@ typedef struct Window {
 } Window;
 
 typedef struct Image {
-  SDL_Texture *texture;
+  GLuint texture_id;
+  Color color;
   int x;
   int y;
+  int w;
+  int h;
 } Image;
 
 typedef struct Text {
+  GLuint texture_id;
+  Color color;
   TTF_Font *font;
-  SDL_Texture *texture;
   char *msg;
   int x;
   int y;
   int w;
   int h;
-  Color color;
 } Text;
 
 typedef struct Sound {
@@ -82,43 +86,49 @@ typedef struct Sound {
 } Sound;
 
 /*
- * OpenGL & ES internal functions
+ * Shared OpenGL functions
+ */
+void gl_print_context();
+GLuint gl_load_shader(GLenum type, const GLchar *shaderSrc, char *shaderName);
+
+/*
+ * OpenGL & GLES internal functions
  */
 #if GLES
-  void hello_gles();
-  int init_gles(int width, int height);
-  void draw_triangle_gles(
+  void gles_hello();
+  int gles_init(int width, int height, int s_width, int s_height);
+  void gles_draw_triangle(
     GLfloat x1,  GLfloat y1,
     GLfloat c1r, GLfloat c1g, GLfloat c1b, GLfloat c1a,
     GLfloat x2,  GLfloat y2,
     GLfloat c2r, GLfloat c2g, GLfloat c2b, GLfloat c2a,
     GLfloat x3,  GLfloat y3,
     GLfloat c3r, GLfloat c3g, GLfloat c3b, GLfloat c3a);
-  void draw_image_gles(Image img);
-  void draw_text_gles(Text txt);
+  void gles_draw_image(Image img);
+  void gles_draw_text(Text txt);
 #else
-  void hello_gl2();
-  void hello_gl3();
-  int init_gl2(int width, int height);
-  int init_gl3(int width, int height);
-  void draw_triangle_gl2(
+  void gl2_hello();
+  void gl3_hello();
+  int gl2_init(int width, int height);
+  int gl3_init(int width, int height);
+  void gl2_draw_triangle(
     GLfloat x1,  GLfloat y1,
     GLfloat c1r, GLfloat c1g, GLfloat c1b, GLfloat c1a,
     GLfloat x2,  GLfloat y2,
     GLfloat c2r, GLfloat c2g, GLfloat c2b, GLfloat c2a,
     GLfloat x3,  GLfloat y3,
     GLfloat c3r, GLfloat c3g, GLfloat c3b, GLfloat c3a);
-  void draw_triangle_gl3(
+  void gl3_draw_triangle(
     GLfloat x1,  GLfloat y1,
     GLfloat c1r, GLfloat c1g, GLfloat c1b, GLfloat c1a,
     GLfloat x2,  GLfloat y2,
     GLfloat c2r, GLfloat c2g, GLfloat c2b, GLfloat c2a,
     GLfloat x3,  GLfloat y3,
     GLfloat c3r, GLfloat c3g, GLfloat c3b, GLfloat c3a);
-  void draw_image_gl2(Image img);
-  void draw_image_gl3(Image img);
-  void draw_text_gl2(Text txt);
-  void draw_text_gl3(Text txt);
+  void gl2_draw_image(Image img);
+  void gl3_draw_image(Image img);
+  void gl2_draw_text(Text txt);
+  void gl3_draw_text(Text txt);
 #endif
 
 /*
@@ -173,7 +183,7 @@ void S2D_DrawQuad(
 /*
  * Create an image
  */
-Image S2D_CreateImage(Window *window, char *path);
+Image S2D_CreateImage(char *path);
 
 /*
  * Draw an image
@@ -188,12 +198,12 @@ void S2D_FreeImage(Image img);
 /*
  * Create text
  */
-Text S2D_CreateText(Window *window, char *font, char *msg, int size);
+Text S2D_CreateText(char *font, char *msg, int size);
 
 /*
 * Sets the text message
 */
-void S2D_SetText(Window *window, Text *txt, char *msg);
+void S2D_SetText(Text *txt, char *msg);
 
 /*
  * Draw text

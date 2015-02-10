@@ -4,9 +4,22 @@
 
 
 /*
+ * Print info about the current OpenGL context
+ */
+void gl_print_context() {
+  puts("\n--- OpenGL Context ---");
+  printf("GL_VENDOR: %s\n", glGetString(GL_VENDOR));
+  printf("GL_RENDERER: %s\n", glGetString(GL_RENDERER));
+  printf("GL_VERSION: %s\n", glGetString(GL_VERSION));
+  printf("GL_SHADING_LANGUAGE_VERSION: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
+  puts("");
+}
+
+
+/*
  * Creates a shader object, loads shader string, and compiles.
  */
-GLuint glLoadShader(GLenum type, const GLchar *shaderSrc, char *shaderName) {
+GLuint gl_load_shader(GLenum type, const GLchar *shaderSrc, char *shaderName) {
   
   GLuint shader;
   GLint compiled;

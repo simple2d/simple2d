@@ -4,19 +4,11 @@
 
 
 /*
- * Testing
- */
-void hello_gl2() {
-  puts("Hello from OpenGL 2.1!");
-}
-
-
-/*
  * Initalize OpenGL
  */
-int init_gl2(int width, int height) {
+int gl2_init(int width, int height) {
   
-  print_gl_context();
+  gl_print_context();
   
   GLenum error = GL_NO_ERROR;
   
@@ -51,7 +43,7 @@ int init_gl2(int width, int height) {
 /*
  * Draw triangle
  */
-void draw_triangle_gl2(GLfloat x1,  GLfloat y1,
+void gl2_draw_triangle(GLfloat x1,  GLfloat y1,
                       GLfloat c1r, GLfloat c1g, GLfloat c1b, GLfloat c1a,
                       GLfloat x2,  GLfloat y2,
                       GLfloat c2r, GLfloat c2g, GLfloat c2b, GLfloat c2a,
@@ -67,58 +59,47 @@ void draw_triangle_gl2(GLfloat x1,  GLfloat y1,
 
 
 /*
- * Draw image
+ * Draw texture
  */
-void draw_image_gl2(Image img) {
+static void gl2_draw_texture(int x, int y, int w, int h, 
+                             GLfloat r, GLfloat g, GLfloat b, GLfloat a,
+                             GLuint texture_id) {
   
-  int w, h;
-  SDL_QueryTexture(img.texture, NULL, NULL, &w, &h);
+  glEnable(GL_TEXTURE_2D);
   
-  if (SDL_GL_BindTexture(img.texture, NULL, NULL)) {
-    sdl_error("draw_image_gl -> SDL_GL_BindTexture");
-  }
+  glBindTexture(GL_TEXTURE_2D, texture_id);
   
   glBegin(GL_QUADS);
-    glColor4f(1, 1, 1, 1);
-    glTexCoord2f(0, 0); glVertex2f(img.x, img.y);
-    glTexCoord2f(w, 0); glVertex2f(img.x + w, img.y);
-    glTexCoord2f(w, h); glVertex2f(img.x + w, img.y + h);
-    glTexCoord2f(0, h); glVertex2f(img.x, img.y + h);
+    glColor4f(r, g, b, a);
+    glTexCoord2f(0, 0); glVertex2f(x,     y    );
+    glTexCoord2f(1, 0); glVertex2f(x + w, y    );
+    glTexCoord2f(1, 1); glVertex2f(x + w, y + h);
+    glTexCoord2f(0, 1); glVertex2f(x,     y + h);
   glEnd();
+  
+  glDisable(GL_TEXTURE_2D);
+}
+
+
+/*
+ * Draw image
+ */
+void gl2_draw_image(Image img) {
+  gl2_draw_texture(
+    img.x, img.y, img.w, img.h,
+    1.f, 1.f, 1.f, 1.f,
+    img.texture_id
+  );
 }
 
 
 /*
  * Draw text
  */
-void draw_text_gl2(Text txt) {
-  
-  int w, h, w_v, h_v;
-  
-  TTF_SizeText(txt.font, txt.msg, &w, &h);
-  
-  if (SDL_GL_BindTexture(txt.texture, NULL, NULL)) {
-    // This is currently returning `-1`, but still works somehow
-    // Uncomment this when returns `0`:
-    //   sdl_error("draw_text_gl -> SDL_GL_BindTexture");
-  }
-  
-  // If text width or height is 0, use calculated values
-  if (!txt.w || !txt.h) {
-    w_v = w;
-    h_v = h;
-  } else {
-    w_v = txt.w;
-    h_v = txt.h;
-  }
-  
-  glBegin(GL_QUADS);
-    glColor4f(txt.color.r, txt.color.g, txt.color.b, txt.color.a);
-    glTexCoord2f(0, 0); glVertex2f(txt.x, txt.y);
-    glTexCoord2f(w, 0); glVertex2f(txt.x + w_v, txt.y);
-    glTexCoord2f(w, h); glVertex2f(txt.x + w_v, txt.y + h_v);
-    glTexCoord2f(0, h); glVertex2f(txt.x, txt.y + h_v);
-  glEnd();
-  
-  SDL_GL_UnbindTexture(txt.texture);
+void gl2_draw_text(Text txt) {
+  gl2_draw_texture(
+    txt.x, txt.y, txt.w, txt.h,
+    txt.color.r, txt.color.g, txt.color.b, txt.color.a,
+    txt.texture_id
+  );
 }
