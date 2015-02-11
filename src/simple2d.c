@@ -2,11 +2,6 @@
 
 #include "../include/simple2d.h"
 
-// The OpenGL version, corresponding with these values
-//   v2.1 == 2
-//   v3.3 == 3
-// If GLES, this is not set (GLES is defined with `#ifdef`s)
-static GLint S2D_GL_VERSION = 0;
 
 // Flag set if OpenGL 2.1
 static bool GL2 = false;
@@ -22,14 +17,6 @@ void sdl_error(char *error) {
   printf("%s: %s\n", error, SDL_GetError());
   exit(1);
 }
-
-
-// TODO: Remove when done testing
-static void get_gl_version() {
-  glGetIntegerv(GL_MAJOR_VERSION, &S2D_GL_VERSION);
-  print_gl_context();
-  printf("S2D_GL_VERSION: %i\n", S2D_GL_VERSION);
-};
 
 
 /*
@@ -498,8 +485,6 @@ Window* S2D_CreateWindow(char* title, int width, int height,
     
     // Initialize OpenGL 3.3 or forward-compatible core profile
     #else
-      
-      
       gl3_init(window->width, window->height);
     #endif
   
@@ -528,6 +513,9 @@ Window* S2D_CreateWindow(char* title, int width, int height,
     #endif
   }
   
+  gl_store_context_info(window);
+  gl_print_context_info(window);
+  
   return window;
 }
 
@@ -555,7 +543,6 @@ int S2D_Show(Window *window) {
       printf("Warning: VSync cannot be enabled");
     }
   }
-  
   
   // Detect Controllers and Joysticks //////////////////////////////////////////
   

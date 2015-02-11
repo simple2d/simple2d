@@ -43,8 +43,12 @@ typedef void (*On_key_down)(const char *);
 
 typedef struct Window {
   SDL_Window *sdl;
-  const int S2D_GL_MAJOR_VERSION;
-  const int S2D_GL_MINOR_VERSION;
+  const GLubyte *S2D_GL_VENDOR;
+  const GLubyte *S2D_GL_RENDERER;
+  const GLubyte *S2D_GL_VERSION;
+  GLint S2D_GL_MAJOR_VERSION;
+  GLint S2D_GL_MINOR_VERSION;
+  const GLubyte *S2D_GL_SHADING_LANGUAGE_VERSION;
   SDL_GLContext glcontext;
   char *title;
   int width;    // actual dimentions
@@ -97,7 +101,8 @@ typedef struct Music {
 /*
  * Shared OpenGL functions
  */
-void gl_print_context();
+void gl_print_context_info(Window *window);
+void gl_store_context_info(Window *window);
 GLuint gl_load_shader(GLenum type, const GLchar *shaderSrc, char *shaderName);
 
 /*

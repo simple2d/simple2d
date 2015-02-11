@@ -8,8 +8,6 @@
  */
 int gl2_init(int width, int height) {
   
-  gl_print_context();
-  
   GLenum error = GL_NO_ERROR;
   
   glViewport(0, 0, width, height);

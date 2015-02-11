@@ -6,14 +6,29 @@
 /*
  * Print info about the current OpenGL context
  */
-void gl_print_context() {
+void gl_print_context_info(Window *window) {
   puts("\n--- OpenGL Context ---");
-  printf("GL_VENDOR: %s\n", glGetString(GL_VENDOR));
-  printf("GL_RENDERER: %s\n", glGetString(GL_RENDERER));
-  printf("GL_VERSION: %s\n", glGetString(GL_VERSION));
-  printf("GL_SHADING_LANGUAGE_VERSION: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
+  printf("GL_VENDOR: %s\n", window->S2D_GL_VENDOR);
+  printf("GL_RENDERER: %s\n", window->S2D_GL_RENDERER);
+  printf("GL_VERSION: %s\n", window->S2D_GL_VERSION);
+  printf("GL_MAJOR_VERSION: %i\n", window->S2D_GL_MAJOR_VERSION);
+  printf("GL_MINOR_VERSION: %i\n", window->S2D_GL_MINOR_VERSION);
+  printf("GL_SHADING_LANGUAGE_VERSION: %s\n", window->S2D_GL_SHADING_LANGUAGE_VERSION);
   puts("");
 }
+
+
+/*
+ * Store info about the current OpenGL context
+ */
+void gl_store_context_info(Window *window) {
+  window->S2D_GL_VENDOR = glGetString(GL_VENDOR);
+  window->S2D_GL_RENDERER = glGetString(GL_RENDERER);
+  window->S2D_GL_VERSION = glGetString(GL_VERSION);
+  glGetIntegerv(GL_MAJOR_VERSION, &window->S2D_GL_MAJOR_VERSION);
+  glGetIntegerv(GL_MINOR_VERSION, &window->S2D_GL_MINOR_VERSION);
+  window->S2D_GL_SHADING_LANGUAGE_VERSION = glGetString(GL_SHADING_LANGUAGE_VERSION);
+};
 
 
 /*

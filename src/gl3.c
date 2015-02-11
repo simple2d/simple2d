@@ -11,8 +11,6 @@ static GLuint texShaderProgram;
  */
 int gl3_init(int width, int height) {
   
-  gl_print_context();
-  
   // Enable transparency
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

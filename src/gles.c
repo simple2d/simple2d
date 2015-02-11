@@ -19,8 +19,6 @@ void hello_gles() {
  */
 int init_gles(int width, int height, int s_width, int s_height) {
   
-  print_gl_context();
-  
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   
