@@ -1,6 +1,6 @@
 # Simple 2D
 
-A simple 2D graphics engine. [Check out the website »](http://www.simple2d.com)
+A simple 2D graphics engine written in C. [Check out the website »](http://www.simple2d.com)
 
 Build and install with:
 

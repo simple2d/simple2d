@@ -15,8 +15,8 @@ int gl3_init(int width, int height) {
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   
-  // TEXTURES: Vertex shader source string
-  const GLchar* vertexSource =
+  // Vertex shader source string
+  GLchar vertexSource[] =
     "#version 150 core\n"
     "uniform mat4 u_mvpMatrix;"
     "in vec2 position;"
@@ -31,7 +31,7 @@ int gl3_init(int width, int height) {
     "}";
   
   // Fragment shader source string
-  const GLchar* fragmentSource =
+  GLchar fragmentSource[] =
     "#version 150 core\n"
     "in vec4 Color;"
     "out vec4 outColor;"
@@ -39,8 +39,8 @@ int gl3_init(int width, int height) {
     "  outColor = Color;"
     "}";
   
-  // TEXTURES: Fragment shader source string
-  const GLchar* texFragmentSource =
+  // Fragment shader source string for textures
+  GLchar texFragmentSource[] =
     "#version 150 core\n"
     "in vec4 Color;"
     "in vec2 Texcoord;"
@@ -171,11 +171,11 @@ static void gl3_draw_texture(int x, int y, int w, int h,
                              GLuint texture_id) {
   
   GLfloat vertices[] =
-    //    x,     y, r, g, b, a,  tx,  ty
-    {     x,     y, r, g, b, a, 0.f, 0.f,    // Top-left
-      x + w,     y, r, g, b, a, 1.f, 0.f,    // Top-right
+  // |x, y coords | colors    | x, y texture coords
+    { x    , y    , r, g, b, a, 0.f, 0.f,    // Top-left
+      x + w, y    , r, g, b, a, 1.f, 0.f,    // Top-right
       x + w, y + h, r, g, b, a, 1.f, 1.f,    // Bottom-right
-          x, y + h, r, g, b, a, 0.f, 1.f };  // Bottom-left
+      x    , y + h, r, g, b, a, 0.f, 1.f };  // Bottom-left
   
   glUseProgram(texShaderProgram);
   glBindTexture(GL_TEXTURE_2D, texture_id);

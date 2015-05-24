@@ -2,6 +2,8 @@
 
 #include "../include/simple2d.h"
 
+// Flag to log diagnostic messages for testing
+static bool diagnostics = true;
 
 // Flag set if OpenGL 2.1
 static bool GL2 = false;
@@ -11,7 +13,17 @@ static bool FORCE_GL2 = false;
 
 
 /*
- * Print SDL errors
+ * Log diagnostic messages
+ */
+static void diag(char *msg) {
+  if (diagnostics) {
+    printf("\n\033[4;36mDiagnostics:\033[0m %s\n", msg);
+  }
+}
+
+
+/*
+ * Print SDL errors and quit
  */
 void sdl_error(char *error) {
   printf("%s: %s\n", error, SDL_GetError());
@@ -116,6 +128,20 @@ Image S2D_CreateImage(char *path) {
   img.w = surface->w;
   img.h = surface->h;
   
+  // TESTING ///////////////////////////////////////////////////////////////////
+  // SDL_RWops *rwop;
+  // rwop=SDL_RWFromFile(path, "rb");
+  // if(IMG_isBMP(rwop))
+  // printf("sample.bmp is a BMP file.\n");
+  // else
+  // printf("sample.bmp is not a BMP file, or BMP support is not available.\n");
+  // 
+  // if (GL2) {
+  //   img.texture = SDL_CreateTextureFromSurface(window->renderer, surface);
+  //   if (!img.texture) sdl_error("SDL_CreateTextureFromSurface");    
+  // } else {
+  // }
+  //////////////////////////////////////////////////////////////////////////////
   
   img.texture_id = 0;
   
@@ -132,6 +158,13 @@ Image S2D_CreateImage(char *path) {
     mode = GL_RGBA;
   }
   
+  // TESTING ///////////////////////////////////////////////////////////////////
+  // printf("\n%s\n", path);
+  // printf("texture_id: %i\n", img.texture_id);
+  // if (mode == GL_RGB) puts("Mode is GL_RGB");
+  // if (mode == GL_RGBA) puts("Mode is GL_RGBA");
+  // printf("mode: %i\n\n", mode);
+  //////////////////////////////////////////////////////////////////////////////
   
   // Specifies the 2D texture image
   glTexImage2D(GL_TEXTURE_2D, 0, mode, surface->w, surface->h, 0, mode, GL_UNSIGNED_BYTE, surface->pixels);
