@@ -6,7 +6,7 @@
 # This script can:
 #  - Install Simple 2D on OS X, Linux, and the Raspberry Pi (Raspbian)
 #  - Update Simple 2D in place
-#  - Provide libraries for compiling with applications
+#  - Provide Simple 2D libraries for compiling with applications
 #  - Check for issues with Simple 2D and SDL
 # 
 # Run from the web using:
@@ -137,7 +137,8 @@ start_timer() {
 # Ends the timer and prints the time elapsed since `start_timer()`
 end_timer() {
   ELAPSED_TIME=$(($SECONDS - $START_TIME))
-  echo -e "${BOLD}Finished in $(($ELAPSED_TIME/60/60)) hr, $(($ELAPSED_TIME/60%60)) min, and $(($ELAPSED_TIME%60)) sec${NORMAL}\n"
+  echo -e "${BOLD}Finished in $(($ELAPSED_TIME/60/60)) hr,"\
+          "$(($ELAPSED_TIME/60%60)) min, and $(($ELAPSED_TIME%60)) sec${NORMAL}\n"
 }
 
 # Prints an information message
@@ -389,7 +390,7 @@ install_sdl() {
 # TODO: Figure out what these params are
 install_s2d() {
   
-  mkdir /tmp/s2d
+  mkdir /tmp/simple2d
   
   if [[ $1 == 'master' ]]; then
     f_name=$1
@@ -400,19 +401,19 @@ install_s2d() {
   print_task "Downloading Simple 2D" "\n\n"
   # Linux and Raspberry Pi may not have curl installed by default
   if which curl > /dev/null; then
-    curl -L https://github.com/simple2d/simple2d/archive/$f_name.zip -o /tmp/s2d/$f_name.zip
+    curl -L https://github.com/simple2d/simple2d/archive/$f_name.zip -o /tmp/simple2d/$f_name.zip
   else
-    wget -NP /tmp/s2d https://github.com/simple2d/simple2d/archive/$f_name.zip
+    wget -NP /tmp/simple2d https://github.com/simple2d/simple2d/archive/$f_name.zip
   fi
   
   # Check if archive was downloaded properly
-  if [ ! -f "/tmp/s2d/$f_name.zip" ]; then
+  if [ ! -f "/tmp/simple2d/$f_name.zip" ]; then
     echo; error_msg "Simple 2D could not be downloaded."
     exit
   fi
   
   echo; print_task "Unpacking"
-  unzip -q /tmp/s2d/$f_name.zip -d /tmp/s2d
+  unzip -q /tmp/simple2d/$f_name.zip -d /tmp/simple2d
   
   # Check if archive was unpacked properly
   if [[ $? != 0 ]]; then
@@ -421,7 +422,7 @@ install_s2d() {
   fi
   
   printf " done"
-  cd /tmp/s2d/simple2d-$1
+  cd /tmp/simple2d/simple2d-$1
   
   echo; print_task "Compiling" "\n\n"
   make
@@ -435,7 +436,7 @@ install_s2d() {
   
   echo; print_task "Cleaning up"
   cd
-  rm -rf /tmp/s2d
+  rm -rf /tmp/simple2d
   echo -e " done"
   
   # Check if S2D installed correctly
@@ -459,7 +460,7 @@ install() {
     warning_msg "Simple 2D is already installed. Proceeding will reinstall."
   fi
   
-  echo -e "This will install Simple 2D to the following locations:
+  echo -e "Simple 2D will be installed to the following locations:
     /usr/local/include/simple2d.h
     /usr/local/lib/libsimple2d.a
     /usr/local/bin/simple2d"
@@ -683,7 +684,8 @@ case $1 in
     elif [[ $platform == 'rpi' ]]; then
       LDFLAGS='-L/opt/vc/lib -lGLESv2'
     fi
-    echo "-lsimple2d `sdl2-config --cflags --libs` ${LDFLAGS} -lSDL2_image -lSDL2_mixer -lSDL2_ttf";;
+    echo "-lsimple2d `sdl2-config --cflags --libs`"\
+         "${LDFLAGS} -lSDL2_image -lSDL2_mixer -lSDL2_ttf";;
   -v|--version)
     echo $VERSION;;
   *)
