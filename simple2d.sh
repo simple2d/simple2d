@@ -606,7 +606,7 @@ unamestr=$(uname)
 if [[ $unamestr == 'Darwin' ]]; then
   platform_display='Mac OS X'
   platform='osx'
-elif [[ $(uname -m) == 'armv6l' && $unamestr == 'Linux' ]]; then
+elif [[ $(uname -m) =~ 'arm' && $unamestr == 'Linux' ]]; then
   platform_display='Raspberry Pi'
   platform='rpi'
 elif [[ $unamestr == 'Linux' ]]; then
