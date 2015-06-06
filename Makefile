@@ -6,6 +6,10 @@ ifeq ($(UNAME_M),armv6l)
   PLATFORM=rpi
   INCLUDES=-I/opt/vc/include/
 endif
+ifeq ($(UNAME_M),armv7l)
+  PLATFORM=rpi
+  INCLUDES=-I/opt/vc/include/
+endif
 
 all: build
 
