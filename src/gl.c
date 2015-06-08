@@ -2,6 +2,23 @@
 
 #include "../include/simple2d.h"
 
+// For GL3 and GLES, an orthographic 2D projection matrix.
+// Matrix is given in column-first order.
+GLfloat orthoMatrix[16] = {
+  2.0f, 0, 0, 0,
+  0, -2.0f, 0, 0,
+  0, 0, -2.0f / 128.0, 0,  // 128.0 == far_z
+  -1.0f, 1.0f, -1.0f, 1.0f
+};
+
+
+/*
+ * Prints current GL error
+ */
+void gl_print_error(char *error) {
+  printf("%s: %d\n", error, glGetError());
+}
+
 
 /*
  * Print info about the current OpenGL context
@@ -37,6 +54,7 @@ void gl_store_context_info(Window *window) {
 
 /*
  * Creates a shader object, loads shader string, and compiles.
+ * Returns 0 if shader could not be compiled.
  */
 GLuint gl_load_shader(GLenum type, const GLchar *shaderSrc, char *shaderName) {
   
@@ -47,7 +65,7 @@ GLuint gl_load_shader(GLenum type, const GLchar *shaderSrc, char *shaderName) {
   shader = glCreateShader(type);
   
   if (shader == 0) {
-    printf("Failed to create shader object: %d\n", glGetError());
+    gl_print_error("Failed to create shader program");
     return 0;
   }
   

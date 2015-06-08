@@ -4,6 +4,27 @@
 
 static GLuint shaderProgram;
 static GLuint texShaderProgram;
+static GLuint elements[] = {
+  0, 1, 2,
+  2, 3, 0
+};
+
+
+/*
+ * Check if shader program was linked
+ */
+int gl3_check_linked(GLuint program) {
+  GLint linked;
+  
+  glGetProgramiv(program, GL_LINK_STATUS, &linked);
+  
+  if (!linked) {
+    puts("Error: GL3 shader was not linked!");
+    return GL_FALSE;
+  }
+  
+  return GL_TRUE;
+}
 
 
 /*
@@ -65,38 +86,46 @@ int gl3_init(int width, int height) {
   glGenBuffers(1, &ebo);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
   
-  // Load shaders
+  // Load the vertex and fragment shaders
   GLuint vertexShader = gl_load_shader(GL_VERTEX_SHADER, vertexSource, "GL3 Vertex");
   GLuint fragmentShader = gl_load_shader(GL_FRAGMENT_SHADER, fragmentSource, "GL3 Fragment");
-  
-  // Link the vertex and fragment shader into a shader program
-  shaderProgram = glCreateProgram();
-  glAttachShader(shaderProgram, vertexShader);
-  glAttachShader(shaderProgram, fragmentShader);
-  glBindFragDataLocation(shaderProgram, 0, "outColor");
-  glLinkProgram(shaderProgram);
-  
-  // TODO: This error should be handled better
-  GLint linked;
-  glGetProgramiv(shaderProgram, GL_LINK_STATUS, &linked);
-  if (!linked) {
-    puts("Error: GL3 shader was not linked!");
-  }
-  
-  // Load texture shaders
   GLuint texFragmentShader = gl_load_shader(GL_FRAGMENT_SHADER, texFragmentSource, "GL3 Texture Fragment");
   
+  // Create the shader program object
+  shaderProgram = glCreateProgram();
+  
+  // Check if program was created successfully
+  if (shaderProgram == 0) {
+    gl_print_error("Failed to create shader program");
+    return GL_FALSE;
+  }
+  
+  // Create the texture shader program object
   texShaderProgram = glCreateProgram();
+  
+  // Check if program was created successfully
+  if (texShaderProgram == 0) {
+    gl_print_error("Failed to create shader program");
+    return GL_FALSE;
+  }
+  
+  // Attach the shader objects to the program object
+  glAttachShader(shaderProgram, vertexShader);
+  glAttachShader(shaderProgram, fragmentShader);
   glAttachShader(texShaderProgram, vertexShader);
   glAttachShader(texShaderProgram, texFragmentShader);
+  
+  // Bind the varying out variables to the fragment shader color number
+  glBindFragDataLocation(shaderProgram, 0, "outColor");
   glBindFragDataLocation(texShaderProgram, 0, "outColor");
+  
+  // Link the shader program
+  glLinkProgram(shaderProgram);
   glLinkProgram(texShaderProgram);
   
   // Check if linked
-  glGetProgramiv(texShaderProgram, GL_LINK_STATUS, &linked);
-  if (!linked) {
-    puts("Error: GL3 texture shader was not linked!");
-  }
+  gl3_check_linked(shaderProgram);
+  gl3_check_linked(texShaderProgram);
   
   // Specify the layout of the vertex data
   GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
@@ -111,35 +140,28 @@ int gl3_init(int width, int height) {
   glEnableVertexAttribArray(texAttrib);
   glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(6 * sizeof(GLfloat)));
   
-  // Create and apply an orthographic projection matrix (2D projection)
-  // (matrix is given in column-first order)
-  GLfloat far_z = 128.0;
-  GLfloat orthoMatrix[16] = {
-    2.0f / (GLfloat)width, 0, 0, 0,
-    0, -2.0f / (GLfloat)height, 0, 0,
-    0, 0, -2.0f / far_z, 0,
-    -1.0f, 1.0f, -1.0f, 1.0f
-  };
+  // Set orthographic projection matrix
+  orthoMatrix[0] = 2.0f / (GLfloat)width;
+  orthoMatrix[5] = -2.0f / (GLfloat)height;
   
+  // Use the program object
   glUseProgram(shaderProgram);
+  
   GLuint mMvpLocation = glGetUniformLocation(shaderProgram, "u_mvpMatrix");
   glUniformMatrix4fv(mMvpLocation, 1, GL_FALSE, orthoMatrix);
   
+  // Use the texture program object
   glUseProgram(texShaderProgram);
+  
   GLuint texmMvpLocation = glGetUniformLocation(texShaderProgram, "u_mvpMatrix");
   glUniformMatrix4fv(texmMvpLocation, 1, GL_FALSE, orthoMatrix);
   
-  // TODO: Clean up (do we actually have to do this stuff?)
-  // glDeleteShader(vertexShader);
-  // glDeleteShader(texFragmentShader);
-  // glDeleteShader(fragmentShader);
-  // glDeleteProgram(shaderProgram);
-  // glDeleteProgram(texShaderProgram);
-  // glDeleteVertexArrays(1, &vao);
-  // glDeleteBuffers(1, &vbo);
-  // glDeleteBuffers(1, &ebo);
+  // Clean up
+  glDeleteShader(vertexShader);
+  glDeleteShader(fragmentShader);
+  glDeleteShader(texFragmentShader);
   
-  return 0;
+  return GL_TRUE;
 }
 
 
@@ -153,8 +175,6 @@ void gl3_draw_triangle(GLfloat x1,  GLfloat y1,
                        GLfloat x3,  GLfloat y3,
                        GLfloat c3r, GLfloat c3g, GLfloat c3b, GLfloat c3a) {
   
-  // TODO: Probably want to declare this at file scope and make static for performance?
-  // Same for other verticies and element arrays below
   GLfloat vertices[] =
     { x1, y1, c1r, c1g, c1b, c1a, 0, 0,
       x2, y2, c2r, c2g, c2b, c2a, 0, 0,
@@ -181,22 +201,20 @@ static void gl3_draw_texture(int x, int y, int w, int h,
   glBindTexture(GL_TEXTURE_2D, texture_id);
   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
   
-  GLuint elements[] = {
-    0, 1, 2,
-    2, 3, 0
-  };
-  
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
-
 
 
 /*
  * Draw image
  */
 void gl3_draw_image(Image img) {
-  gl3_draw_texture(img.x, img.y, img.w, img.h, 1.f, 1.f, 1.f, 1.f, img.texture_id);
+  gl3_draw_texture(
+    img.x, img.y, img.w, img.h,
+    1.f, 1.f, 1.f, 1.f,
+    img.texture_id
+  );
 }
 
 
@@ -204,6 +222,9 @@ void gl3_draw_image(Image img) {
  * Draw text
  */
 void gl3_draw_text(Text txt) {
-  gl3_draw_texture(txt.x, txt.y, txt.w, txt.h, 
-                   txt.color.r, txt.color.g, txt.color.b, txt.color.a, txt.texture_id);
+  gl3_draw_texture(
+    txt.x, txt.y, txt.w, txt.h, 
+    txt.color.r, txt.color.g, txt.color.b, txt.color.a,
+    txt.texture_id
+  );
 }

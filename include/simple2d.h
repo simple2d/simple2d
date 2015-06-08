@@ -21,6 +21,8 @@
 #include <SDL2/SDL_mixer.h>
 #include <SDL2/SDL_ttf.h>
 
+// In simple2d.c
+
 typedef struct Color {
   GLfloat r;
   GLfloat g;
@@ -98,9 +100,14 @@ typedef struct Music {
   Mix_Music *data;
 } Music;
 
+// In gl.c
+
+GLfloat orthoMatrix[16];
+
 /*
  * Shared OpenGL functions
  */
+void gl_print_error(char *error);
 void gl_print_context_info(Window *window);
 void gl_store_context_info(Window *window);
 GLuint gl_load_shader(GLenum type, const GLchar *shaderSrc, char *shaderName);
