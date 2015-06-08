@@ -1,8 +1,7 @@
 CFLAGS=-std=c99
 
 # Includes and libs for Raspberry Pi
-UNAME_M := $(shell uname -m)
-ifeq ($(UNAME_M),armv6l)
+ifneq (,$(findstring arm,$(shell uname -m)))
   PLATFORM=rpi
   INCLUDES=-I/opt/vc/include/
 endif
