@@ -211,167 +211,184 @@ have_sdl2_libs?() {
 # Installs SDL on OS X
 install_sdl_osx() {
   
-  if have_sdl2_libs?; then
-    echo; info_msg "SDL already installed."
-  else
-    echo "Install SDL2 libraries using Homebrew:"
-    echo "  brew update"
-    printf "  brew install "
-    
-    if ! $have_sdl2_lib ; then
-      printf "sdl2 "
-    fi
-    
-    if ! $have_image_lib ; then
-      printf "sdl2_image "
-    fi
-    
-    if ! $have_mixer_lib ; then
-      printf "libvorbis flac sdl2_mixer "
-    fi
-    
-    if ! $have_ttf_lib ; then
-      printf "sdl2_ttf "
-    fi
-    
-    echo -e "\n\nLearn more at http://brew.sh\n"
-    exit
+  echo "Install SDL2 libraries using Homebrew:"
+  echo "  brew update"
+  printf "  brew install "
+  
+  if ! $have_sdl2_lib; then
+    printf "sdl2 "
   fi
+  
+  if ! $have_image_lib; then
+    printf "sdl2_image "
+  fi
+  
+  if ! $have_mixer_lib; then
+    printf "libvorbis flac sdl2_mixer "
+  fi
+  
+  if ! $have_ttf_lib; then
+    printf "sdl2_ttf "
+  fi
+  
+  echo -e "\n\nLearn more at http://brew.sh\n"
+  exit
 }
 
 # Installs SDL on Linux
 install_sdl_linux() {
   
-  if have_sdl2_libs?; then
-    echo; info_msg "SDL already installed."
+  prompt_to_continue "Install SDL now?"
+  
+  print_task "Updating packages" "\n\n"
+  sudo apt-get update
+  echo; print_task "Installing SDL2" "\n\n"
+  sudo apt-get install -y libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev
+  echo
+  
+  if ! have_sdl2_libs?; then
+    error_msg "SDL libraries did not install correctly."
+    exit
   else
-    prompt_to_continue "Install SDL now?"
-    
-    print_task "Updating packages" "\n\n"
-    sudo apt-get update
-    echo; print_task "Installing SDL2" "\n\n"
-    sudo apt-get install -y libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev
-    echo
-    
-    if ! have_sdl2_libs?; then
-      error_msg "SDL libraries did not install correctly."
-      exit
-    else
-      echo; info_msg "SDL was installed successfully."
-    fi
+    echo; info_msg "SDL was installed successfully."
   fi
 }
 
 # Installs SDL on Raspberry Pi
+# params:
+#   $1  String  Install options, e.g. 'reinstall'
 install_sdl_rpi() {
   
-  if have_sdl2_libs?; then
-    echo; info_msg "SDL already installed."
+  # TODO: Installing SDL2 on RPI 2 takes about 25 min; update this message.
+  warning_msg "Installing SDL can take up to an hour on the Raspberry Pi."
+  prompt_to_continue "Continue?"
+  
+  # Install library dependencies
+  print_task "Installing SDL2 dependencies" "\n\n"
+  sudo apt-get update
+  
+  libs=(
+    # SDL2
+    libudev-dev
+    libasound2-dev
+    libdbus-1-dev
+    
+    # SDL2_image
+    libjpeg8-dev
+    libpng12-dev
+    libtiff5-dev
+    libwebp-dev
+    
+    # SDL2_mixer
+    libvorbis-dev
+    libflac-dev
+    
+    # SDL2_ttf
+    libfreetype6-dev
+  )
+  
+  sudo apt-get install -y ${libs[*]}
+  
+  # Setting up variables
+  url="http://www.libsdl.org"
+  
+  sdl="SDL2-2.0.3"
+  sdl_url="${url}/release/${sdl}.tar.gz"
+  
+  image="SDL2_image-2.0.0"
+  image_url="${url}/projects/SDL_image/release/${image}.tar.gz"
+  
+  smpeg="smpeg2-2.0.0"  # An SDL_mixer dependency, no package available
+  smpeg_url="${url}/projects/smpeg/release/${smpeg}.tar.gz"
+  
+  mixer="SDL2_mixer-2.0.0"
+  mixer_url="${url}/projects/SDL_mixer/release/${mixer}.tar.gz"
+  
+  ttf="SDL2_ttf-2.0.12"
+  ttf_url="${url}/projects/SDL_ttf/release/${ttf}.tar.gz"
+  
+  # Downloads, compiles, and installs an SDL library from source
+  # params:
+  #   $1  String  URL of the tar archive
+  #   $2  String  Name of the tar file
+  #   $3  String  ./configure flags
+  install_sdl_lib () {
+    cd /tmp
+    wget -N $1
+    tar -xzf $2.tar.gz
+    cd $2
+    print_task "Configuring" "\n\n"
+    ./configure $3
+    echo; print_task "Compiling"
+    make > /dev/null 2>&1
+    echo -e " done"
+    print_task "Installing" "\n\n"
+    sudo make install
+    rm /tmp/$2.tar.gz
+    rm -rf /tmp/$2
+  }
+  
+  # Note: `$have_*_lib` variables set by `have_sdl2_libs?()`
+  
+  if [[ $have_sdl2_lib == 'false' || $1 == 'reinstall' ]]; then
+    echo; print_task "Installing SDL2" "\n\n"
+    
+    # May need to also add flags:
+    #   --disable-pulseaudio --disable-esd
+    #   --disable-video-mir --disable-video-wayland"
+    
+    sdl_config_flags="--disable-video-opengl --disable-video-x11"
+    
+    if [[ $rpi_version == 2 ]]; then
+      sdl_config_flags="--host=armv7l-raspberry-linux-gnueabihf $sdl_config_flags"
+    fi
+    
+    install_sdl_lib $sdl_url $sdl $sdl_config_flags
+  fi
+  
+  if [[ $have_image_lib == 'false' || $1 == 'reinstall' ]]; then
+    echo; print_task "Installing SDL2_image" "\n\n"
+    install_sdl_lib $image_url $image
+  fi
+  
+  if [[ $have_mixer_lib == 'false' || $1 == 'reinstall' ]]; then
+    echo; print_task "Installing SDL2_mixer" "\n\n"
+    install_sdl_lib $smpeg_url $smpeg
+    install_sdl_lib $mixer_url $mixer
+  fi
+  
+  if [[ $have_ttf_lib == 'false' || $1 == 'reinstall' ]]; then
+    echo; print_task "Installing SDL2_ttf" "\n\n"
+    install_sdl_lib $ttf_url $ttf
+  fi
+  
+  echo
+  if ! have_sdl2_libs?; then
+    error_msg "SDL libraries did not install correctly."
+    exit
   else
-    warning_msg "Installing SDL can take up to an hour on the Raspberry Pi."
-    prompt_to_continue "Install now?"
-    
-    # Install library dependencies
-    print_task "Installing SDL2 dependencies" "\n\n"
-    sudo apt-get update
-    
-    libs=(
-      # SDL2
-      # libx11-dev  # TODO: Get Simple 2D to work in an X11 window
-      libudev-dev
-      libasound2-dev
-      libdbus-1-dev
-      
-      # SDL2_image
-      libjpeg8-dev
-      libpng12-dev
-      libtiff5-dev
-      libwebp-dev
-      
-      # SDL2_mixer
-      libvorbis-dev
-      libflac-dev
-      
-      # SDL2_ttf
-      libfreetype6-dev
-    )
-    
-    sudo apt-get install -y ${libs[*]}
-    
-    # Setting up variables
-    url="http://www.libsdl.org"
-    
-    sdl="SDL2-2.0.3"
-    sdl_url="${url}/release/${sdl}.tar.gz"
-    
-    image="SDL2_image-2.0.0"
-    image_url="${url}/projects/SDL_image/release/${image}.tar.gz"
-    
-    smpeg="smpeg2-2.0.0"  # An SDL_mixer dependency, no package available
-    smpeg_url="${url}/projects/smpeg/release/${smpeg}.tar.gz"
-    
-    mixer="SDL2_mixer-2.0.0"
-    mixer_url="${url}/projects/SDL_mixer/release/${mixer}.tar.gz"
-    
-    ttf="SDL2_ttf-2.0.12"
-    ttf_url="${url}/projects/SDL_ttf/release/${ttf}.tar.gz"
-    
-    # Downloads, compiles, and installs an SDL library from source
-    # params:
-    #   $1  String  URL of the tar archive
-    #   $2  String  Name of the tar file
-    #   $3  String  ./configure flags
-    install_sdl_lib () {
-      cd /tmp
-      wget -N $1
-      tar -xzf $2.tar.gz
-      cd $2
-      print_task "Configuring" "\n\n"
-      ./configure $3
-      echo; print_task "Compiling"
-      make > /dev/null 2>&1
-      echo -e " done"
-      print_task "Installing" "\n\n"
-      sudo make install
-      rm /tmp/$2.tar.gz
-      rm -rf /tmp/$2
-    }
-    
-    # `$have_*_lib` variables set by `have_sdl2_libs?()`
-    
-    if ! $have_sdl2_lib ; then
-      echo; print_task "Installing SDL2" "\n\n"
-      install_sdl_lib $sdl_url $sdl "--disable-video-opengl --disable-video-x11"
-    fi
-    
-    if ! $have_image_lib ; then
-      echo; print_task "Installing SDL2_image" "\n\n"
-      install_sdl_lib $image_url $image
-    fi
-    
-    if ! $have_mixer_lib ; then
-      echo; print_task "Installing SDL2_mixer" "\n\n"
-      install_sdl_lib $smpeg_url $smpeg
-      install_sdl_lib $mixer_url $mixer
-    fi
-    
-    if ! $have_ttf_lib ; then
-      echo; print_task "Installing SDL2_ttf" "\n\n"
-      install_sdl_lib $ttf_url $ttf
-    fi
-    
-    echo
-    if ! have_sdl2_libs?; then
-      error_msg "SDL libraries did not install correctly."
-      exit
-    else
-      echo; info_msg "SDL was installed successfully."
-    fi
+    echo; info_msg "SDL was installed successfully."
   fi
 }
 
 # Installs SDL
+# params:
+#   $1  String  'flag' means `simple2d install --sdl` used
 install_sdl() {
+  
+  sdl_install_options=''
+  
+  if have_sdl2_libs?; then
+    
+    echo; info_msg "SDL already installed."
+    
+    if [[ $1 == 'flag' ]]; then
+      prompt_to_continue "Reinstall SDL?"
+      sdl_install_options='reinstall'
+    else
+      return
+    fi
+  fi
   
   print_task "Installing SDL" "\n\n"
   
@@ -380,7 +397,17 @@ install_sdl() {
   elif [[ $platform == 'linux' ]]; then
     install_sdl_linux
   elif [[ $platform == 'rpi' ]]; then
-    install_sdl_rpi
+    
+    if [[ $1 == 'flag' ]]; then
+      start_timer
+    fi
+    
+    install_sdl_rpi $sdl_install_options
+    
+    if [[ $1 == 'flag' ]]; then
+      end_timer
+    fi
+    
   fi
 }
 
@@ -466,6 +493,10 @@ install() {
     /usr/local/bin/simple2d"
   echo
   
+  if $install_edge; then
+    echo -e "This will install to the bleeding edge (latest commit).\n"
+  fi
+  
   prompt_to_continue "Continue?"
   
   start_timer
@@ -548,7 +579,7 @@ update() {
   }
   
   if $install_edge; then
-    echo -e "This will update Simple 2D to the bleeding edge."
+    echo -e "This will update Simple 2D to the bleeding edge (latest commit)."
     prompt_to_continue "Continue?"
     update_check_sdl
     install_s2d 'master'
@@ -610,6 +641,11 @@ if [[ $unamestr == 'Darwin' ]]; then
 elif [[ $(uname -m) =~ 'arm' && $unamestr == 'Linux' ]]; then
   platform_display='Raspberry Pi'
   platform='rpi'
+  
+  if [[ $(uname -m) == 'armv7l' ]]; then
+    rpi_version=2
+  fi
+  
 elif [[ $unamestr == 'Linux' ]]; then
   platform_display='Linux'
   platform='linux'
@@ -651,7 +687,7 @@ case $1 in
         install_edge=true
         install;;
       --sdl)
-        echo; install_sdl;;
+        echo; install_sdl 'flag';;
       *)
         print_usage;;
     esac;;
@@ -682,7 +718,7 @@ case $1 in
     elif [[ $platform == 'linux' ]]; then
       LDFLAGS='-lGL'
     elif [[ $platform == 'rpi' ]]; then
-      LDFLAGS='-L/opt/vc/lib -lGLESv2'
+      LDFLAGS='-I/opt/vc/include/ -L/opt/vc/lib -lGLESv2'
     fi
     echo "-lsimple2d `sdl2-config --cflags --libs`"\
          "${LDFLAGS} -lSDL2_image -lSDL2_mixer -lSDL2_ttf";;
