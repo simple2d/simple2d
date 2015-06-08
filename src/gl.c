@@ -25,8 +25,12 @@ void gl_store_context_info(Window *window) {
   window->S2D_GL_VENDOR = glGetString(GL_VENDOR);
   window->S2D_GL_RENDERER = glGetString(GL_RENDERER);
   window->S2D_GL_VERSION = glGetString(GL_VERSION);
-  glGetIntegerv(GL_MAJOR_VERSION, &window->S2D_GL_MAJOR_VERSION);
-  glGetIntegerv(GL_MINOR_VERSION, &window->S2D_GL_MINOR_VERSION);
+  
+  #if !GLES
+    glGetIntegerv(GL_MAJOR_VERSION, &window->S2D_GL_MAJOR_VERSION);
+    glGetIntegerv(GL_MINOR_VERSION, &window->S2D_GL_MINOR_VERSION);
+  #endif
+  
   window->S2D_GL_SHADING_LANGUAGE_VERSION = glGetString(GL_SHADING_LANGUAGE_VERSION);
 };
 
