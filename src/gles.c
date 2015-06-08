@@ -2,23 +2,46 @@
 
 #include "../include/simple2d.h"
 
-static GLuint programObject;
+static GLuint shaderProgram;
+static GLuint texShaderProgram;
 static GLuint colorLocation;
 
 
 /*
- * Testing
+ * Check if shader program was linked
  */
-void hello_gles() {
-  puts("Hello from OpenGL ES!");
+int gles_check_linked(GLuint program, char *name) {
+  GLint linked;
+  
+  glGetProgramiv(program, GL_LINK_STATUS, &linked);
+  
+  if (!linked) {
+    
+    GLint infoLen = 0;
+    glGetProgramiv(program, GL_INFO_LOG_LENGTH, &infoLen);
+    
+    if (infoLen > 1) {
+      
+      char* infoLog = malloc (sizeof(char) * infoLen);
+      
+      glGetProgramInfoLog(program, infoLen, NULL, infoLog);
+      printf("Error linking program `%s`: %s\n", name, infoLog);
+      
+      free(infoLog);
+    }
+    
+    glDeleteProgram(program);
+    return GL_FALSE;
+  }
 }
 
 
 /*
  * Initalize OpenGL ES
  */
-int init_gles(int width, int height, int s_width, int s_height) {
+int gles_init(int width, int height, int s_width, int s_height) {
   
+  // Enable transparency
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   
@@ -26,26 +49,29 @@ int init_gles(int width, int height, int s_width, int s_height) {
   glViewport(0, 0, width, height);
   
   // Vertex shader source string
-  GLchar vShaderStr[] =
+  GLchar vertexSource[] =
     // uniforms used by the vertex shader
     "uniform mat4 u_mvpMatrix;"  // model view and projection matrix
     
     // attributes input to the vertex shader
     "attribute vec4 a_position;"  // position value
     "attribute vec4 a_color;"     // input vertex color
+    "attribute vec2 a_texcoord;"  // input texture
     
     // varying variables, input to the fragment shader
-    "varying vec4 v_color;"  // output vertex color
+    "varying vec4 v_color;"     // output vertex color
+    "varying vec2 v_texcoord;"  // output texture
     
+    // main
     "void main()"
     "{"
-    "  vec4 position = vec4(a_position.xyz, 1.0);"
-    "  gl_Position = u_mvpMatrix * position;"
     "  v_color = a_color;"
+    "  v_texcoord = a_texcoord;"
+    "  gl_Position = u_mvpMatrix * vec4(a_position.xyz, 1.0);"
     "}";
   
   // Fragment shader source string
-  GLchar fShaderStr[] =
+  GLchar fragmentSource[] =
     "precision mediump float;"
     // input vertex color from vertex shader
     "varying vec4 v_color;"
@@ -54,56 +80,54 @@ int init_gles(int width, int height, int s_width, int s_height) {
     "  gl_FragColor = v_color;"
     "}";
   
-  // Shader variables
-  GLuint vertexShader;
-  GLuint fragmentShader;
-  GLint linked;
+  // Fragment shader source string for textures
+  GLchar texFragmentSource[] =
+    "precision mediump float;"
+    // input vertex color from vertex shader
+    "varying vec4 v_color;"
+    "varying vec2 v_texcoord;"
+    "uniform sampler2D texture;"
+    "void main()"
+    "{"
+    "  gl_FragColor = texture(texture, v_texcoord) * v_color;"
+    "}";
   
   // Load the vertex and fragment shaders
-  vertexShader = LoadShader(GL_VERTEX_SHADER, vShaderStr);
-  fragmentShader = LoadShader(GL_FRAGMENT_SHADER, fShaderStr);
+  GLuint vertexShader = gl_load_shader(GL_VERTEX_SHADER, vertexSource, "GLES Vertex");
+  GLuint fragmentShader = gl_load_shader(GL_FRAGMENT_SHADER, fragmentSource, "GLES Fragment");
+  GLuint texFragmentShader = gl_load_shader(GL_FRAGMENT_SHADER, texFragmentSource, "GLES Texture Fragment");
   
-  // Create and store the program object
-  programObject = glCreateProgram();
+  // Create the shader program objects
+  shaderProgram = glCreateProgram();
+  texShaderProgram = glCreateProgram();
   
-  if (programObject == 0) {
-    printf("Failed to create program object: %d\n", glGetError());
-    return 1;
+  /* TODO: Check if programs created successfully
+  if (shaderProgram == 0) {
+    printf("Failed to create shader program: %d\n", glGetError());
+    return 1;  // Should we return `GL_FALSE` instead?
   }
+  */
   
-  glAttachShader(programObject, vertexShader);
-  glAttachShader(programObject, fragmentShader);
+  // Attach the shader objects to the program object
+  glAttachShader(shaderProgram, vertexShader);
+  glAttachShader(shaderProgram, fragmentShader);
+  glAttachShader(texShaderProgram, vertexShader);
+  glAttachShader(texShaderProgram, texFragmentShader);
   
-  // Bind vPosition to attribute 0
-  glBindAttribLocation(programObject, 0, "a_position");
+  // Associate user-defined attribute variables in the
+  // program object with the vertex attribute index
+  glBindAttribLocation(shaderProgram, 0, "a_position");
+  glBindAttribLocation(texShaderProgram, 0, "a_position");
   
-  // Link the program
-  glLinkProgram(programObject);
+  // Link the shader program
+  glLinkProgram(shaderProgram);
+  glLinkProgram(texShaderProgram);
   
-  // Check the link status
-  glGetProgramiv(programObject, GL_LINK_STATUS, &linked);
+  // Check if linked
+  // TODO: Should we return `GL_FALSE`?
+  gles_check_linked(shaderProgram, "shaderProgram");
+  gles_check_linked(texShaderProgram, "texShaderProgram");
   
-  if (!linked) {
-    
-    GLint infoLen = 0;
-    glGetProgramiv(programObject, GL_INFO_LOG_LENGTH, &infoLen);
-    
-    if (infoLen > 1) {
-      
-      char* infoLog = malloc (sizeof(char) * infoLen);
-      
-      glGetProgramInfoLog(programObject, infoLen, NULL, infoLog);
-      printf("Error linking program:\n%s\n", infoLog);
-      
-      free(infoLog);
-    }
-    
-    glDeleteProgram(programObject);
-    return GL_FALSE;
-  }
-  
-  // Use the program object
-  glUseProgram(programObject);
   
   // Compute scaling factors, if necessary
   GLfloat scale_x = 1.0f;
@@ -119,16 +143,25 @@ int init_gles(int width, int height, int s_width, int s_height) {
   
   // Create and apply an orthographic projection matrix (2D projection)
   // (matrix is given in column-first order)
-  int far_z = 128;
+  GLfloat far_z = 128.0;
   GLfloat orthoMatrix[16] = {
     2.0f / ((GLfloat)width * scale_x), 0, 0, 0,
     0, -2.0f / ((GLfloat)height * scale_y), 0, 0,
-    0, 0, -2.0f / (GLfloat)far_z, 0,
+    0, 0, -2.0f / far_z, 0,
     -1.0f, 1.0f, -1.0f, 1.0f
   };
   
-  GLuint mMvpLocation = glGetUniformLocation(programObject, "u_mvpMatrix");
+  // Use the program object
+  glUseProgram(shaderProgram);
+  
+  GLuint mMvpLocation = glGetUniformLocation(shaderProgram, "u_mvpMatrix");
   glUniformMatrix4fv(mMvpLocation, 1, GL_FALSE, orthoMatrix);
+  
+  // Use the texture program object
+  glUseProgram(texShaderProgram);
+  
+  GLuint texmMvpLocation = glGetUniformLocation(texShaderProgram, "u_mvpMatrix");
+  glUniformMatrix4fv(texmMvpLocation, 1, GL_FALSE, orthoMatrix);
   
   return GL_TRUE;
 }
@@ -137,7 +170,7 @@ int init_gles(int width, int height, int s_width, int s_height) {
 /*
  * Draw triangle
  */
-void draw_triangle_gles(GLfloat x1,  GLfloat y1,
+void gles_draw_triangle(GLfloat x1,  GLfloat y1,
                         GLfloat c1r, GLfloat c1g, GLfloat c1b, GLfloat c1a,
                         GLfloat x2,  GLfloat y2,
                         GLfloat c2r, GLfloat c2g, GLfloat c2b, GLfloat c2a,
@@ -154,8 +187,10 @@ void draw_triangle_gles(GLfloat x1,  GLfloat y1,
       c2r, c2g, c2b, c2a,
       c3r, c3g, c3b, c3a };
   
+  glUseProgram(shaderProgram);
+  
   // Set the color
-  colorLocation = glGetAttribLocation(programObject, "a_color");
+  colorLocation = glGetAttribLocation(shaderProgram, "a_color");
   glVertexAttribPointer(colorLocation, 4, GL_FLOAT, GL_FALSE, 0, vColors);
   glEnableVertexAttribArray(colorLocation);
   
@@ -171,7 +206,7 @@ void draw_triangle_gles(GLfloat x1,  GLfloat y1,
 /*
  * Draw image
  */
-void draw_image_gles(Image img, int x, int y) {
+void gles_draw_image(Image img) {
   // TODO: Implement this
 }
 
@@ -179,6 +214,6 @@ void draw_image_gles(Image img, int x, int y) {
 /*
  * Draw text
  */
-void draw_text_gles(Text txt, int x, int y) {
+void gles_draw_text(Text txt) {
   // TODO: Implement this
 }

@@ -110,6 +110,7 @@ GLuint gl_load_shader(GLenum type, const GLchar *shaderSrc, char *shaderName);
  */
 #if GLES
   void gles_hello();
+  int gles_check_linked(GLuint program, char *name);
   int gles_init(int width, int height, int s_width, int s_height);
   void gles_draw_triangle(
     GLfloat x1,  GLfloat y1,
@@ -123,6 +124,7 @@ GLuint gl_load_shader(GLenum type, const GLchar *shaderSrc, char *shaderName);
 #else
   void gl2_hello();
   void gl3_hello();
+  int gl3_check_linked(GLuint program);
   int gl2_init(int width, int height);
   int gl3_init(int width, int height);
   void gl2_draw_triangle(
