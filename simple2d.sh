@@ -208,33 +208,6 @@ have_sdl2_libs?() {
   fi
 }
 
-# Installs SDL on OS X
-install_sdl_osx() {
-  
-  echo "Install SDL2 libraries using Homebrew:"
-  echo "  brew update"
-  printf "  brew install "
-  
-  if ! $have_sdl2_lib; then
-    printf "sdl2 "
-  fi
-  
-  if ! $have_image_lib; then
-    printf "sdl2_image "
-  fi
-  
-  if ! $have_mixer_lib; then
-    printf "libvorbis flac sdl2_mixer "
-  fi
-  
-  if ! $have_ttf_lib; then
-    printf "sdl2_ttf "
-  fi
-  
-  echo -e "\n\nLearn more at http://brew.sh\n"
-  exit
-}
-
 # Installs SDL on Linux
 install_sdl_linux() {
   
@@ -392,9 +365,7 @@ install_sdl() {
   
   print_task "Installing SDL" "\n\n"
   
-  if [[ $platform == 'osx' ]]; then
-    install_sdl_osx
-  elif [[ $platform == 'linux' ]]; then
+  if [[ $platform == 'linux' ]]; then
     install_sdl_linux
   elif [[ $platform == 'rpi' ]]; then
     
@@ -455,11 +426,7 @@ install_s2d() {
   make
   
   echo; print_task "Installing" "\n\n"
-  if [[ $platform == 'osx' ]]; then
-    make install
-  else
-    sudo make install
-  fi
+  sudo make install
   
   echo; print_task "Cleaning up"
   cd
@@ -476,6 +443,10 @@ install_s2d() {
 
 # Main entry point to install Simple 2D
 install() {
+  
+  if [[ $platform == 'osx' ]]; then
+    osx_homebrew_message
+  fi
   
   # Welcome message
   echo -e "\n${BOLD}Welcome to Simple 2D!${NORMAL}"
@@ -521,10 +492,7 @@ uninstall_sdl() {
   
   echo; print_task "Uninstalling SDL" "\n\n"
   
-  if [[ $platform == 'osx' ]]; then
-    echo "If using Homebrew, use:"
-    echo "  brew uninstall sdl2 sdl2_image sdl2_mixer sdl2_ttf"; echo
-  elif [[ $platform == 'linux' ]]; then
+  if [[ $platform == 'linux' ]]; then
     apt-get --purge remove libsdl2*
   elif [[ $platform == 'rpi' ]]; then
     # TODO: Implement this
@@ -534,6 +502,10 @@ uninstall_sdl() {
 
 # Uninstalls Simple 2D
 uninstall() {
+  
+  if [[ $platform == 'osx' ]]; then
+    osx_homebrew_message
+  fi
   
   echo; prompt_to_continue "Uninstall Simple 2D?"
   
@@ -558,6 +530,10 @@ uninstall() {
 
 # Updates Simple 2D to latest version or commit
 update() {
+  
+  if [[ $platform == 'osx' ]]; then
+    osx_homebrew_message
+  fi
   
   # Is Simple 2D installed?
   echo
@@ -630,6 +606,26 @@ doctor() {
   else
     success_msg "No issues found!"
   fi
+}
+
+# Platform Specific ############################################################
+
+# Prints homebrew message and quit
+osx_homebrew_message() {
+  echo "
+Use Homebrew to install, update, and uninstall Simple 2D on OS X.
+
+  First, use \`brew tap\` to get Simple 2D formulas:
+    brew tap simple2d/tap
+  
+  Then, \`brew\` commands will be available:
+    brew install simple2d
+    brew upgrade simple2d
+    brew uninstall simple2d
+
+Learn more at http://brew.sh
+"
+  exit
 }
 
 # Detect Platform ##############################################################
