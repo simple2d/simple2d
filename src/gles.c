@@ -106,16 +106,23 @@ int gles_init(int width, int height, int s_width, int s_height) {
   GLuint fragmentShader = gl_load_shader(GL_FRAGMENT_SHADER, fragmentSource, "GLES Fragment");
   GLuint texFragmentShader = gl_load_shader(GL_FRAGMENT_SHADER, texFragmentSource, "GLES Texture Fragment");
   
-  // Create the shader program objects
+  // Create the shader program object
   shaderProgram = glCreateProgram();
+  
+  // Check if program was created successfully
+  if (shaderProgram == 0) {
+    gl_print_error("Failed to create shader program");
+    return GL_FALSE;
+  }
+  
+  // Create the texture shader program object
   texShaderProgram = glCreateProgram();
   
-  /* TODO: Check if programs created successfully
-  if (shaderProgram == 0) {
-    printf("Failed to create shader program: %d\n", glGetError());
-    return 1;  // Should we return `GL_FALSE` instead?
+  // Check if program was created successfully
+  if (texShaderProgram == 0) {
+    gl_print_error("Failed to create shader program");
+    return GL_FALSE;
   }
-  */
   
   // Attach the shader objects to the program object
   glAttachShader(shaderProgram, vertexShader);
@@ -133,10 +140,8 @@ int gles_init(int width, int height, int s_width, int s_height) {
   glLinkProgram(texShaderProgram);
   
   // Check if linked
-  // TODO: Should we return `GL_FALSE`?
   gles_check_linked(shaderProgram, "shaderProgram");
   gles_check_linked(texShaderProgram, "texShaderProgram");
-  
   
   // Compute scaling factors, if necessary
   GLfloat scale_x = 1.0f;
@@ -165,6 +170,11 @@ int gles_init(int width, int height, int s_width, int s_height) {
   
   GLuint texmMvpLocation = glGetUniformLocation(texShaderProgram, "u_mvpMatrix");
   glUniformMatrix4fv(texmMvpLocation, 1, GL_FALSE, orthoMatrix);
+  
+  // Clean up
+  glDeleteShader(vertexShader);
+  glDeleteShader(fragmentShader);
+  glDeleteShader(texFragmentShader);
   
   return GL_TRUE;
 }

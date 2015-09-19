@@ -160,14 +160,14 @@ void render() {
   S2D_SetText(&fps_val, fps_str);
   S2D_DrawText(fps_val);
   
-  // TODO: Make option to print this
-  puts("--------------------");
-  printf("cursor: %i, %i\n", window->cursor.x, window->cursor.y);
-  printf("frames: %i\n", window->frames);
-  printf("elapsed_ms: %i\n", window->elapsed_ms);
-  printf("loop_ms: %i\n", window->loop_ms);
-  printf("delay_ms: %i\n", window->delay_ms);
-  printf("fps: %f\n", window->fps);
+  // Uncomment to print window loop statistics to console
+  // puts("--------------------");
+  // printf("cursor: %i, %i\n", window->cursor.x, window->cursor.y);
+  // printf("frames: %i\n", window->frames);
+  // printf("elapsed_ms: %i\n", window->elapsed_ms);
+  // printf("loop_ms: %i\n", window->loop_ms);
+  // printf("delay_ms: %i\n", window->delay_ms);
+  // printf("fps: %f\n", window->fps);
 }
 
 int main(int argc, char const *argv[]) {

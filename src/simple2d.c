@@ -495,15 +495,20 @@ Window* S2D_CreateWindow(char* title, int width, int height,
   
   if (!window->sdl) S2D_Error("SDL_CreateWindow", SDL_GetError());
   
-  // Window created by SDL might not actually be the requested size
-  // If not, retrieve and set the actual window size
+  // Window created by SDL might not actually be the requested size.
+  // If not, retrieve and set the actual window size.
   window->s_width = window->width;
   window->s_height = window->height;
   SDL_GetWindowSize(window->sdl, &window->width, &window->height);
+  
   if ((window->width != window->s_width) ||
-     (window->height != window->s_height)) {
-    printf("Warning: Resolution %dx%d unsupported by driver, scaling to %dx%d\n",
-    window->s_width, window->s_height, window->width, window->height);
+    (window->height != window->s_height)) {
+    
+    char *msg;
+    asprintf(&msg, "Resolution %dx%d unsupported by driver. Scaling to %dx%d.",
+             window->s_width, window->s_height, window->width, window->height);
+    S2D_Log(msg, WARN);
+    free(msg);
   }
   
   // Init OpenGL / GLES ////////////////////////////////////////////////////////
@@ -645,6 +650,7 @@ int S2D_Show(Window *window) {
   while (!quit) {
     
     // Clear Frame /////////////////////////////////////////////////////////////
+    
     glClearColor(
       window->background.r,
       window->background.g,
