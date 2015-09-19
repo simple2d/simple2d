@@ -6,6 +6,15 @@ static GLuint shaderProgram;
 static GLuint texShaderProgram;
 static GLuint colorLocation;
 
+// For GL3 and GLES, an orthographic 2D projection matrix.
+// Matrix is given in column-first order.
+static GLfloat orthoMatrix[16] = {
+  2.0f, 0, 0, 0,
+  0, -2.0f, 0, 0,
+  0, 0, -2.0f / 128.0, 0,  // 128.0 == far_z
+  -1.0f, 1.0f, -1.0f, 1.0f
+};
+
 
 /*
  * Check if shader program was linked
@@ -141,15 +150,9 @@ int gles_init(int width, int height, int s_width, int s_height) {
     scale_y = (GLfloat)s_height / (GLfloat)height;
   }
   
-  // Create and apply an orthographic projection matrix (2D projection)
-  // (matrix is given in column-first order)
-  GLfloat far_z = 128.0;
-  GLfloat orthoMatrix[16] = {
-    2.0f / ((GLfloat)width * scale_x), 0, 0, 0,
-    0, -2.0f / ((GLfloat)height * scale_y), 0, 0,
-    0, 0, -2.0f / far_z, 0,
-    -1.0f, 1.0f, -1.0f, 1.0f
-  };
+  // Set orthographic projection matrix
+  orthoMatrix[0] = 2.0f / ((GLfloat)width * scale_x);
+  orthoMatrix[5] = -2.0f / ((GLfloat)height * scale_y);
   
   // Use the program object
   glUseProgram(shaderProgram);

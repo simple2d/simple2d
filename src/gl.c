@@ -2,15 +2,6 @@
 
 #include "../include/simple2d.h"
 
-// For GL3 and GLES, an orthographic 2D projection matrix.
-// Matrix is given in column-first order.
-GLfloat orthoMatrix[16] = {
-  2.0f, 0, 0, 0,
-  0, -2.0f, 0, 0,
-  0, 0, -2.0f / 128.0, 0,  // 128.0 == far_z
-  -1.0f, 1.0f, -1.0f, 1.0f
-};
-
 
 /*
  * Prints current GL error

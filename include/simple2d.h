@@ -100,10 +100,6 @@ typedef struct Music {
   Mix_Music *data;
 } Music;
 
-// In gl.c
-
-GLfloat orthoMatrix[16];
-
 /*
  * Shared OpenGL functions
  */
