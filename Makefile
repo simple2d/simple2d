@@ -1,3 +1,4 @@
+PREFIX?=/usr/local
 CFLAGS=-std=c99
 
 # Includes and libs for Raspberry Pi
@@ -27,9 +28,12 @@ endif
 	rm build/simple2d.o
 
 install:
-	cp include/simple2d.h /usr/local/include/
-	cp build/libsimple2d.a /usr/local/lib/
-	cp build/simple2d /usr/local/bin/
+	mkdir -p $(PREFIX)/include/
+	mkdir -p $(PREFIX)/lib/
+	mkdir -p $(PREFIX)/bin/
+	cp include/simple2d.h $(PREFIX)/include/
+	cp build/libsimple2d.a $(PREFIX)/lib/
+	cp build/simple2d $(PREFIX)/bin/
 
 clean:
 	rm -f build/libsimple2d.a
