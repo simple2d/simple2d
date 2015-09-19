@@ -2,8 +2,12 @@
 
 #include "../include/simple2d.h"
 
-// Flag to log diagnostic messages for testing
-static bool diagnostics = true;
+#define INFO  1
+#define WARN  2
+#define ERROR 3
+
+// Flag for printing diagnostic messages
+static bool diagnostics = false;
 
 // Flag set if OpenGL 2.1
 static bool GL2 = false;
@@ -13,21 +17,41 @@ static bool FORCE_GL2 = false;
 
 
 /*
- * Log diagnostic messages
+ * Logs standard messages to the console
  */
-static void diag(char *msg) {
+void S2D_Log(char *msg, int type) {
+  
   if (diagnostics) {
-    printf("\n\033[4;36mDiagnostics:\033[0m %s\n", msg);
+    switch (type) {
+      case INFO:
+        printf("\033[4;36mInfo:\033[0m %s\n", msg);
+        break;
+      case WARN:
+        printf("\033[4;33mWarning:\033[0m %s\n", msg);
+        break;
+      case ERROR:
+        printf("\033[4;31mError:\033[0m %s\n", msg);
+        break;
+      default:
+        printf("%s\n", msg);
+    }
   }
 }
 
 
 /*
- * Print SDL errors and quit
+ * Logs Simple 2D errors to the console, with caller and message body
  */
-void sdl_error(char *error) {
-  printf("%s: %s\n", error, SDL_GetError());
-  exit(1);
+void S2D_Error(char *caller, const char *msg) {
+  printf("\033[4;31mError:\033[0m (%s) %s\n", caller, msg);
+}
+
+
+/*
+ * Enable/disable logging of diagnostics
+ */
+void S2D_Diagnostics(bool status) {
+  diagnostics = status? true: false;
 }
 
 
@@ -108,7 +132,7 @@ Image S2D_CreateImage(char *path) {
   
   // TODO: Implement images in GLES
   #if GLES
-    puts("S2D_DrawImage not yet implemented!");
+    S2D_Log("S2D_DrawImage not yet implemented!", INFO);
   #endif
   
   Image img;
@@ -117,7 +141,7 @@ Image S2D_CreateImage(char *path) {
   // Load image from file as SDL_Surface
   surface = IMG_Load(path);
   if (!surface) {
-    printf("IMG_Load failed: %s\n", IMG_GetError());
+    S2D_Error("IMG_Load", IMG_GetError());
     exit(1);
   }
   
@@ -138,7 +162,7 @@ Image S2D_CreateImage(char *path) {
   // 
   // if (GL2) {
   //   img.texture = SDL_CreateTextureFromSurface(window->renderer, surface);
-  //   if (!img.texture) sdl_error("SDL_CreateTextureFromSurface");    
+  //   if (!img.texture) S2D_Error("SDL_CreateTextureFromSurface", SDL_GetError());
   // } else {
   // }
   //////////////////////////////////////////////////////////////////////////////
@@ -210,14 +234,14 @@ void S2D_FreeImage(Image img) {
 Text S2D_CreateText(char *font, char *msg, int size) {
   
   #if GLES
-    puts("S2D_DrawText not yet implemented!");
+    S2D_Log("S2D_DrawText not yet implemented!", WARN);
   #endif
   
   Text txt;
   
   // `msg` cannot be an empty string; if so, quit
   if (strlen(msg) == 0) {
-    puts("S2D_CreateText Error: Text message cannot be empty!");
+    S2D_Error("S2D_CreateText", "Text message cannot be empty!");
     exit(1);
   } else {
     txt.msg = msg;
@@ -232,7 +256,7 @@ Text S2D_CreateText(char *font, char *msg, int size) {
   
   txt.font = TTF_OpenFont(font, size);
   if (!txt.font) {
-    printf("TTF_OpenFont failed: %s\n", TTF_GetError());
+    S2D_Error("TTF_OpenFont", TTF_GetError());
     exit(1);
   }
   
@@ -321,9 +345,7 @@ Sound S2D_CreateSound(char *path) {
   Sound sound;
   
   sound.data = Mix_LoadWAV(path);
-  if (!sound.data) {
-    printf("Mix_LoadWAV failed: %s\n", Mix_GetError());
-  }
+  if (!sound.data) S2D_Error("Mix_LoadWAV", Mix_GetError());
   
   return sound;
 }
@@ -352,9 +374,7 @@ Music S2D_CreateMusic(char *path) {
   Music music;
   
   music.data = Mix_LoadMUS(path);
-  if (!music.data) {
-    printf("Mix_LoadMUS error: %s\n", Mix_GetError());
-  }
+  if (!music.data) S2D_Error("Mix_LoadMUS", Mix_GetError());
   
   return music;
 }
@@ -367,7 +387,7 @@ void S2D_PlayMusic(Music music, int times) {
   // times: 0 == once, -1 == forever
   if (Mix_PlayMusic(music.data, times) == -1) {
     // No music for you
-    printf("\033[4;31mS2D Error:\033[0m S2D_PlayMusic says %s\n", Mix_GetError());
+    S2D_Error("S2D_PlayMusic", Mix_GetError());
   }
 }
 
@@ -437,11 +457,11 @@ Window* S2D_CreateWindow(char* title, int width, int height,
   // SDL Initialization ////////////////////////////////////////////////////////
   
   // Initialize SDL
-  if (SDL_Init(SDL_INIT_EVERYTHING) != 0) sdl_error("SDL_Init");
+  if (SDL_Init(SDL_INIT_EVERYTHING) != 0) S2D_Error("SDL_Init", SDL_GetError());
   
   // Initialize SDL_ttf
   if (TTF_Init() != 0) {
-    printf("TTF_Init: %s\n", TTF_GetError());
+    S2D_Error("TTF_Init", TTF_GetError());
     exit(1);
   }
   
@@ -449,8 +469,7 @@ Window* S2D_CreateWindow(char* title, int width, int height,
   int mix_flags = MIX_INIT_FLAC|MIX_INIT_OGG|MIX_INIT_MP3;
   int mix_initted = Mix_Init(mix_flags);
   if ((mix_initted&mix_flags) != mix_flags) {
-    printf("Mix_Init: Failed to initialize required audio support!\n");
-    printf("Mix_Init: %s\n", Mix_GetError());
+    S2D_Error("Mix_Init", Mix_GetError());
   }
   
   int audio_rate = 44100;
@@ -459,7 +478,7 @@ Window* S2D_CreateWindow(char* title, int width, int height,
   int audio_buffers = 4096;
   
   if (Mix_OpenAudio(audio_rate, MIX_DEFAULT_FORMAT, audio_channels, audio_buffers) != 0) {
-    printf("Mix_OpenAudio: Unable to initialize audio: %s\n", Mix_GetError());
+    S2D_Error("Mix_OpenAudio", Mix_GetError());
     exit(1);
   }
   
@@ -474,7 +493,7 @@ Window* S2D_CreateWindow(char* title, int width, int height,
     SDL_WINDOW_OPENGL                                // flags
   );
   
-  if (!window->sdl) sdl_error("SDL_CreateWindow");
+  if (!window->sdl) S2D_Error("SDL_CreateWindow", SDL_GetError());
   
   // Window created by SDL might not actually be the requested size
   // If not, retrieve and set the actual window size
@@ -526,8 +545,8 @@ Window* S2D_CreateWindow(char* title, int width, int height,
     
     // Fail on OpenGL ES
     #if GLES
-      sdl_error("GLES / SDL_GL_CreateContext");
-    
+      S2D_Error("GLES / SDL_GL_CreateContext", SDL_GetError());
+      
     // Try to fallback on an OpenGL 2.1 context
     #else
       SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
@@ -541,13 +560,13 @@ Window* S2D_CreateWindow(char* title, int width, int height,
         
         // Could not create any GL contexts
       } else {
-        sdl_error("GL2 / SDL_GL_CreateContext");
+        S2D_Error("GL2 / SDL_GL_CreateContext", SDL_GetError());
       }
     #endif
   }
   
   gl_store_context_info(window);
-  gl_print_context_info(window);
+  if (diagnostics) gl_print_context_info(window);
   
   return window;
 }
@@ -573,13 +592,13 @@ int S2D_Show(Window *window) {
   // Enable VSync
   if (window->vsync) {
     if (!SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1")) {
-      printf("Warning: VSync cannot be enabled");
+      S2D_Log("VSync cannot be enabled", WARN);
     }
   }
   
   // Detect Controllers and Joysticks //////////////////////////////////////////
   
-  printf("Number of Joysticks: %i\n", SDL_NumJoysticks());
+  if (diagnostics) printf("Number of Joysticks: %i\n", SDL_NumJoysticks());
   
   // Variables for controllers and joysticks
   SDL_GameController *controller = NULL;
@@ -592,28 +611,29 @@ int S2D_Show(Window *window) {
     if (SDL_IsGameController(i)) {
       controller = SDL_GameControllerOpen(i);
       if (controller) {
-        printf("Found a valid controller, named: %s\n", SDL_GameControllerName(controller));
+        if (diagnostics) printf("Found a valid controller, named: %s\n", SDL_GameControllerName(controller));
         break;  // Break after first available controller
       } else {
-        fprintf(stderr, "Could not open game controller %i: %s\n", i, SDL_GetError());
+        if (diagnostics) fprintf(stderr, "Could not open game controller %i: %s\n", i, SDL_GetError());
       }
     
     // Controller interface not supported, try to open as joystick
     } else {
-      printf("Joystick %i is not supported by the game controller interface!\n", i);
+      if (diagnostics) printf("Joystick %i is not supported by the game controller interface!\n", i);
       joy = SDL_JoystickOpen(i);
       
       // Joystick is valid
       if (joy) {
-        printf("Opened Joystick %i\n", i);
-        printf("Name: %s\n", SDL_JoystickName(joy));
-        printf("Number of Axes: %d\n", SDL_JoystickNumAxes(joy));
-        printf("Number of Buttons: %d\n", SDL_JoystickNumButtons(joy));
-        printf("Number of Balls: %d\n", SDL_JoystickNumBalls(joy));
-      
+        if (diagnostics) {
+          printf("Opened Joystick %i\n", i);
+          printf("Name: %s\n", SDL_JoystickName(joy));
+          printf("Number of Axes: %d\n", SDL_JoystickNumAxes(joy));
+          printf("Number of Buttons: %d\n", SDL_JoystickNumButtons(joy));
+          printf("Number of Balls: %d\n", SDL_JoystickNumBalls(joy));
+        }
       // Joystick not valid
       } else {
-        printf("Couldn't open Joystick %i\n", i);
+        if (diagnostics) printf("Couldn't open Joystick %i\n", i);
       }
       break;  // Break after first available joystick
     }
@@ -666,16 +686,16 @@ int S2D_Show(Window *window) {
           break;
         case SDL_MOUSEBUTTONDOWN:
           // TODO: Register the mouse click, add callback
-          printf("Mouse down at: %i, %i\n", e.button.x, e.button.y);
+          if (diagnostics) printf("Mouse down at: %i, %i\n", e.button.x, e.button.y);
           break;
         case SDL_CONTROLLERBUTTONDOWN:
-          puts("SDL_CONTROLLERBUTTONDOWN");
+          if (diagnostics) puts("SDL_CONTROLLERBUTTONDOWN");
           break;
         case SDL_JOYAXISMOTION:
-          printf("SDL_JOYAXISMOTION: axis=%i, value=%i\n", e.jaxis.axis, e.jaxis.value);
+          if (diagnostics) printf("SDL_JOYAXISMOTION: axis=%i, value=%i\n", e.jaxis.axis, e.jaxis.value);
           break;
         case SDL_JOYBUTTONDOWN:
-          printf("SDL_JOYBUTTONDOWN: %i\n", e.jbutton.button);
+          if (diagnostics) printf("SDL_JOYBUTTONDOWN: %i\n", e.jbutton.button);
           break;
         case SDL_QUIT:
           quit = true;

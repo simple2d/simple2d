@@ -171,6 +171,9 @@ void render() {
 }
 
 int main(int argc, char const *argv[]) {
+  
+  S2D_Diagnostics(true);
+  
   window = S2D_CreateWindow("Testcard", 800, 600, update, render);
   
   window->on_key = on_key;

@@ -151,9 +151,19 @@ GLuint gl_load_shader(GLenum type, const GLchar *shaderSrc, char *shaderName);
 #endif
 
 /*
- * Print SDL errors
+ * Logs standard messages to the console
  */
-void sdl_error(char *error);
+void S2D_Log(char *msg, int type);
+
+/*
+ * Logs Simple 2D errors to the console, with caller and message body
+ */
+void S2D_Error(char *caller, const char *msg);
+
+/*
+ * Enable/disable logging of diagnostics
+ */
+void S2D_Diagnostics(bool status);
 
 /*
  * Print info about the current OpenGL context
