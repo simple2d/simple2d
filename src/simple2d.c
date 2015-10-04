@@ -583,7 +583,7 @@ Window* S2D_CreateWindow(char* title, int width, int height,
 int S2D_Show(Window *window) {
   
   // Setting up variables
-  int cursor_x, cursor_y;  // Cursor positions
+  int mouse_x, mouse_y;  // Mouse positions
   const Uint8 *key_state;
   Uint32 frames = 0;       // Total frames since start
   Uint32 start_ms = SDL_GetTicks();  // Elapsed time since start
@@ -722,28 +722,28 @@ int S2D_Show(Window *window) {
     
     // Update Window State /////////////////////////////////////////////////////
     
-    // Store the cursor position
-    SDL_GetMouseState(&cursor_x, &cursor_y);
+    // Store the mouse position
+    SDL_GetMouseState(&mouse_x, &mouse_y);
     
     // Store new values in the window
-    window->cursor.x      = cursor_x;
-    window->cursor.y      = cursor_y;
-    window->cursor.real_x = cursor_x;
-    window->cursor.real_y = cursor_y;
-    window->frames        = frames;
-    window->elapsed_ms    = elapsed_ms;
-    window->loop_ms       = loop_ms;
-    window->delay_ms      = delay_ms;
-    window->fps           = fps;
+    window->mouse.x      = mouse_x;
+    window->mouse.y      = mouse_y;
+    window->mouse.real_x = mouse_x;
+    window->mouse.real_y = mouse_y;
+    window->frames       = frames;
+    window->elapsed_ms   = elapsed_ms;
+    window->loop_ms      = loop_ms;
+    window->delay_ms     = delay_ms;
+    window->fps          = fps;
     
-    // scale the cursor position, if necessary
+    // scale the mouse position, if necessary
     if (window->s_width != window->width) {
-      window->cursor.x = (int)((double)window->cursor.real_x *
+      window->mouse.x = (int)((double)window->mouse.real_x *
         ((double)window->s_width / (double)window->width) + 0.5);
     }
     
     if (window->s_height != window->height) {
-      window->cursor.y = (int)((double)window->cursor.real_y *
+      window->mouse.y = (int)((double)window->mouse.real_y *
         ((double)window->s_height / (double)window->height) + 0.5);
     }
     

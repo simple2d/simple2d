@@ -30,13 +30,13 @@ typedef struct Color {
   GLfloat a;
 } Color;
 
-typedef struct Cursor {
+typedef struct Mouse {
   int visible;
   int x;       // scaled positions
   int y;
   int real_x;  // actual positions
   int real_y;
-} Cursor;
+} Mouse;
 
 typedef void (*Update)(void);
 typedef void (*Render)(void);
@@ -64,7 +64,7 @@ typedef struct Window {
   Render render;
   On_key on_key;
   On_key_down on_key_down;
-  Cursor cursor;
+  Mouse mouse;
   Uint32 frames;
   Uint32 elapsed_ms;
   Uint32 loop_ms;
