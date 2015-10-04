@@ -334,7 +334,7 @@ void S2D_DrawText(Text txt) {
  */
 void S2D_FreeText(Text txt) {
   glDeleteTextures(1, &txt.texture_id);
-  TTF_CloseFont(txt.font);  
+  TTF_CloseFont(txt.font);
 }
 
 

@@ -3,7 +3,3 @@ build/
 tests/audio
 tests/testcard
 tests/triangle
-
-tmp/
-_*
-*.DS_Store

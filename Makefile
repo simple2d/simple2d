@@ -31,16 +31,15 @@ install:
 	mkdir -p $(PREFIX)/include/
 	mkdir -p $(PREFIX)/lib/
 	mkdir -p $(PREFIX)/bin/
-	cp include/simple2d.h $(PREFIX)/include/
+	cp include/simple2d.h  $(PREFIX)/include/
 	cp build/libsimple2d.a $(PREFIX)/lib/
-	cp build/simple2d $(PREFIX)/bin/
+	cp build/simple2d      $(PREFIX)/bin/
 
 clean:
 	rm -f build/libsimple2d.a
 	rm -f build/simple2d
 	rm -f tests/audio
 	rm -f tests/testcard
-	rm -f tests/triangle
 
 uninstall:
 	rm -f /usr/local/include/simple2d.h
@@ -48,8 +47,7 @@ uninstall:
 	rm -f /usr/local/bin/simple2d
 
 tests:
-	cc $(CFLAGS) tests/audio.c `simple2d --libs` -o tests/audio
+	cc $(CFLAGS) tests/audio.c    `simple2d --libs` -o tests/audio
 	cc $(CFLAGS) tests/testcard.c `simple2d --libs` -o tests/testcard
-	cc $(CFLAGS) tests/triangle.c `simple2d --libs` -o tests/triangle
 
 .PHONY: build tests
