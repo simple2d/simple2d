@@ -149,6 +149,12 @@ window->background.a = 1.0;
 
 Event callback functions can also be changed anytime – more on that below. Many values can also be read from the `Window` structure, see the [simple2d.h](simple2d.h) header file for details.
 
+When you're done with the window, close it to free allocated memory and shut down drawing and audio subsystems:
+
+```c
+S2D_Close(window);
+```
+
 ### Update and Render
 
 The window loop is where all the action takes place: the frame rate is set, input is handled, the app state is updated, and visuals are rendered. You'll want to declare two essential functions which will be called by the main window loop: `update()` and `render()`. Like a traditional game loop, `update()` is used for updating the application state, and `render()` is used for drawing the scene. Simple 2D optimizes both functions for performance and accurate scene composition, so it's good practice to keep those updating and rendering tasks separate (although drawing can actually be done anywhere, but don't make a habit of it).

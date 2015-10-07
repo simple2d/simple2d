@@ -226,5 +226,7 @@ int main(int argc, char const *argv[]) {
   fps_val.y = 470;
   
   S2D_Show(window);
+  
+  S2D_Close(window);
   return 0;
 }

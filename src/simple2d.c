@@ -755,7 +755,17 @@ int S2D_Show(Window *window) {
     SDL_GL_SwapWindow(window->sdl);
   }
   
-  // Quitting clean up
+  return 0;
+}
+
+
+/*
+ * Close the window, clean up SDL
+ */
+int S2D_Close(Window *window) {
+  
+  S2D_Log("Closing S2D", INFO);
+  
   IMG_Quit();
   Mix_CloseAudio();
   Mix_Quit();

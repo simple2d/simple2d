@@ -171,7 +171,7 @@ void S2D_Diagnostics(bool status);
 void print_gl_context();
 
 /*
- * Show the window
+ * Create the window
  */
 Window* S2D_CreateWindow(char *title, int width, int height, Update, Render);
 
@@ -179,6 +179,11 @@ Window* S2D_CreateWindow(char *title, int width, int height, Update, Render);
  * Show the window
  */
 int S2D_Show(Window *window);
+
+/*
+ * Close the window
+ */
+int S2D_Close(Window *window);
 
 /*
  * Draw triangle
