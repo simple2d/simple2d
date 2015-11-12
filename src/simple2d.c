@@ -447,6 +447,7 @@ Window* S2D_CreateWindow(char* title, int width, int height,
   window->render = render;
   window->on_key = NULL;
   window->on_key_down = NULL;
+  window->on_mouse = NULL;
   window->background.r = 0.0;
   window->background.g = 0.0;
   window->background.b = 0.0;
@@ -702,9 +703,8 @@ int S2D_Show(Window *window) {
           }
           break;
         case SDL_MOUSEBUTTONDOWN:
-          // TODO: Register the mouse click, add callback
-          break;
-        case SDL_CONTROLLERBUTTONDOWN:
+          if (window->on_mouse)
+            window->on_mouse(e.button.x, e.button.y);
           break;
           
         case SDL_JOYAXISMOTION:

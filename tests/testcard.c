@@ -32,6 +32,9 @@ void on_key_down(const char *key) {
   S2D_SetText(&key_down_char, (char*)key);
 }
 
+void on_mouse(int x, int y) {
+  printf("Mouse down at: %i, %i\n", x, y);
+}
 void update() {
   pointer.x = window->mouse.x;
   pointer.y = window->mouse.y;
@@ -197,6 +200,7 @@ int main(int argc, char const *argv[]) {
   
   window->on_key = on_key;
   window->on_key_down = on_key_down;
+  window->on_mouse = on_mouse;
   
   img_bmp = S2D_CreateImage("media/image.bmp");
   img_jpg = S2D_CreateImage("media/image.jpg");
