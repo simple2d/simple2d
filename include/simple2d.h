@@ -1,5 +1,9 @@
 // simple2d.h
 
+#define INFO   1
+#define WARN   2
+#define ERROR  3
+
 // If ARM, assume GLES
 #ifdef __arm__
   #define GLES true
@@ -22,6 +26,8 @@
 #include <SDL2/SDL_ttf.h>
 
 // In simple2d.c
+
+char *s2d_msg;  // for S2D_Log messages
 
 typedef struct Color {
   GLfloat r;

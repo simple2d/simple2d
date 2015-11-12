@@ -7,7 +7,8 @@
  * Prints current GL error
  */
 void gl_print_error(char *error) {
-  printf("%s: %d\n", error, glGetError());
+  asprintf(&s2d_msg, "%s (%d)", error, glGetError());
+  S2D_Log(s2d_msg, ERROR);
 }
 
 
@@ -15,14 +16,22 @@ void gl_print_error(char *error) {
  * Print info about the current OpenGL context
  */
 void gl_print_context_info(Window *window) {
-  puts("\n--- OpenGL Context ---");
-  printf("GL_VENDOR: %s\n", window->S2D_GL_VENDOR);
-  printf("GL_RENDERER: %s\n", window->S2D_GL_RENDERER);
-  printf("GL_VERSION: %s\n", window->S2D_GL_VERSION);
-  printf("GL_MAJOR_VERSION: %i\n", window->S2D_GL_MAJOR_VERSION);
-  printf("GL_MINOR_VERSION: %i\n", window->S2D_GL_MINOR_VERSION);
-  printf("GL_SHADING_LANGUAGE_VERSION: %s\n", window->S2D_GL_SHADING_LANGUAGE_VERSION);
-  puts("");
+  asprintf(&s2d_msg,
+    "OpenGL Context\n"
+    "GL_VENDOR: %s\n"
+    "GL_RENDERER: %s\n"
+    "GL_VERSION: %s\n"
+    "GL_MAJOR_VERSION: %i\n"
+    "GL_MINOR_VERSION: %i\n"
+    "GL_SHADING_LANGUAGE_VERSION: %s",
+    window->S2D_GL_VENDOR,
+    window->S2D_GL_RENDERER,
+    window->S2D_GL_VERSION,
+    window->S2D_GL_MAJOR_VERSION,
+    window->S2D_GL_MINOR_VERSION,
+    window->S2D_GL_SHADING_LANGUAGE_VERSION
+  );
+  S2D_Log(s2d_msg, INFO);
 }
 
 

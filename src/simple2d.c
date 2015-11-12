@@ -2,10 +2,6 @@
 
 #include "../include/simple2d.h"
 
-#define INFO  1
-#define WARN  2
-#define ERROR 3
-
 // Flag for printing diagnostic messages
 static bool diagnostics = false;
 
@@ -14,6 +10,7 @@ static bool GL2 = false;
 
 // Set to `true` to force OpenGL 2.1 for testing
 static bool FORCE_GL2 = false;
+
 
 
 /*
@@ -43,7 +40,8 @@ void S2D_Log(char *msg, int type) {
  * Logs Simple 2D errors to the console, with caller and message body
  */
 void S2D_Error(char *caller, const char *msg) {
-  printf("\033[4;31mError:\033[0m (%s) %s\n", caller, msg);
+  asprintf(&s2d_msg, "(%s) %s", caller, msg);
+  S2D_Log(s2d_msg, ERROR);
 }
 
 
@@ -51,7 +49,7 @@ void S2D_Error(char *caller, const char *msg) {
  * Enable/disable logging of diagnostics
  */
 void S2D_Diagnostics(bool status) {
-  diagnostics = status? true: false;
+  diagnostics = status;
 }
 
 
@@ -504,11 +502,10 @@ Window* S2D_CreateWindow(char* title, int width, int height,
   if ((window->width != window->s_width) ||
     (window->height != window->s_height)) {
     
-    char *msg;
-    asprintf(&msg, "Resolution %dx%d unsupported by driver. Scaling to %dx%d.",
-             window->s_width, window->s_height, window->width, window->height);
-    S2D_Log(msg, WARN);
-    free(msg);
+    asprintf(&s2d_msg,
+      "Resolution %dx%d unsupported by driver, scaling to %dx%d",
+      window->s_width, window->s_height, window->width, window->height);
+    S2D_Log(s2d_msg, WARN);
   }
   
   // Init OpenGL / GLES ////////////////////////////////////////////////////////
@@ -603,7 +600,10 @@ int S2D_Show(Window *window) {
   
   // Detect Controllers and Joysticks //////////////////////////////////////////
   
-  if (diagnostics) printf("Number of Joysticks: %i\n", SDL_NumJoysticks());
+  if (SDL_NumJoysticks() > 0) {
+    asprintf(&s2d_msg, "Joysticks detected: %i", SDL_NumJoysticks());
+    S2D_Log(s2d_msg, INFO);
+  }
   
   // Variables for controllers and joysticks
   SDL_GameController *controller = NULL;
@@ -616,30 +616,40 @@ int S2D_Show(Window *window) {
     if (SDL_IsGameController(i)) {
       controller = SDL_GameControllerOpen(i);
       if (controller) {
-        if (diagnostics) printf("Found a valid controller, named: %s\n", SDL_GameControllerName(controller));
+        asprintf(&s2d_msg, "Found a valid controller, named: %s\n",
+                 SDL_GameControllerName(controller));
+        S2D_Log(s2d_msg, INFO);
         break;  // Break after first available controller
       } else {
-        if (diagnostics) fprintf(stderr, "Could not open game controller %i: %s\n", i, SDL_GetError());
+        asprintf(&s2d_msg, "Could not open game controller %i: %s\n", i, SDL_GetError());
+        S2D_Log(s2d_msg, ERROR);
       }
     
     // Controller interface not supported, try to open as joystick
     } else {
-      if (diagnostics) printf("Joystick %i is not supported by the game controller interface!\n", i);
+      asprintf(&s2d_msg, "Joystick %i is not supported by the game controller interface", i);
+      S2D_Log(s2d_msg, WARN);
       joy = SDL_JoystickOpen(i);
       
       // Joystick is valid
       if (joy) {
-        if (diagnostics) {
-          printf("Opened Joystick %i\n", i);
-          printf("Name: %s\n", SDL_JoystickName(joy));
-          printf("Number of Axes: %d\n", SDL_JoystickNumAxes(joy));
-          printf("Number of Buttons: %d\n", SDL_JoystickNumButtons(joy));
-          printf("Number of Balls: %d\n", SDL_JoystickNumBalls(joy));
-        }
+        asprintf(&s2d_msg,
+          "Opened Joystick %i\n"
+          "Name: %s\n"
+          "Axes: %d\n"
+          "Buttons: %d\n"
+          "Balls: %d\n",
+          i, SDL_JoystickName(joy), SDL_JoystickNumAxes(joy),
+          SDL_JoystickNumButtons(joy), SDL_JoystickNumBalls(joy)
+        );
+        S2D_Log(s2d_msg, INFO);
+        
       // Joystick not valid
       } else {
-        if (diagnostics) printf("Couldn't open Joystick %i\n", i);
+        asprintf(&s2d_msg, "Could not open Joystick %i", i);
+        S2D_Log(s2d_msg, ERROR);
       }
+      
       break;  // Break after first available joystick
     }
   }
@@ -682,6 +692,7 @@ int S2D_Show(Window *window) {
     SDL_Event e;
     while (SDL_PollEvent(&e)) {
       switch (e.type) {
+        
         case SDL_KEYDOWN:
           if (e.key.keysym.scancode == SDL_SCANCODE_ESCAPE) {
             quit = true;
@@ -692,17 +703,15 @@ int S2D_Show(Window *window) {
           break;
         case SDL_MOUSEBUTTONDOWN:
           // TODO: Register the mouse click, add callback
-          if (diagnostics) printf("Mouse down at: %i, %i\n", e.button.x, e.button.y);
           break;
         case SDL_CONTROLLERBUTTONDOWN:
-          if (diagnostics) puts("SDL_CONTROLLERBUTTONDOWN");
           break;
+          
         case SDL_JOYAXISMOTION:
-          if (diagnostics) printf("SDL_JOYAXISMOTION: axis=%i, value=%i\n", e.jaxis.axis, e.jaxis.value);
           break;
         case SDL_JOYBUTTONDOWN:
-          if (diagnostics) printf("SDL_JOYBUTTONDOWN: %i\n", e.jbutton.button);
           break;
+          
         case SDL_QUIT:
           quit = true;
           break;
@@ -766,6 +775,10 @@ int S2D_Close(Window *window) {
   
   S2D_Log("Closing S2D", INFO);
   
+  // S2D
+  free(s2d_msg);
+  
+  // SDL
   IMG_Quit();
   Mix_CloseAudio();
   Mix_Quit();

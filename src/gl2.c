@@ -30,7 +30,7 @@ int gl2_init(int width, int height) {
   // Check for errors
   error = glGetError();
   if (error != GL_NO_ERROR) {
-    printf( "OpenGL initialization failed! Error code: %i\n", error);
+    gl_print_error("OpenGL initialization failed");
     return 1;
   } else {
     return 0;
