@@ -448,6 +448,7 @@ Window* S2D_CreateWindow(char* title, int width, int height,
   window->on_key = NULL;
   window->on_key_down = NULL;
   window->on_mouse = NULL;
+  window->on_controller = NULL;
   window->background.r = 0.0;
   window->background.g = 0.0;
   window->background.b = 0.0;
@@ -708,8 +709,13 @@ int S2D_Show(Window *window) {
           break;
           
         case SDL_JOYAXISMOTION:
+          if (window->on_controller)
+            window->on_controller(true, e.jaxis.axis, e.jaxis.value, false, 0);
           break;
+          
         case SDL_JOYBUTTONDOWN:
+          if (window->on_controller)
+            window->on_controller(false, 0, 0, true, e.jbutton.button);
           break;
           
         case SDL_QUIT:

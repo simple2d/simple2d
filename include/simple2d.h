@@ -49,6 +49,7 @@ typedef void (*Render)(void);
 typedef void (*On_key)(const char *);
 typedef void (*On_key_down)(const char *);
 typedef void (*On_mouse)(int x, int y);
+typedef void (*On_controller)(bool is_axis, int axis, int val, bool is_btn, int btn);
 
 typedef struct Window {
   SDL_Window *sdl;
@@ -72,6 +73,7 @@ typedef struct Window {
   On_key on_key;
   On_key_down on_key_down;
   On_mouse on_mouse;
+  On_controller on_controller;
   Mouse mouse;
   Uint32 frames;
   Uint32 elapsed_ms;
