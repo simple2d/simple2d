@@ -46,8 +46,8 @@ typedef struct Mouse {
 
 typedef void (*Update)(void);
 typedef void (*Render)(void);
-typedef void (*On_key)(const char *);
-typedef void (*On_key_down)(const char *);
+typedef void (*On_key)(const char *key);
+typedef void (*On_key_down)(const char *key);
 typedef void (*On_mouse)(int x, int y);
 typedef void (*On_controller)(bool is_axis, int axis, int val, bool is_btn, int btn);
 

@@ -189,7 +189,10 @@ Image S2D_CreateImage(char *path) {
   //////////////////////////////////////////////////////////////////////////////
   
   // Specifies the 2D texture image
-  glTexImage2D(GL_TEXTURE_2D, 0, mode, surface->w, surface->h, 0, mode, GL_UNSIGNED_BYTE, surface->pixels);
+  glTexImage2D(
+    GL_TEXTURE_2D, 0, mode, surface->w, surface->h,
+    0, mode, GL_UNSIGNED_BYTE, surface->pixels
+  );
   
   // Set texture parameters
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -274,7 +277,10 @@ Text S2D_CreateText(char *font, char *msg, int size) {
   glBindTexture(GL_TEXTURE_2D, txt.texture_id);
   
   // Specifies the 2D texture image
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, txt.w, txt.h, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels);
+  glTexImage2D(
+    GL_TEXTURE_2D, 0, GL_RGBA, txt.w, txt.h,
+    0, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels
+  );
   
   // Set texture parameters
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -301,7 +307,10 @@ void S2D_SetText(Text *txt, char *msg) {
   surface = TTF_RenderText_Blended(txt->font, txt->msg, color);
   
   glBindTexture(GL_TEXTURE_2D, txt->texture_id);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, txt->w, txt->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels);
+  glTexImage2D(
+    GL_TEXTURE_2D, 0, GL_RGBA, txt->w, txt->h,
+    0, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels
+  );
   
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -433,7 +442,7 @@ void S2D_FreeMusic(Music music) {
 /*
  * Create a window
  */
-Window* S2D_CreateWindow(char* title, int width, int height,
+Window* S2D_CreateWindow(char *title, int width, int height,
                          Update update, Render render) {
   
   // Allocate window and set default values
@@ -696,13 +705,11 @@ int S2D_Show(Window *window) {
       switch (e.type) {
         
         case SDL_KEYDOWN:
-          if (e.key.keysym.scancode == SDL_SCANCODE_ESCAPE) {
-            quit = true;
-          }
-          if (window->on_key) {
+          if (e.key.keysym.scancode == SDL_SCANCODE_ESCAPE) quit = true;
+          if (window->on_key)
             window->on_key(SDL_GetScancodeName(e.key.keysym.scancode));
-          }
           break;
+          
         case SDL_MOUSEBUTTONDOWN:
           if (window->on_mouse)
             window->on_mouse(e.button.x, e.button.y);
@@ -724,6 +731,7 @@ int S2D_Show(Window *window) {
       }
     }
     
+    // Detect keys held down
     int num_keys;
     key_state = SDL_GetKeyboardState(&num_keys);
     
@@ -735,10 +743,10 @@ int S2D_Show(Window *window) {
       }
     }
     
-    // Update Window State /////////////////////////////////////////////////////
-    
     // Store the mouse position
     SDL_GetMouseState(&mouse_x, &mouse_y);
+    
+    // Update Window State /////////////////////////////////////////////////////
     
     // Store new values in the window
     window->mouse.x      = mouse_x;
