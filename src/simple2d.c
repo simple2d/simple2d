@@ -20,13 +20,13 @@ void S2D_Log(char *msg, int type) {
   
   if (diagnostics) {
     switch (type) {
-      case INFO:
+      case S2D_INFO:
         printf("\033[4;36mInfo:\033[0m %s\n", msg);
         break;
-      case WARN:
+      case S2D_WARN:
         printf("\033[4;33mWarning:\033[0m %s\n", msg);
         break;
-      case ERROR:
+      case S2D_ERROR:
         printf("\033[4;31mError:\033[0m %s\n", msg);
         break;
       default:
@@ -41,7 +41,7 @@ void S2D_Log(char *msg, int type) {
  */
 void S2D_Error(char *caller, const char *msg) {
   asprintf(&s2d_msg, "(%s) %s", caller, msg);
-  S2D_Log(s2d_msg, ERROR);
+  S2D_Log(s2d_msg, S2D_ERROR);
 }
 
 
@@ -130,7 +130,7 @@ Image S2D_CreateImage(char *path) {
   
   // TODO: Implement images in GLES
   #if GLES
-    S2D_Log("S2D_DrawImage not yet implemented!", INFO);
+    S2D_Log("S2D_DrawImage not yet implemented!", S2D_INFO);
   #endif
   
   Image img;
@@ -235,7 +235,7 @@ void S2D_FreeImage(Image img) {
 Text S2D_CreateText(char *font, char *msg, int size) {
   
   #if GLES
-    S2D_Log("S2D_DrawText not yet implemented!", WARN);
+    S2D_Log("S2D_DrawText not yet implemented!", S2D_WARN);
   #endif
   
   Text txt;
@@ -516,7 +516,7 @@ Window* S2D_CreateWindow(char *title, int width, int height,
     asprintf(&s2d_msg,
       "Resolution %dx%d unsupported by driver, scaling to %dx%d",
       window->s_width, window->s_height, window->width, window->height);
-    S2D_Log(s2d_msg, WARN);
+    S2D_Log(s2d_msg, S2D_WARN);
   }
   
   // Init OpenGL / GLES ////////////////////////////////////////////////////////
@@ -605,7 +605,7 @@ int S2D_Show(Window *window) {
   // Enable VSync
   if (window->vsync) {
     if (!SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1")) {
-      S2D_Log("VSync cannot be enabled", WARN);
+      S2D_Log("VSync cannot be enabled", S2D_WARN);
     }
   }
   
@@ -613,7 +613,7 @@ int S2D_Show(Window *window) {
   
   if (SDL_NumJoysticks() > 0) {
     asprintf(&s2d_msg, "Joysticks detected: %i", SDL_NumJoysticks());
-    S2D_Log(s2d_msg, INFO);
+    S2D_Log(s2d_msg, S2D_INFO);
   }
   
   // Variables for controllers and joysticks
@@ -629,17 +629,17 @@ int S2D_Show(Window *window) {
       if (controller) {
         asprintf(&s2d_msg, "Found a valid controller, named: %s\n",
                  SDL_GameControllerName(controller));
-        S2D_Log(s2d_msg, INFO);
+        S2D_Log(s2d_msg, S2D_INFO);
         break;  // Break after first available controller
       } else {
         asprintf(&s2d_msg, "Could not open game controller %i: %s\n", i, SDL_GetError());
-        S2D_Log(s2d_msg, ERROR);
+        S2D_Log(s2d_msg, S2D_ERROR);
       }
     
     // Controller interface not supported, try to open as joystick
     } else {
       asprintf(&s2d_msg, "Joystick %i is not supported by the game controller interface", i);
-      S2D_Log(s2d_msg, WARN);
+      S2D_Log(s2d_msg, S2D_WARN);
       joy = SDL_JoystickOpen(i);
       
       // Joystick is valid
@@ -653,12 +653,12 @@ int S2D_Show(Window *window) {
           i, SDL_JoystickName(joy), SDL_JoystickNumAxes(joy),
           SDL_JoystickNumButtons(joy), SDL_JoystickNumBalls(joy)
         );
-        S2D_Log(s2d_msg, INFO);
+        S2D_Log(s2d_msg, S2D_INFO);
         
       // Joystick not valid
       } else {
         asprintf(&s2d_msg, "Could not open Joystick %i", i);
-        S2D_Log(s2d_msg, ERROR);
+        S2D_Log(s2d_msg, S2D_ERROR);
       }
       
       break;  // Break after first available joystick
@@ -787,7 +787,7 @@ int S2D_Show(Window *window) {
  */
 int S2D_Close(Window *window) {
   
-  S2D_Log("Closing S2D", INFO);
+  S2D_Log("Closing S2D", S2D_INFO);
   
   // S2D
   free(s2d_msg);

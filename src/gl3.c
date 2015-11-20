@@ -28,7 +28,7 @@ int gl3_check_linked(GLuint program) {
   glGetProgramiv(program, GL_LINK_STATUS, &linked);
   
   if (!linked) {
-    S2D_Log("GL3 shader was not linked", ERROR);
+    S2D_Log("GL3 shader was not linked", S2D_ERROR);
     return GL_FALSE;
   }
   

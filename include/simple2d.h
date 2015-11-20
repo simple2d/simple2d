@@ -1,8 +1,8 @@
 // simple2d.h
 
-#define INFO   1
-#define WARN   2
-#define ERROR  3
+#define S2D_INFO  1
+#define S2D_WARN  2
+#define S2D_ERROR 3
 
 // If ARM, assume GLES
 #ifdef __arm__

@@ -8,7 +8,7 @@
  */
 void gl_print_error(char *error) {
   asprintf(&s2d_msg, "%s (%d)", error, glGetError());
-  S2D_Log(s2d_msg, ERROR);
+  S2D_Log(s2d_msg, S2D_ERROR);
 }
 
 
@@ -31,7 +31,7 @@ void gl_print_context_info(Window *window) {
     window->S2D_GL_MINOR_VERSION,
     window->S2D_GL_SHADING_LANGUAGE_VERSION
   );
-  S2D_Log(s2d_msg, INFO);
+  S2D_Log(s2d_msg, S2D_INFO);
 }
 
 
