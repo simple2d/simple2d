@@ -4,6 +4,11 @@
 #define S2D_WARN  2
 #define S2D_ERROR 3
 
+#define S2D_RESIZABLE  SDL_WINDOW_RESIZABLE
+#define S2D_BORDERLESS SDL_WINDOW_BORDERLESS
+#define S2D_FULLSCREEN SDL_WINDOW_FULLSCREEN_DESKTOP
+#define S2D_HIGHDPI    SDL_WINDOW_ALLOW_HIGHDPI
+
 // If ARM, assume GLES
 #ifdef __arm__
   #define GLES true
@@ -183,7 +188,9 @@ void print_gl_context();
 /*
  * Create the window
  */
-Window* S2D_CreateWindow(char *title, int width, int height, Update, Render);
+Window* S2D_CreateWindow(
+  char *title, int width, int height, Update, Render, int flags
+);
 
 /*
  * Show the window

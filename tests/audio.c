@@ -105,7 +105,7 @@ void on_key(const char *key) {
 int main(int argc, char const *argv[]) {
   
   window = S2D_CreateWindow(
-    "Audio", 200, 150, NULL, NULL
+    "Audio", 200, 150, NULL, NULL, 0
   );
   
   window->on_key = on_key;

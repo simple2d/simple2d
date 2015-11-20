@@ -443,7 +443,7 @@ void S2D_FreeMusic(Music music) {
  * Create a window
  */
 Window* S2D_CreateWindow(char *title, int width, int height,
-                         Update update, Render render) {
+                         Update update, Render render, int flags) {
   
   // Allocate window and set default values
   Window *window = (Window*)malloc(sizeof(Window));
@@ -492,14 +492,11 @@ Window* S2D_CreateWindow(char *title, int width, int height,
   }
   
   // Create SDL window
-  // TODO: Add `SDL_WINDOW_FULLSCREEN_DESKTOP` option to flags, or...
-  //       Call `SDL_SetWindowFullscreen` in update loop
-  // TODO: Add SDL_WINDOW_ALLOW_HIGHDPI flag
   window->sdl = SDL_CreateWindow(
     window->title,                                   // title
     SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,  // window position
     window->width, window->height,                   // window size
-    SDL_WINDOW_OPENGL                                // flags
+    SDL_WINDOW_OPENGL | flags                        // flags
   );
   
   if (!window->sdl) S2D_Error("SDL_CreateWindow", SDL_GetError());
