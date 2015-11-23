@@ -112,8 +112,8 @@ void render() {
   // Transparancy
   
   S2D_DrawQuad(  0, 165, 1, 1, 1, 0,
-               700, 165, 1, 1, 1, 1,
-               700, 200, 1, 1, 1, 1,
+               600, 165, 1, 1, 1, 1,
+               600, 200, 1, 1, 1, 1,
                  0, 200, 1, 1, 1, 0);
   
   // Triangles
@@ -189,10 +189,10 @@ void render() {
   
   // Mouse positions
   
-  S2D_DrawQuad(pointer.x - 5, pointer.y - 7,  1, 0, 0, 1,
-               pointer.x + 5, pointer.y - 7,  1, 0, 0, 1,
-               pointer.x + 5, pointer.y + 4, 1, 0, 0, 1,
-               pointer.x - 5, pointer.y + 4, 1, 0, 0, 1);
+  S2D_DrawQuad(pointer.x - 5, pointer.y - 7,  1, 1, 1, 1,
+               pointer.x + 5, pointer.y - 7,  1, 1, 1, 1,
+               pointer.x + 5, pointer.y + 4,  1, 1, 1, 1,
+               pointer.x - 5, pointer.y + 4,  1, 1, 1, 1);
   
 }
 
