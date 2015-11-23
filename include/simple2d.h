@@ -122,6 +122,7 @@ void gl_print_error(char *error);
 void gl_print_context_info(Window *window);
 void gl_store_context_info(Window *window);
 GLuint gl_load_shader(GLenum type, const GLchar *shaderSrc, char *shaderName);
+void S2D_GL_SetupTexture(GLuint *id, GLint format, int w, int h, const GLvoid *data, GLint filter);
 
 /*
  * OpenGL & GLES internal functions

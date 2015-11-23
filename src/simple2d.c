@@ -143,60 +143,21 @@ Image S2D_CreateImage(char *path) {
     exit(1);
   }
   
+  // Initialize values
   img.x = 0;
   img.y = 0;
-  
-  // Save the width and height of the surface
   img.w = surface->w;
   img.h = surface->h;
-  
-  // TESTING ///////////////////////////////////////////////////////////////////
-  // SDL_RWops *rwop;
-  // rwop=SDL_RWFromFile(path, "rb");
-  // if(IMG_isBMP(rwop))
-  // printf("sample.bmp is a BMP file.\n");
-  // else
-  // printf("sample.bmp is not a BMP file, or BMP support is not available.\n");
-  // 
-  // if (GL2) {
-  //   img.texture = SDL_CreateTextureFromSurface(window->renderer, surface);
-  //   if (!img.texture) S2D_Error("SDL_CreateTextureFromSurface", SDL_GetError());
-  // } else {
-  // }
-  //////////////////////////////////////////////////////////////////////////////
-  
   img.texture_id = 0;
   
-  // Generate texture names
-  glGenTextures(1, &img.texture_id);
-  
-  // Bind the named texture to a texturing target
-  glBindTexture(GL_TEXTURE_2D, img.texture_id);
-  
-  // TODO: BMP is in BGR, I think
   // Detect image mode
-  int mode = GL_RGB;
+  // TODO: BMP is in BGR...?
+  int format = GL_RGB;
   if(surface->format->BytesPerPixel == 4) {
-    mode = GL_RGBA;
+    format = GL_RGBA;
   }
   
-  // TESTING ///////////////////////////////////////////////////////////////////
-  // printf("\n%s\n", path);
-  // printf("texture_id: %i\n", img.texture_id);
-  // if (mode == GL_RGB) puts("Mode is GL_RGB");
-  // if (mode == GL_RGBA) puts("Mode is GL_RGBA");
-  // printf("mode: %i\n\n", mode);
-  //////////////////////////////////////////////////////////////////////////////
-  
-  // Specifies the 2D texture image
-  glTexImage2D(
-    GL_TEXTURE_2D, 0, mode, surface->w, surface->h,
-    0, mode, GL_UNSIGNED_BYTE, surface->pixels
-  );
-  
-  // Set texture parameters
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  S2D_GL_SetupTexture(&img.texture_id, format, img.w, img.h, surface->pixels, GL_NEAREST);
   
   // Free the surface data, no longer needed
   SDL_FreeSurface(surface);
@@ -254,6 +215,7 @@ Text S2D_CreateText(char *font, char *msg, int size) {
   txt.color.g = 1.0;
   txt.color.b = 1.0;
   txt.color.a = 1.0;
+  txt.texture_id = 0;
   
   txt.font = TTF_OpenFont(font, size);
   if (!txt.font) {
@@ -268,23 +230,7 @@ Text S2D_CreateText(char *font, char *msg, int size) {
   SDL_Color color = { 255, 255, 255 };
   surface = TTF_RenderText_Blended(txt.font, txt.msg, color);
   
-  txt.texture_id = 0;
-  
-  // Generate texture names
-  glGenTextures(1, &txt.texture_id);
-  
-  // Bind the named texture to a texturing target
-  glBindTexture(GL_TEXTURE_2D, txt.texture_id);
-  
-  // Specifies the 2D texture image
-  glTexImage2D(
-    GL_TEXTURE_2D, 0, GL_RGBA, txt.w, txt.h,
-    0, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels
-  );
-  
-  // Set texture parameters
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  S2D_GL_SetupTexture(&txt.texture_id, GL_RGBA, txt.w, txt.h, surface->pixels, GL_NEAREST);
   
   // Free the surface data, no longer needed
   SDL_FreeSurface(surface);
@@ -306,14 +252,7 @@ void S2D_SetText(Text *txt, char *msg) {
   SDL_Color color = { 255, 255, 255 };
   surface = TTF_RenderText_Blended(txt->font, txt->msg, color);
   
-  glBindTexture(GL_TEXTURE_2D, txt->texture_id);
-  glTexImage2D(
-    GL_TEXTURE_2D, 0, GL_RGBA, txt->w, txt->h,
-    0, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels
-  );
-  
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  S2D_GL_SetupTexture(&txt->texture_id, GL_RGBA, txt->w, txt->h, surface->pixels, GL_NEAREST);
   
   SDL_FreeSurface(surface);
 }

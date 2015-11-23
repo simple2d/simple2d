@@ -100,3 +100,28 @@ GLuint gl_load_shader(GLenum type, const GLchar *shaderSrc, char *shaderName) {
   
   return shader;
 }
+
+/*
+ * Prepares a texture for rendering.
+ */
+void S2D_GL_SetupTexture(GLuint *id, GLint format, int w, int h, const GLvoid *data, GLint filter) {
+  
+  // If 0, then a new texture; generate name
+  if (*id == 0) {
+    glGenTextures(1, id);
+  }
+  
+  // Bind the named texture to a texturing target
+  glBindTexture(GL_TEXTURE_2D, *id);
+  
+  // Specifies the 2D texture image
+  glTexImage2D(
+    GL_TEXTURE_2D, 0, format, w, h,
+    0, format, GL_UNSIGNED_BYTE, data
+  );
+  
+  // Set texture parameters
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
+}
+
