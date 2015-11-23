@@ -38,6 +38,7 @@
 
 extern char *S2D_msg;  // for S2D_Log messages
 extern bool S2D_GL2;   // Flag set if OpenGL 2.1
+extern GLfloat S2D_GL_orthoMatrix[16];
 
 // Type Definitions ////////////////////////////////////////////////////////////
 

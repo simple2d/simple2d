@@ -6,15 +6,6 @@ static GLuint shaderProgram;
 static GLuint texShaderProgram;
 static GLuint colorLocation;
 
-// For GL3 and GLES, an orthographic 2D projection matrix.
-// Matrix is given in column-first order.
-static GLfloat orthoMatrix[16] = {
-  2.0f, 0, 0, 0,
-  0, -2.0f, 0, 0,
-  0, 0, -2.0f / 128.0, 0,  // 128.0 == far_z
-  -1.0f, 1.0f, -1.0f, 1.0f
-};
-
 
 /*
  * Check if shader program was linked
@@ -156,20 +147,20 @@ int gles_init(int width, int height, int s_width, int s_height) {
   }
   
   // Set orthographic projection matrix
-  orthoMatrix[0] = 2.0f / ((GLfloat)width * scale_x);
-  orthoMatrix[5] = -2.0f / ((GLfloat)height * scale_y);
+  S2D_GL_orthoMatrix[0] = 2.0f / ((GLfloat)width * scale_x);
+  S2D_GL_orthoMatrix[5] = -2.0f / ((GLfloat)height * scale_y);
   
   // Use the program object
   glUseProgram(shaderProgram);
   
   GLuint mMvpLocation = glGetUniformLocation(shaderProgram, "u_mvpMatrix");
-  glUniformMatrix4fv(mMvpLocation, 1, GL_FALSE, orthoMatrix);
+  glUniformMatrix4fv(mMvpLocation, 1, GL_FALSE, S2D_GL_orthoMatrix);
   
   // Use the texture program object
   glUseProgram(texShaderProgram);
   
   GLuint texmMvpLocation = glGetUniformLocation(texShaderProgram, "u_mvpMatrix");
-  glUniformMatrix4fv(texmMvpLocation, 1, GL_FALSE, orthoMatrix);
+  glUniformMatrix4fv(texmMvpLocation, 1, GL_FALSE, S2D_GL_orthoMatrix);
   
   // Clean up
   glDeleteShader(vertexShader);

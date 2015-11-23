@@ -2,6 +2,15 @@
 
 #include "../include/simple2d.h"
 
+// The orthographic projection matrix for 2D rendering,
+// given in column-first order.
+GLfloat S2D_GL_orthoMatrix[16] = {
+   2.0f,     0,             0,    0,
+      0, -2.0f,             0,    0,
+      0,     0, -2.0f / 128.0,    0,  // 128.0 == far_z
+  -1.0f,  1.0f,         -1.0f, 1.0f
+};
+
 
 /*
  * Prints current GL error

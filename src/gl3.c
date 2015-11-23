@@ -9,15 +9,6 @@ static GLuint elements[] = {
   2, 3, 0
 };
 
-// For GL3 and GLES, an orthographic 2D projection matrix.
-// Matrix is given in column-first order.
-static GLfloat orthoMatrix[16] = {
-  2.0f, 0, 0, 0,
-  0, -2.0f, 0, 0,
-  0, 0, -2.0f / 128.0, 0,  // 128.0 == far_z
-  -1.0f, 1.0f, -1.0f, 1.0f
-};
-
 
 /*
  * Check if shader program was linked
@@ -45,20 +36,20 @@ void gl3_set_view(int window_width,       int window_height,
   glViewport(0, 0, window_width, window_height);
   
   // Set orthographic projection matrix
-  orthoMatrix[0] =  2.0f / (GLfloat)s2d_viewport_width;
-  orthoMatrix[5] = -2.0f / (GLfloat)s2d_viewport_height;
+  S2D_GL_orthoMatrix[0] =  2.0f / (GLfloat)s2d_viewport_width;
+  S2D_GL_orthoMatrix[5] = -2.0f / (GLfloat)s2d_viewport_height;
   
   // Use the program object
   glUseProgram(shaderProgram);
   
   GLuint mMvpLocation = glGetUniformLocation(shaderProgram, "u_mvpMatrix");
-  glUniformMatrix4fv(mMvpLocation, 1, GL_FALSE, orthoMatrix);
+  glUniformMatrix4fv(mMvpLocation, 1, GL_FALSE, S2D_GL_orthoMatrix);
   
   // Use the texture program object
   glUseProgram(texShaderProgram);
   
   GLuint texmMvpLocation = glGetUniformLocation(texShaderProgram, "u_mvpMatrix");
-  glUniformMatrix4fv(texmMvpLocation, 1, GL_FALSE, orthoMatrix);
+  glUniformMatrix4fv(texmMvpLocation, 1, GL_FALSE, S2D_GL_orthoMatrix);
 }
 
 
