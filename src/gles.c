@@ -102,9 +102,9 @@ int gles_init(int width, int height, int s_width, int s_height) {
     "}";
   
   // Load the vertex and fragment shaders
-  GLuint vertexShader = gl_load_shader(GL_VERTEX_SHADER, vertexSource, "GLES Vertex");
-  GLuint fragmentShader = gl_load_shader(GL_FRAGMENT_SHADER, fragmentSource, "GLES Fragment");
-  GLuint texFragmentShader = gl_load_shader(GL_FRAGMENT_SHADER, texFragmentSource, "GLES Texture Fragment");
+  GLuint vertexShader      = S2D_GL_LoadShader(  GL_VERTEX_SHADER,      vertexSource, "GLES Vertex");
+  GLuint fragmentShader    = S2D_GL_LoadShader(GL_FRAGMENT_SHADER,    fragmentSource, "GLES Fragment");
+  GLuint texFragmentShader = S2D_GL_LoadShader(GL_FRAGMENT_SHADER, texFragmentSource, "GLES Texture Fragment");
   
   // Create the shader program object
   shaderProgram = glCreateProgram();

@@ -7,8 +7,8 @@
  * Prints current GL error
  */
 void S2D_GL_PrintError(char *error) {
-  asprintf(&s2d_msg, "%s (%d)", error, glGetError());
-  S2D_Log(s2d_msg, S2D_ERROR);
+  asprintf(&S2D_msg, "%s (%d)", error, glGetError());
+  S2D_Log(S2D_msg, S2D_ERROR);
 }
 
 
@@ -16,7 +16,7 @@ void S2D_GL_PrintError(char *error) {
  * Print info about the current OpenGL context
  */
 void S2D_GL_PrintContextInfo(Window *window) {
-  asprintf(&s2d_msg,
+  asprintf(&S2D_msg,
     "OpenGL Context\n"
     "GL_VENDOR: %s\n"
     "GL_RENDERER: %s\n"
@@ -31,7 +31,7 @@ void S2D_GL_PrintContextInfo(Window *window) {
     window->S2D_GL_MINOR_VERSION,
     window->S2D_GL_SHADING_LANGUAGE_VERSION
   );
-  S2D_Log(s2d_msg, S2D_INFO);
+  S2D_Log(S2D_msg, S2D_INFO);
 }
 
 
@@ -111,7 +111,7 @@ void S2D_GL_SetView(int window_width,       int window_height,
   #if GLES
     // gles_set_view(window_width, window_height, s2d_viewport_width, s2d_viewport_height);
   #else
-    if (GL2) {
+    if (S2D_GL2) {
       // gl2_set_view(window_width, window_height, s2d_viewport_width, s2d_viewport_height);
     } else {
       gl3_set_view(window_width, window_height, s2d_viewport_width, s2d_viewport_height);
@@ -160,7 +160,7 @@ void S2D_GL_DrawTriangle(GLfloat x1,  GLfloat y1,
                        x2, y2, c2r, c2g, c2b, c2a,
                        x3, y3, c3r, c3g, c3b, c3a);
   #else
-    if (GL2) {
+    if (S2D_GL2) {
       gl2_draw_triangle(x1, y1, c1r, c1g, c1b, c1a,
                         x2, y2, c2r, c2g, c2b, c2a,
                         x3, y3, c3r, c3g, c3b, c3a);
@@ -180,7 +180,7 @@ void S2D_GL_DrawImage(Image img) {
   #if GLES
     gles_draw_image(img);
   #else
-    if (GL2) {
+    if (S2D_GL2) {
       gl2_draw_image(img);
     } else {
       gl3_draw_image(img);
@@ -196,7 +196,7 @@ void S2D_GL_DrawText(Text txt) {
   #if GLES
     gles_draw_text(txt);
   #else
-    if (GL2) {
+    if (S2D_GL2) {
       gl2_draw_text(txt);
     } else {
       gl3_draw_text(txt);

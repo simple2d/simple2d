@@ -1,5 +1,7 @@
 // simple2d.h
 
+// Definitions /////////////////////////////////////////////////////////////////
+
 #define S2D_INFO  1
 #define S2D_WARN  2
 #define S2D_ERROR 3
@@ -16,6 +18,8 @@
   #define GLES false
 #endif
 
+// Includes ////////////////////////////////////////////////////////////////////
+
 #include <stdbool.h>
 #include <SDL2/SDL.h>
 
@@ -30,9 +34,12 @@
 #include <SDL2/SDL_mixer.h>
 #include <SDL2/SDL_ttf.h>
 
-// In simple2d.c
+// Shared Data /////////////////////////////////////////////////////////////////
 
-char *s2d_msg;  // for S2D_Log messages
+extern char *S2D_msg;  // for S2D_Log messages
+extern bool S2D_GL2;   // Flag set if OpenGL 2.1
+
+// Type Definitions ////////////////////////////////////////////////////////////
 
 typedef struct Color {
   GLfloat r;
@@ -115,9 +122,8 @@ typedef struct Music {
   Mix_Music *data;
 } Music;
 
-/*
- * Simple 2D OpenGL functions
- */
+// Simple 2D OpenGL Functions //////////////////////////////////////////////////
+
 void S2D_GL_PrintError(char *error);
 void S2D_GL_PrintContextInfo(Window *window);
 void S2D_GL_StoreContextInfo(Window *window);
@@ -138,9 +144,8 @@ void S2D_GL_DrawText(Text txt);
 void S2D_GL_FreeTexture(GLuint *id);
 void S2D_GL_Clear(Color clr);
 
-/*
- * OpenGL & GLES internal functions
- */
+// OpenGL & GLES Internal Functions ////////////////////////////////////////////
+
 #if GLES
   void gles_hello();
   int gles_check_linked(GLuint program, char *name);
@@ -182,6 +187,8 @@ void S2D_GL_Clear(Color clr);
   void gl2_draw_text(Text txt);
   void gl3_draw_text(Text txt);
 #endif
+
+// S2D Functions ///////////////////////////////////////////////////////////////
 
 /*
  * Logs standard messages to the console

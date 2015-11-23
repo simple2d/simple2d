@@ -122,9 +122,9 @@ int gl3_init(int width, int height) {
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
   
   // Load the vertex and fragment shaders
-  GLuint vertexShader = gl_load_shader(GL_VERTEX_SHADER, vertexSource, "GL3 Vertex");
-  GLuint fragmentShader = gl_load_shader(GL_FRAGMENT_SHADER, fragmentSource, "GL3 Fragment");
-  GLuint texFragmentShader = gl_load_shader(GL_FRAGMENT_SHADER, texFragmentSource, "GL3 Texture Fragment");
+  GLuint vertexShader      = S2D_GL_LoadShader(  GL_VERTEX_SHADER,      vertexSource, "GL3 Vertex");
+  GLuint fragmentShader    = S2D_GL_LoadShader(GL_FRAGMENT_SHADER,    fragmentSource, "GL3 Fragment");
+  GLuint texFragmentShader = S2D_GL_LoadShader(GL_FRAGMENT_SHADER, texFragmentSource, "GL3 Texture Fragment");
   
   // Create the shader program object
   shaderProgram = glCreateProgram();
@@ -207,6 +207,9 @@ void gl3_draw_triangle(GLfloat x1,  GLfloat y1,
 }
 
 
+/*
+ * Draw a texture
+ */
 static void gl3_draw_texture(int x, int y, int w, int h, 
                              GLfloat r, GLfloat g, GLfloat b, GLfloat a,
                              GLuint texture_id) {

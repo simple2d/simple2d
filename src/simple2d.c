@@ -5,11 +5,12 @@
 // Flag for printing diagnostic messages
 static bool diagnostics = false;
 
-// Flag set if OpenGL 2.1
-static bool GL2 = false;
-
 // Set to `true` to force OpenGL 2.1 for testing
 static bool FORCE_GL2 = false;
+
+// Initalize S2D shared data
+bool S2D_GL2 = false;
+char *S2D_msg = "";
 
 
 /*
@@ -39,8 +40,8 @@ void S2D_Log(char *msg, int type) {
  * Logs Simple 2D errors to the console, with caller and message body
  */
 void S2D_Error(char *caller, const char *msg) {
-  asprintf(&s2d_msg, "(%s) %s", caller, msg);
-  S2D_Log(s2d_msg, S2D_ERROR);
+  asprintf(&S2D_msg, "(%s) %s", caller, msg);
+  S2D_Log(S2D_msg, S2D_ERROR);
 }
 
 
@@ -399,14 +400,15 @@ Window* S2D_CreateWindow(char *title, int width, int height,
   if ((window->width != window->s_width) ||
     (window->height != window->s_height)) {
     
-    asprintf(&s2d_msg,
+    asprintf(&S2D_msg,
       "Resolution %dx%d unsupported by driver, scaling to %dx%d",
       window->s_width, window->s_height, window->width, window->height);
-    S2D_Log(s2d_msg, S2D_WARN);
+    S2D_Log(S2D_msg, S2D_WARN);
   }
   
   // Init OpenGL / GLES ////////////////////////////////////////////////////////
   
+  // Specify the OpenGL Context
   #if !GLES
     if (FORCE_GL2) {
       // Use legacy OpenGL 2.1
@@ -420,6 +422,7 @@ Window* S2D_CreateWindow(char *title, int width, int height,
     }
   #endif
   
+  // Create and store the OpenGL context
   if (FORCE_GL2) {
     window->glcontext = NULL;
   } else {
@@ -427,43 +430,49 @@ Window* S2D_CreateWindow(char *title, int width, int height,
     window->glcontext = SDL_GL_CreateContext(window->sdl);
   }
   
-  // Check for a valid OpenGL context
+  // Check if a valid OpenGL context was created
   if (window->glcontext) {
+    // Valid context found
     
-    // Initialize OpenGL ES 2.0
     #if GLES
+      // Initialize OpenGL ES 2.0
       gles_init(window->width, window->height, window->s_width, window->s_height);
-    
-    // Initialize OpenGL 3.3 or forward-compatible core profile
+      
     #else
+      // Initialize OpenGL 3.3+
       gl3_init(window->width, window->height);
     #endif
-  
-  // Could not create context
-  } else {
     
-    // Fail on OpenGL ES
+  } else {
+    // Context could not be created
+    
     #if GLES
       S2D_Error("GLES / SDL_GL_CreateContext", SDL_GetError());
       
-    // Try to fallback on an OpenGL 2.1 context
     #else
+      // Try to fallback using an OpenGL 2.1 context
       SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
       SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
       
-      // Check for a valid OpenGL context
+      // Try creating the context again
       window->glcontext = SDL_GL_CreateContext(window->sdl);
+      
+      // Check if this context was created
       if (window->glcontext) {
-        GL2 = true;
+        // Valid context found
+        S2D_GL2 = true;
         gl2_init(window->width, window->height);
         
-        // Could not create any GL contexts
       } else {
+        // Could not create any OpenGL contexts, hard failure
         S2D_Error("GL2 / SDL_GL_CreateContext", SDL_GetError());
+        S2D_Log("An OpenGL context could not be created", S2D_ERROR);
+        exit(1);
       }
     #endif
   }
   
+  // Store the context and print it if diagnostics is enabled
   S2D_GL_StoreContextInfo(window);
   if (diagnostics) S2D_GL_PrintContextInfo(window);
   
@@ -498,8 +507,8 @@ int S2D_Show(Window *window) {
   // Detect Controllers and Joysticks //////////////////////////////////////////
   
   if (SDL_NumJoysticks() > 0) {
-    asprintf(&s2d_msg, "Joysticks detected: %i", SDL_NumJoysticks());
-    S2D_Log(s2d_msg, S2D_INFO);
+    asprintf(&S2D_msg, "Joysticks detected: %i", SDL_NumJoysticks());
+    S2D_Log(S2D_msg, S2D_INFO);
   }
   
   // Variables for controllers and joysticks
@@ -513,24 +522,24 @@ int S2D_Show(Window *window) {
     if (SDL_IsGameController(i)) {
       controller = SDL_GameControllerOpen(i);
       if (controller) {
-        asprintf(&s2d_msg, "Found a valid controller, named: %s\n",
+        asprintf(&S2D_msg, "Found a valid controller, named: %s\n",
                  SDL_GameControllerName(controller));
-        S2D_Log(s2d_msg, S2D_INFO);
+        S2D_Log(S2D_msg, S2D_INFO);
         break;  // Break after first available controller
       } else {
-        asprintf(&s2d_msg, "Could not open game controller %i: %s\n", i, SDL_GetError());
-        S2D_Log(s2d_msg, S2D_ERROR);
+        asprintf(&S2D_msg, "Could not open game controller %i: %s\n", i, SDL_GetError());
+        S2D_Log(S2D_msg, S2D_ERROR);
       }
     
     // Controller interface not supported, try to open as joystick
     } else {
-      asprintf(&s2d_msg, "Joystick %i is not supported by the game controller interface", i);
-      S2D_Log(s2d_msg, S2D_WARN);
+      asprintf(&S2D_msg, "Joystick %i is not supported by the game controller interface", i);
+      S2D_Log(S2D_msg, S2D_WARN);
       joy = SDL_JoystickOpen(i);
       
       // Joystick is valid
       if (joy) {
-        asprintf(&s2d_msg,
+        asprintf(&S2D_msg,
           "Opened Joystick %i\n"
           "Name: %s\n"
           "Axes: %d\n"
@@ -539,12 +548,12 @@ int S2D_Show(Window *window) {
           i, SDL_JoystickName(joy), SDL_JoystickNumAxes(joy),
           SDL_JoystickNumButtons(joy), SDL_JoystickNumBalls(joy)
         );
-        S2D_Log(s2d_msg, S2D_INFO);
+        S2D_Log(S2D_msg, S2D_INFO);
         
       // Joystick not valid
       } else {
-        asprintf(&s2d_msg, "Could not open Joystick %i", i);
-        S2D_Log(s2d_msg, S2D_ERROR);
+        asprintf(&S2D_msg, "Could not open Joystick %i", i);
+        S2D_Log(S2D_msg, S2D_ERROR);
       }
       
       break;  // Break after first available joystick
@@ -589,17 +598,17 @@ int S2D_Show(Window *window) {
           if (window->on_key)
             window->on_key(SDL_GetScancodeName(e.key.keysym.scancode));
           break;
-          
+        
         case SDL_MOUSEBUTTONDOWN:
           if (window->on_mouse)
             window->on_mouse(e.button.x, e.button.y);
           break;
-          
+        
         case SDL_JOYAXISMOTION:
           if (window->on_controller)
             window->on_controller(true, e.jaxis.axis, e.jaxis.value, false, 0);
           break;
-          
+        
         case SDL_JOYBUTTONDOWN:
           if (window->on_controller)
             window->on_controller(false, 0, 0, true, e.jbutton.button);
@@ -678,7 +687,7 @@ int S2D_Close(Window *window) {
   S2D_Log("Closing S2D", S2D_INFO);
   
   // S2D
-  free(s2d_msg);
+  free(S2D_msg);
   
   // SDL
   IMG_Quit();
