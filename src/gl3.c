@@ -37,6 +37,32 @@ int gl3_check_linked(GLuint program) {
 
 
 /*
+ * Sets the view and matrix projection
+ */
+void gl3_set_view(int window_width,       int window_height,
+                  int s2d_viewport_width, int s2d_viewport_height) {
+  
+  glViewport(0, 0, window_width, window_height);
+  
+  // Set orthographic projection matrix
+  orthoMatrix[0] =  2.0f / (GLfloat)s2d_viewport_width;
+  orthoMatrix[5] = -2.0f / (GLfloat)s2d_viewport_height;
+  
+  // Use the program object
+  glUseProgram(shaderProgram);
+  
+  GLuint mMvpLocation = glGetUniformLocation(shaderProgram, "u_mvpMatrix");
+  glUniformMatrix4fv(mMvpLocation, 1, GL_FALSE, orthoMatrix);
+  
+  // Use the texture program object
+  glUseProgram(texShaderProgram);
+  
+  GLuint texmMvpLocation = glGetUniformLocation(texShaderProgram, "u_mvpMatrix");
+  glUniformMatrix4fv(texmMvpLocation, 1, GL_FALSE, orthoMatrix);
+}
+
+
+/*
  * Initalize OpenGL
  */
 int gl3_init(int width, int height) {
@@ -149,21 +175,7 @@ int gl3_init(int width, int height) {
   glEnableVertexAttribArray(texAttrib);
   glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(6 * sizeof(GLfloat)));
   
-  // Set orthographic projection matrix
-  orthoMatrix[0] = 2.0f / (GLfloat)width;
-  orthoMatrix[5] = -2.0f / (GLfloat)height;
-  
-  // Use the program object
-  glUseProgram(shaderProgram);
-  
-  GLuint mMvpLocation = glGetUniformLocation(shaderProgram, "u_mvpMatrix");
-  glUniformMatrix4fv(mMvpLocation, 1, GL_FALSE, orthoMatrix);
-  
-  // Use the texture program object
-  glUseProgram(texShaderProgram);
-  
-  GLuint texmMvpLocation = glGetUniformLocation(texShaderProgram, "u_mvpMatrix");
-  glUniformMatrix4fv(texmMvpLocation, 1, GL_FALSE, orthoMatrix);
+  gl3_set_view(width, height, width, height);
   
   // Clean up
   glDeleteShader(vertexShader);

@@ -721,7 +721,24 @@ int S2D_Show(Window *window) {
           if (window->on_controller)
             window->on_controller(false, 0, 0, true, e.jbutton.button);
           break;
-          
+        
+        case SDL_WINDOWEVENT:
+          switch (e.window.event) {
+            case SDL_WINDOWEVENT_RESIZED:
+              #if GLES
+                // gles_set_view(e.window.data1, e.window.data2, window->width, window->height);
+              #else
+                if (GL2) {
+                  // gl2_set_view(e.window.data1, e.window.data2, window->width, window->height);
+                } else {
+                  gl3_set_view(e.window.data1, e.window.data2, window->width, window->height);
+                }
+              #endif
+              
+              break;
+          }
+          break;
+        
         case SDL_QUIT:
           quit = true;
           break;
