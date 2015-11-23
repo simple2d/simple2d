@@ -131,7 +131,7 @@ int gl3_init(int width, int height) {
   
   // Check if program was created successfully
   if (shaderProgram == 0) {
-    gl_print_error("Failed to create shader program");
+    S2D_GL_PrintError("Failed to create shader program");
     return GL_FALSE;
   }
   
@@ -140,7 +140,7 @@ int gl3_init(int width, int height) {
   
   // Check if program was created successfully
   if (texShaderProgram == 0) {
-    gl_print_error("Failed to create shader program");
+    S2D_GL_PrintError("Failed to create shader program");
     return GL_FALSE;
   }
   

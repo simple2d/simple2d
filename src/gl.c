@@ -1,4 +1,4 @@
-// OpenGL Shared Functions
+// Simple 2D OpenGL Functions
 
 #include "../include/simple2d.h"
 
@@ -6,7 +6,7 @@
 /*
  * Prints current GL error
  */
-void gl_print_error(char *error) {
+void S2D_GL_PrintError(char *error) {
   asprintf(&s2d_msg, "%s (%d)", error, glGetError());
   S2D_Log(s2d_msg, S2D_ERROR);
 }
@@ -15,7 +15,7 @@ void gl_print_error(char *error) {
 /*
  * Print info about the current OpenGL context
  */
-void gl_print_context_info(Window *window) {
+void S2D_GL_PrintContextInfo(Window *window) {
   asprintf(&s2d_msg,
     "OpenGL Context\n"
     "GL_VENDOR: %s\n"
@@ -38,10 +38,10 @@ void gl_print_context_info(Window *window) {
 /*
  * Store info about the current OpenGL context
  */
-void gl_store_context_info(Window *window) {
-  window->S2D_GL_VENDOR = glGetString(GL_VENDOR);
+void S2D_GL_StoreContextInfo(Window *window) {
+  window->S2D_GL_VENDOR   = glGetString(GL_VENDOR);
   window->S2D_GL_RENDERER = glGetString(GL_RENDERER);
-  window->S2D_GL_VERSION = glGetString(GL_VERSION);
+  window->S2D_GL_VERSION  = glGetString(GL_VERSION);
   
   #if !GLES
     glGetIntegerv(GL_MAJOR_VERSION, &window->S2D_GL_MAJOR_VERSION);
@@ -56,7 +56,7 @@ void gl_store_context_info(Window *window) {
  * Creates a shader object, loads shader string, and compiles.
  * Returns 0 if shader could not be compiled.
  */
-GLuint gl_load_shader(GLenum type, const GLchar *shaderSrc, char *shaderName) {
+GLuint S2D_GL_LoadShader(GLenum type, const GLchar *shaderSrc, char *shaderName) {
   
   GLuint shader;
   GLint compiled;
@@ -65,7 +65,7 @@ GLuint gl_load_shader(GLenum type, const GLchar *shaderSrc, char *shaderName) {
   shader = glCreateShader(type);
   
   if (shader == 0) {
-    gl_print_error("Failed to create shader program");
+    S2D_GL_PrintError("Failed to create shader program");
     return 0;
   }
   
@@ -101,10 +101,29 @@ GLuint gl_load_shader(GLenum type, const GLchar *shaderSrc, char *shaderName) {
   return shader;
 }
 
+
+/*
+ * Sets the view and matrix projection
+ */
+void S2D_GL_SetView(int window_width,       int window_height,
+                    int s2d_viewport_width, int s2d_viewport_height) {
+  
+  #if GLES
+    // gles_set_view(window_width, window_height, s2d_viewport_width, s2d_viewport_height);
+  #else
+    if (GL2) {
+      // gl2_set_view(window_width, window_height, s2d_viewport_width, s2d_viewport_height);
+    } else {
+      gl3_set_view(window_width, window_height, s2d_viewport_width, s2d_viewport_height);
+    }
+  #endif
+}
+
+
 /*
  * Prepares a texture for rendering.
  */
-void S2D_GL_SetupTexture(GLuint *id, GLint format, int w, int h, const GLvoid *data, GLint filter) {
+void S2D_GL_SetUpTexture(GLuint *id, GLint format, int w, int h, const GLvoid *data, GLint filter) {
   
   // If 0, then a new texture; generate name
   if (*id == 0) {
@@ -125,3 +144,79 @@ void S2D_GL_SetupTexture(GLuint *id, GLint format, int w, int h, const GLvoid *d
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
 }
 
+
+/*
+ * Draw a triangle
+ */
+void S2D_GL_DrawTriangle(GLfloat x1,  GLfloat y1,
+                         GLfloat c1r, GLfloat c1g, GLfloat c1b, GLfloat c1a,
+                         GLfloat x2,  GLfloat y2,
+                         GLfloat c2r, GLfloat c2g, GLfloat c2b, GLfloat c2a,
+                         GLfloat x3,  GLfloat y3,
+                         GLfloat c3r, GLfloat c3g, GLfloat c3b, GLfloat c3a) {
+  
+  #if GLES
+    gles_draw_triangle(x1, y1, c1r, c1g, c1b, c1a,
+                       x2, y2, c2r, c2g, c2b, c2a,
+                       x3, y3, c3r, c3g, c3b, c3a);
+  #else
+    if (GL2) {
+      gl2_draw_triangle(x1, y1, c1r, c1g, c1b, c1a,
+                        x2, y2, c2r, c2g, c2b, c2a,
+                        x3, y3, c3r, c3g, c3b, c3a);
+    } else {
+      gl3_draw_triangle(x1, y1, c1r, c1g, c1b, c1a,
+                        x2, y2, c2r, c2g, c2b, c2a,
+                        x3, y3, c3r, c3g, c3b, c3a);
+    }
+  #endif
+}
+
+
+/*
+ * Draw an image
+ */
+void S2D_GL_DrawImage(Image img) {
+  #if GLES
+    gles_draw_image(img);
+  #else
+    if (GL2) {
+      gl2_draw_image(img);
+    } else {
+      gl3_draw_image(img);
+    }
+  #endif
+}
+
+
+/*
+ * Draw text
+ */
+void S2D_GL_DrawText(Text txt) {
+  #if GLES
+    gles_draw_text(txt);
+  #else
+    if (GL2) {
+      gl2_draw_text(txt);
+    } else {
+      gl3_draw_text(txt);
+    }
+  #endif
+}
+
+
+/*
+ * Free a texture
+ */
+void S2D_GL_FreeTexture(GLuint *id) {
+  glDeleteTextures(1, id);
+}
+
+
+/*
+ * Clear buffers to given color values
+ */
+void S2D_GL_Clear(Color clr) {
+  glClearColor(clr.r, clr.g, clr.b, clr.a);
+  glClear(GL_COLOR_BUFFER_BIT);
+}

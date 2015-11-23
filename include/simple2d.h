@@ -116,13 +116,27 @@ typedef struct Music {
 } Music;
 
 /*
- * Shared OpenGL functions
+ * Simple 2D OpenGL functions
  */
-void gl_print_error(char *error);
-void gl_print_context_info(Window *window);
-void gl_store_context_info(Window *window);
-GLuint gl_load_shader(GLenum type, const GLchar *shaderSrc, char *shaderName);
-void S2D_GL_SetupTexture(GLuint *id, GLint format, int w, int h, const GLvoid *data, GLint filter);
+void S2D_GL_PrintError(char *error);
+void S2D_GL_PrintContextInfo(Window *window);
+void S2D_GL_StoreContextInfo(Window *window);
+GLuint S2D_GL_LoadShader(GLenum type, const GLchar *shaderSrc, char *shaderName);
+void S2D_GL_SetView(
+  int window_width,       int window_height,
+  int s2d_viewport_width, int s2d_viewport_height);
+void S2D_GL_SetUpTexture(GLuint *id, GLint format, int w, int h, const GLvoid *data, GLint filter);
+void S2D_GL_DrawTriangle(
+  GLfloat x1,  GLfloat y1,
+  GLfloat c1r, GLfloat c1g, GLfloat c1b, GLfloat c1a,
+  GLfloat x2,  GLfloat y2,
+  GLfloat c2r, GLfloat c2g, GLfloat c2b, GLfloat c2a,
+  GLfloat x3,  GLfloat y3,
+  GLfloat c3r, GLfloat c3g, GLfloat c3b, GLfloat c3a);
+void S2D_GL_DrawImage(Image img);
+void S2D_GL_DrawText(Text txt);
+void S2D_GL_FreeTexture(GLuint *id);
+void S2D_GL_Clear(Color clr);
 
 /*
  * OpenGL & GLES internal functions

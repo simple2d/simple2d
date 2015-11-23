@@ -12,7 +12,6 @@ static bool GL2 = false;
 static bool FORCE_GL2 = false;
 
 
-
 /*
  * Logs standard messages to the console
  */
@@ -63,21 +62,9 @@ void S2D_DrawTriangle(GLfloat x1,  GLfloat y1,
                       GLfloat x3,  GLfloat y3,
                       GLfloat c3r, GLfloat c3g, GLfloat c3b, GLfloat c3a) {
   
-  #if GLES
-    gles_draw_triangle(x1, y1, c1r, c1g, c1b, c1a,
-                       x2, y2, c2r, c2g, c2b, c2a,
-                       x3, y3, c3r, c3g, c3b, c3a);
-  #else
-    if (GL2) {
-      gl2_draw_triangle(x1, y1, c1r, c1g, c1b, c1a,
-                        x2, y2, c2r, c2g, c2b, c2a,
-                        x3, y3, c3r, c3g, c3b, c3a);
-    } else {
-      gl3_draw_triangle(x1, y1, c1r, c1g, c1b, c1a,
-                        x2, y2, c2r, c2g, c2b, c2a,
-                        x3, y3, c3r, c3g, c3b, c3a);
-    }
-  #endif
+  S2D_GL_DrawTriangle(x1, y1, c1r, c1g, c1b, c1a,
+                      x2, y2, c2r, c2g, c2b, c2a,
+                      x3, y3, c3r, c3g, c3b, c3a);
 }
 
 
@@ -93,33 +80,13 @@ void S2D_DrawQuad(GLfloat x1,  GLfloat y1,
                   GLfloat x4,  GLfloat y4,
                   GLfloat c4r, GLfloat c4g, GLfloat c4b, GLfloat c4a) {
   
-  #if GLES
-    gles_draw_triangle(x1, y1, c1r, c1g, c1b, c1a,
-                       x2, y2, c2r, c2g, c2b, c2a,
-                       x3, y3, c3r, c3g, c3b, c3a);
-    
-    gles_draw_triangle(x3, y3, c3r, c3g, c3b, c3a,
-                       x4, y4, c4r, c4g, c4b, c4a,
-                       x1, y1, c1r, c1g, c1b, c1a);
-  #else
-    if (GL2) {
-      gl2_draw_triangle(x1, y1, c1r, c1g, c1b, c1a,
-                        x2, y2, c2r, c2g, c2b, c2a,
-                        x3, y3, c3r, c3g, c3b, c3a);
-      
-      gl2_draw_triangle(x3, y3, c3r, c3g, c3b, c3a,
-                        x4, y4, c4r, c4g, c4b, c4a,
-                        x1, y1, c1r, c1g, c1b, c1a);      
-    } else {
-      gl3_draw_triangle(x1, y1, c1r, c1g, c1b, c1a,
-                        x2, y2, c2r, c2g, c2b, c2a,
-                        x3, y3, c3r, c3g, c3b, c3a);
-      
-      gl3_draw_triangle(x3, y3, c3r, c3g, c3b, c3a,
-                        x4, y4, c4r, c4g, c4b, c4a,
-                        x1, y1, c1r, c1g, c1b, c1a);
-    }
-  #endif
+  S2D_GL_DrawTriangle(x1, y1, c1r, c1g, c1b, c1a,
+                      x2, y2, c2r, c2g, c2b, c2a,
+                      x3, y3, c3r, c3g, c3b, c3a);
+  
+  S2D_GL_DrawTriangle(x3, y3, c3r, c3g, c3b, c3a,
+                      x4, y4, c4r, c4g, c4b, c4a,
+                      x1, y1, c1r, c1g, c1b, c1a);
 };
 
 
@@ -157,7 +124,7 @@ Image S2D_CreateImage(char *path) {
     format = GL_RGBA;
   }
   
-  S2D_GL_SetupTexture(&img.texture_id, format, img.w, img.h, surface->pixels, GL_NEAREST);
+  S2D_GL_SetUpTexture(&img.texture_id, format, img.w, img.h, surface->pixels, GL_NEAREST);
   
   // Free the surface data, no longer needed
   SDL_FreeSurface(surface);
@@ -170,15 +137,7 @@ Image S2D_CreateImage(char *path) {
  * Draw an image
  */
 void S2D_DrawImage(Image img) {
-  #if GLES
-    gles_draw_image(img);
-  #else
-    if (GL2) {
-      gl2_draw_image(img);
-    } else {
-      gl3_draw_image(img);
-    }
-  #endif
+  S2D_GL_DrawImage(img);
 }
 
 
@@ -186,7 +145,7 @@ void S2D_DrawImage(Image img) {
  * Free an image
  */
 void S2D_FreeImage(Image img) {
-  glDeleteTextures(1, &img.texture_id);
+  S2D_GL_FreeTexture(&img.texture_id);
 }
 
 
@@ -230,7 +189,7 @@ Text S2D_CreateText(char *font, char *msg, int size) {
   SDL_Color color = { 255, 255, 255 };
   surface = TTF_RenderText_Blended(txt.font, txt.msg, color);
   
-  S2D_GL_SetupTexture(&txt.texture_id, GL_RGBA, txt.w, txt.h, surface->pixels, GL_NEAREST);
+  S2D_GL_SetUpTexture(&txt.texture_id, GL_RGBA, txt.w, txt.h, surface->pixels, GL_NEAREST);
   
   // Free the surface data, no longer needed
   SDL_FreeSurface(surface);
@@ -252,7 +211,7 @@ void S2D_SetText(Text *txt, char *msg) {
   SDL_Color color = { 255, 255, 255 };
   surface = TTF_RenderText_Blended(txt->font, txt->msg, color);
   
-  S2D_GL_SetupTexture(&txt->texture_id, GL_RGBA, txt->w, txt->h, surface->pixels, GL_NEAREST);
+  S2D_GL_SetUpTexture(&txt->texture_id, GL_RGBA, txt->w, txt->h, surface->pixels, GL_NEAREST);
   
   SDL_FreeSurface(surface);
 }
@@ -262,16 +221,7 @@ void S2D_SetText(Text *txt, char *msg) {
  * Draw text
  */
 void S2D_DrawText(Text txt) {
-  
-  #if GLES
-    gles_draw_text(txt);
-  #else
-    if (GL2) {
-      gl2_draw_text(txt);
-    } else {
-      gl3_draw_text(txt);
-    }
-  #endif
+  S2D_GL_DrawText(txt);
 }
 
 
@@ -279,7 +229,7 @@ void S2D_DrawText(Text txt) {
  * Free the text
  */
 void S2D_FreeText(Text txt) {
-  glDeleteTextures(1, &txt.texture_id);
+  S2D_GL_FreeTexture(&txt.texture_id);
   TTF_CloseFont(txt.font);
 }
 
@@ -514,8 +464,8 @@ Window* S2D_CreateWindow(char *title, int width, int height,
     #endif
   }
   
-  gl_store_context_info(window);
-  if (diagnostics) gl_print_context_info(window);
+  S2D_GL_StoreContextInfo(window);
+  if (diagnostics) S2D_GL_PrintContextInfo(window);
   
   return window;
 }
@@ -608,13 +558,7 @@ int S2D_Show(Window *window) {
     
     // Clear Frame /////////////////////////////////////////////////////////////
     
-    glClearColor(
-      window->background.r,
-      window->background.g,
-      window->background.b,
-      window->background.a
-    );
-    glClear(GL_COLOR_BUFFER_BIT);
+    S2D_GL_Clear(window->background);
     
     // Set FPS /////////////////////////////////////////////////////////////////
     
@@ -664,16 +608,7 @@ int S2D_Show(Window *window) {
         case SDL_WINDOWEVENT:
           switch (e.window.event) {
             case SDL_WINDOWEVENT_RESIZED:
-              #if GLES
-                // gles_set_view(e.window.data1, e.window.data2, window->width, window->height);
-              #else
-                if (GL2) {
-                  // gl2_set_view(e.window.data1, e.window.data2, window->width, window->height);
-                } else {
-                  gl3_set_view(e.window.data1, e.window.data2, window->width, window->height);
-                }
-              #endif
-              
+              S2D_GL_SetView(e.window.data1, e.window.data2, window->width, window->height);
               break;
           }
           break;
