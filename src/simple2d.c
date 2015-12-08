@@ -10,7 +10,7 @@ static bool FORCE_GL2 = false;
 
 // Initalize S2D shared data
 bool S2D_GL2 = false;
-char *S2D_msg = "";
+char S2D_msg[1024];
 
 
 /*
@@ -40,7 +40,7 @@ void S2D_Log(char *msg, int type) {
  * Logs Simple 2D errors to the console, with caller and message body
  */
 void S2D_Error(char *caller, const char *msg) {
-  asprintf(&S2D_msg, "(%s) %s", caller, msg);
+  sprintf(S2D_msg, "(%s) %s", caller, msg);
   S2D_Log(S2D_msg, S2D_ERROR);
 }
 
@@ -400,7 +400,7 @@ Window* S2D_CreateWindow(char *title, int width, int height,
   if ((window->width != window->s_width) ||
     (window->height != window->s_height)) {
     
-    asprintf(&S2D_msg,
+    sprintf(S2D_msg,
       "Resolution %dx%d unsupported by driver, scaling to %dx%d",
       window->s_width, window->s_height, window->width, window->height);
     S2D_Log(S2D_msg, S2D_WARN);
@@ -507,7 +507,7 @@ int S2D_Show(Window *window) {
   // Detect Controllers and Joysticks //////////////////////////////////////////
   
   if (SDL_NumJoysticks() > 0) {
-    asprintf(&S2D_msg, "Joysticks detected: %i", SDL_NumJoysticks());
+    sprintf(S2D_msg, "Joysticks detected: %i", SDL_NumJoysticks());
     S2D_Log(S2D_msg, S2D_INFO);
   }
   
@@ -522,24 +522,24 @@ int S2D_Show(Window *window) {
     if (SDL_IsGameController(i)) {
       controller = SDL_GameControllerOpen(i);
       if (controller) {
-        asprintf(&S2D_msg, "Found a valid controller, named: %s\n",
+        sprintf(S2D_msg, "Found a valid controller, named: %s\n",
                  SDL_GameControllerName(controller));
         S2D_Log(S2D_msg, S2D_INFO);
         break;  // Break after first available controller
       } else {
-        asprintf(&S2D_msg, "Could not open game controller %i: %s\n", i, SDL_GetError());
+        sprintf(S2D_msg, "Could not open game controller %i: %s\n", i, SDL_GetError());
         S2D_Log(S2D_msg, S2D_ERROR);
       }
     
     // Controller interface not supported, try to open as joystick
     } else {
-      asprintf(&S2D_msg, "Joystick %i is not supported by the game controller interface", i);
+      sprintf(S2D_msg, "Joystick %i is not supported by the game controller interface", i);
       S2D_Log(S2D_msg, S2D_WARN);
       joy = SDL_JoystickOpen(i);
       
       // Joystick is valid
       if (joy) {
-        asprintf(&S2D_msg,
+        sprintf(S2D_msg,
           "Opened Joystick %i\n"
           "Name: %s\n"
           "Axes: %d\n"
@@ -552,7 +552,7 @@ int S2D_Show(Window *window) {
         
       // Joystick not valid
       } else {
-        asprintf(&S2D_msg, "Could not open Joystick %i", i);
+        sprintf(S2D_msg, "Could not open Joystick %i", i);
         S2D_Log(S2D_msg, S2D_ERROR);
       }
       
@@ -685,9 +685,6 @@ int S2D_Show(Window *window) {
 int S2D_Close(Window *window) {
   
   S2D_Log("Closing S2D", S2D_INFO);
-  
-  // S2D
-  free(S2D_msg);
   
   // SDL
   IMG_Quit();

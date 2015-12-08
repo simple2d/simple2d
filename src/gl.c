@@ -16,7 +16,7 @@ GLfloat S2D_GL_orthoMatrix[16] = {
  * Prints current GL error
  */
 void S2D_GL_PrintError(char *error) {
-  asprintf(&S2D_msg, "%s (%d)", error, glGetError());
+  sprintf(S2D_msg, "%s (%d)", error, glGetError());
   S2D_Log(S2D_msg, S2D_ERROR);
 }
 
@@ -25,7 +25,7 @@ void S2D_GL_PrintError(char *error) {
  * Print info about the current OpenGL context
  */
 void S2D_GL_PrintContextInfo(Window *window) {
-  asprintf(&S2D_msg,
+  sprintf(S2D_msg,
     "OpenGL Context\n"
     "GL_VENDOR: %s\n"
     "GL_RENDERER: %s\n"
