@@ -88,7 +88,7 @@ void render() {
 int main() {
   
   window = S2D_CreateWindow(
-    "Hello Triangle", 640, 480, NULL, render
+    "Hello Triangle", 640, 480, NULL, render, 0
   );
   
   S2D_Show(window);
@@ -118,9 +118,21 @@ Window *window;
 window = S2D_CreateWindow(
   "Hello World!",  // title of the window
   800, 600,        // width and height
-  update, render   // callback function pointers (these can be NULL)
+  update, render,  // callback function pointers (these can be NULL)
+  0                // flags
 );
 ```
+
+The window flags can be any one of the following, and also combined using a bitwise OR, for example: `HELLO | WORLD`.
+
+```c
+S2D_RESIZABLE
+S2D_BORDERLESS
+S2D_FULLSCREEN
+S2D_HIGHDPI
+```
+
+Use `0` to not set any flags.
 
 Before showing the window, these attributes can be set:
 
@@ -279,6 +291,20 @@ The cursor position of the mouse or trackpad can be read at any time from the wi
 ```c
 window->mouse.x;
 window->mouse.y;
+```
+
+To capture mouse button presses, attach a callback to the window.
+
+```c
+window->on_mouse = on_mouse;
+```
+
+Then define the function to do something.
+
+```c
+void on_mouse(int x, int y) {
+  // mouse clicked at x, y
+}
 ```
 
 ### Keyboard
