@@ -85,7 +85,7 @@ void render() {
   );
 }
 
-int main(int argc, char const *argv[]) {
+int main() {
   
   window = S2D_CreateWindow(
     "Hello Triangle", 640, 480, NULL, render

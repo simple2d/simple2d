@@ -102,7 +102,7 @@ void on_key(const char *key) {
   }
 }
 
-int main(int argc, char const *argv[]) {
+int main(int argc, const char *argv[]) {
   
   window = S2D_CreateWindow(
     "Audio", 200, 150, NULL, NULL, 0
