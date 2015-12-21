@@ -397,6 +397,17 @@ Despite the continuing advancement of graphics hardware and software, getting st
 
 Check out the [open issues](https://github.com/simple2d/simple2d/issues) and join the [mailing list](https://groups.google.com/d/forum/simple2d). If you're a hardcore C and OS hacker, you should seriously consider contributing to [SDL](https://www.libsdl.org) so we can continue writing games without worrying about the platforms underneath. Take a look at the talks from [Steam Dev Days](http://www.steamdevdays.com), especially [Ryan C. Gordon's](https://twitter.com/icculus) talk on [Game Development with SDL 2.0](https://www.youtube.com/watch?v=MeMPCSqQ-34&list=UUStZs-X5W6V3TFJLnwkzN5w).
 
+## Preparing a Release
+
+1. [Run tests](#running-tests) on all supported platforms
+2. Update version number in files [`VERSION`](VERSION) and [`simple2d.sh`](simple2d.sh)
+3. Create a [new release](https://github.com/simple2d/simple2d/releases) in GitHub, with tag in the form `v#.#.#`
+4. Update the [Homebrew tap](https://github.com/simple2d/homebrew-tap):
+  - Update formula with new `url`
+  - Run `brew audit --strict ./simple2d.rb` to detect issues
+  - Calculate new `sha256` using `brew install ./simple2d.rb` (note the "SHA256 mismatch" error, use the "Actual" value)
+  - Test installing using same command above
+
 # About the Project
 
 Simple 2D was created by [Tom Black](https://twitter.com/blacktm) who thought simple graphics programming was way too difficult and decided to do something about it. And no, the web browser is not an acceptable alternative – it's a workaround.
