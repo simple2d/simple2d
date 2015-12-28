@@ -17,4 +17,4 @@ echo -e "\n${BLUE}==>${BOLD} make tests${NORMAL}\n" && \
 make tests && \
 echo -e "\n${BLUE}==>${SUCCESS} Build successful!${NORMAL}\n" && \
 echo -e "${BLUE}==>${BOLD} Running ./tests/$1 ${NORMAL}\n" && \
-./tests/$1
+( cd tests/ ; ./$1 )
