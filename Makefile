@@ -3,8 +3,13 @@ CFLAGS=-std=c99
 
 # Includes and libs for Raspberry Pi
 ifneq (,$(findstring arm,$(shell uname -m)))
-  PLATFORM=rpi
-  INCLUDES=-I/opt/vc/include/
+	PLATFORM=rpi
+	INCLUDES=-I/opt/vc/include/
+endif
+
+# For Linux
+ifeq ($(shell uname),Linux)
+	CFLAGS+=-fPIC
 endif
 
 all: build
