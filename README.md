@@ -400,7 +400,7 @@ Check out the [open issues](https://github.com/simple2d/simple2d/issues) and joi
 ## Preparing a Release
 
 1. [Run tests](#running-tests) on all supported platforms
-2. Update version number in files [`VERSION`](VERSION) and [`simple2d.sh`](simple2d.sh)
+2. Update version number in files [`VERSION`](VERSION) and [`simple2d.sh`](simple2d.sh), commit changes
 3. Create a [new release](https://github.com/simple2d/simple2d/releases) in GitHub, with tag in the form `v#.#.#`
 4. Update the [Homebrew tap](https://github.com/simple2d/homebrew-tap):
   - Update formula with new `url`
