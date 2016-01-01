@@ -17,7 +17,7 @@
 
 # Set Constants ################################################################
 
-VERSION='0.0.4'
+VERSION='0.1.0'
 VERSION_URL='https://raw.githubusercontent.com/simple2d/simple2d/master/VERSION'
 
 # Colors
