@@ -8,14 +8,16 @@ If you encounter any issues, ping the [mailing list](https://groups.google.com/d
 
 Currently, Simple 2D officially supports OS X, Linux, and the [Raspberry Pi](http://www.raspberrypi.org) (Raspbian). To compile and install...
 
-...on OS X, use [Homebrew](http://brew.sh):
+### ...on OS X, use [Homebrew](http://brew.sh):
 
 ```bash
 brew tap simple2d/tap
 brew install simple2d
 ```
 
-...on Linux and Raspberry Pi, run the [`simple2d.sh`](simple2d.sh) Bash script. Everything will be explained along the way and you'll be prompted before any action is taken. To run this script from the web, copy and paste this in your terminal (make sure to copy the entire string – it's rather long):
+### ...on Linux and Raspberry Pi, run the [`simple2d.sh`](simple2d.sh) Bash script.
+
+Everything will be explained along the way and you'll be prompted before any action is taken. To run this script from the web, copy and paste this in your terminal (make sure to copy the entire string – it's rather long):
 
 ```bash
 url='https://raw.githubusercontent.com/simple2d/simple2d/master/simple2d.sh'; which curl > /dev/null && cmd='curl -fsSL' || cmd='wget -qO -'; bash <($cmd $url) install
@@ -23,7 +25,7 @@ url='https://raw.githubusercontent.com/simple2d/simple2d/master/simple2d.sh'; wh
 
 Of course, you can always just download or clone this repo and run `make && make install`. This obviously won't check for installed dependancies, which is why the script above is helpful.
 
-Once installed, use the command-line utility to update Simple 2D, check for issues, output the libraries needed to compile applications, and more. Run `simple2d` to see all the available commands and options.
+Once installed, use the `simple2d` command-line utility to update Simple 2D, check for issues, output the libraries needed to compile applications, and more. Run `simple2d --help` to see all available commands and options.
 
 ## Running Tests
 
@@ -36,17 +38,17 @@ git submodule init
 git submodule update --remote
 ```
 
-Alternatively, you can clone the repo and update the submodule in one step:
+Alternatively, you can clone the repo and update the submodule in one step using:
 
 ```bash
 git clone --recursive https://github.com/simple2d/simple2d.git
 ```
 
-Simply run `git submodule update --remote` anytime to get the latest changes from `test_media` (i.e. when there's a new commit available).
+To get the latest changes from `test_media`, like when new commits are available, simply run `git submodule update --remote`.
 
 ### Building the Tests
 
-Simply run `make tests`. Built tests are placed in the `tests/` directory with the same name as their C source file.
+Simply run `make tests`. Tests are compiled and placed in the `tests/` directory with the same name as their C source file.
 
 ### Available Tests
 
