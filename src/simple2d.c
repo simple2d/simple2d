@@ -594,7 +594,6 @@ int S2D_Show(Window *window) {
       switch (e.type) {
         
         case SDL_KEYDOWN:
-          if (e.key.keysym.scancode == SDL_SCANCODE_ESCAPE) quit = true;
           if (window->on_key)
             window->on_key(SDL_GetScancodeName(e.key.keysym.scancode));
           break;
