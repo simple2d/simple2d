@@ -94,7 +94,7 @@ int gl3_init(int width, int height) {
     "out vec4 outColor;"
     "uniform sampler2D tex;"
     "void main() {"
-    "  outColor = texture(tex, Texcoord) * Color;"
+    "  outColor = texture(tex, Texcoord)*Color;"
     "}";
   
   // Create Vertex Array Object
@@ -126,6 +126,34 @@ int gl3_init(int width, int height) {
     return GL_FALSE;
   }
   
+  
+  // Attach the shader objects to the program object
+  glAttachShader(shaderProgram, vertexShader);
+  glAttachShader(shaderProgram, fragmentShader);
+  
+  // Bind the varying out variables to the fragment shader color number
+  glBindFragDataLocation(shaderProgram, 0, "outColor");
+  
+  // Link the shader program
+  glLinkProgram(shaderProgram);
+  
+  // Check if linked
+  gl3_check_linked(shaderProgram);
+  
+  // Specify the layout of the vertex data
+  GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
+  glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), 0);
+  glEnableVertexAttribArray(posAttrib);
+  
+  GLint colAttrib = glGetAttribLocation(shaderProgram, "color");
+  glVertexAttribPointer(colAttrib, 4, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(2 * sizeof(GLfloat)));
+  glEnableVertexAttribArray(colAttrib);
+  
+  GLint texAttrib = glGetAttribLocation(shaderProgram, "texcoord");
+  glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(6 * sizeof(GLfloat)));
+  glEnableVertexAttribArray(texAttrib);
+  
+  
   // Create the texture shader program object
   texShaderProgram = glCreateProgram();
   
@@ -135,36 +163,28 @@ int gl3_init(int width, int height) {
     return GL_FALSE;
   }
   
-  // Attach the shader objects to the program object
-  glAttachShader(shaderProgram, vertexShader);
-  glAttachShader(shaderProgram, fragmentShader);
   glAttachShader(texShaderProgram, vertexShader);
   glAttachShader(texShaderProgram, texFragmentShader);
   
-  // Bind the varying out variables to the fragment shader color number
-  glBindFragDataLocation(shaderProgram, 0, "outColor");
   glBindFragDataLocation(texShaderProgram, 0, "outColor");
   
-  // Link the shader program
-  glLinkProgram(shaderProgram);
   glLinkProgram(texShaderProgram);
   
-  // Check if linked
-  gl3_check_linked(shaderProgram);
   gl3_check_linked(texShaderProgram);
   
   // Specify the layout of the vertex data
-  GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
-  glEnableVertexAttribArray(posAttrib);
+  posAttrib = glGetAttribLocation(texShaderProgram, "position");
   glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), 0);
+  glEnableVertexAttribArray(posAttrib);
   
-  GLint colAttrib = glGetAttribLocation(shaderProgram, "color");
-  glEnableVertexAttribArray(colAttrib);
+  colAttrib = glGetAttribLocation(texShaderProgram, "color");
   glVertexAttribPointer(colAttrib, 4, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(2 * sizeof(GLfloat)));
+  glEnableVertexAttribArray(colAttrib);
   
-  GLint texAttrib = glGetAttribLocation(shaderProgram, "texcoord");
-  glEnableVertexAttribArray(texAttrib);
+  texAttrib = glGetAttribLocation(texShaderProgram, "texcoord");
   glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(6 * sizeof(GLfloat)));
+  glEnableVertexAttribArray(texAttrib);
+  
   
   gl3_set_view(width, height, width, height);
   
