@@ -201,6 +201,8 @@ int main(int argc, const char *argv[]) {
   S2D_Diagnostics(true);
   
   window = S2D_CreateWindow("Simple 2D – Testcard", 600, 500, update, render, S2D_RESIZABLE);
+  if(!window)
+      return 1;
   
   window->on_key = on_key;
   window->on_key_down = on_key_down;
