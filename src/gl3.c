@@ -94,7 +94,7 @@ int gl3_init(int width, int height) {
     "out vec4 outColor;"
     "uniform sampler2D tex;"
     "void main() {"
-    "  outColor = texture(tex, Texcoord)*Color;"
+    "  outColor = texture(tex, Texcoord) * Color;"
     "}";
   
   // Create Vertex Array Object
