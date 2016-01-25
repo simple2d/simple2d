@@ -149,11 +149,6 @@ int gl3_init(int width, int height) {
   glVertexAttribPointer(colAttrib, 4, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(2 * sizeof(GLfloat)));
   glEnableVertexAttribArray(colAttrib);
   
-  GLint texAttrib = glGetAttribLocation(shaderProgram, "texcoord");
-  glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(6 * sizeof(GLfloat)));
-  glEnableVertexAttribArray(texAttrib);
-  
-  
   // Create the texture shader program object
   texShaderProgram = glCreateProgram();
   
@@ -181,7 +176,7 @@ int gl3_init(int width, int height) {
   glVertexAttribPointer(colAttrib, 4, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(2 * sizeof(GLfloat)));
   glEnableVertexAttribArray(colAttrib);
   
-  texAttrib = glGetAttribLocation(texShaderProgram, "texcoord");
+  GLint texAttrib = glGetAttribLocation(texShaderProgram, "texcoord");
   glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(6 * sizeof(GLfloat)));
   glEnableVertexAttribArray(texAttrib);
   
