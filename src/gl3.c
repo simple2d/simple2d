@@ -224,11 +224,11 @@ static void gl3_draw_texture(int x, int y, int w, int h,
 /*
  * Draw image
  */
-void gl3_draw_image(Image img) {
+void gl3_draw_image(Image *img) {
   gl3_draw_texture(
-    img.x, img.y, img.w, img.h,
+    img->x, img->y, img->w, img->h,
     1.f, 1.f, 1.f, 1.f,
-    img.texture_id
+    img->texture_id
   );
 }
 
@@ -236,10 +236,10 @@ void gl3_draw_image(Image img) {
 /*
  * Draw text
  */
-void gl3_draw_text(Text txt) {
+void gl3_draw_text(Text *txt) {
   gl3_draw_texture(
-    txt.x, txt.y, txt.w, txt.h, 
-    txt.color.r, txt.color.g, txt.color.b, txt.color.a,
-    txt.texture_id
+    txt->x, txt->y, txt->w, txt->h, 
+    txt->color.r, txt->color.g, txt->color.b, txt->color.a,
+    txt->texture_id
   );
 }
