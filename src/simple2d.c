@@ -117,6 +117,10 @@ Image S2D_CreateImage(char *path) {
   img.w = surface->w;
   img.h = surface->h;
   img.texture_id = 0;
+  img.color.r = 1.f;
+  img.color.g = 1.f;
+  img.color.b = 1.f;
+  img.color.a = 1.f;
   
   // Detect image mode
   // TODO: BMP is in BGR...?

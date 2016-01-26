@@ -85,7 +85,7 @@ static void gl2_draw_texture(int x, int y, int w, int h,
 void gl2_draw_image(Image img) {
   gl2_draw_texture(
     img.x, img.y, img.w, img.h,
-    1.f, 1.f, 1.f, 1.f,
+    img.color.r, img.color.g, img.color.b, img.color.a,
     img.texture_id
   );
 }
