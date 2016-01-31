@@ -2,18 +2,18 @@
 #include <simple2d.h>
 
 Window *window;
-Image img_bmp;
-Image img_jpg;
-Image img_png;
-Text txt;
-Text on_key_text;
-Text on_key_char;
-Text key_down_text;
-Text key_down_char;
-Text fps;
-Text fps_val;
+Image *img_bmp = NULL;
+Image *img_jpg = NULL;
+Image *img_png = NULL;
+Text *txt = NULL;
+Text *on_key_text = NULL;
+Text *on_key_char = NULL;
+Text *key_down_text = NULL;
+Text *key_down_char = NULL;
+Text *fps = NULL;
+Text *fps_val = NULL;
 char fps_str[7];
-char *font = "./media/bitstream_vera/vera.ttf";
+const char *font = "./media/bitstream_vera/vera.ttf";
 int font_size = 20;
 
 typedef struct Point {
@@ -25,14 +25,16 @@ Point pointer;
 
 void on_key(const char *key) {
   printf("Key pressed: %s\n", key);
-  S2D_SetText(&on_key_char, (char*)key);
+  
   if(strcmp(key, "Escape")==0) {
     S2D_Close();
   }
+
+  S2D_SetText(on_key_char, key);
 }
 
 void on_key_down(const char *key) {
-  S2D_SetText(&key_down_char, (char*)key);
+  S2D_SetText(key_down_char, key);
 }
 
 void on_mouse(int x, int y) {
@@ -164,16 +166,16 @@ void render() {
   
   // Images
   
-  img_png.x = 300;
-  img_png.y = 0;
+  img_png->x = 300;
+  img_png->y = 0;
   S2D_DrawImage(img_png);
   
-  img_jpg.x = 400;
-  img_jpg.y = 0;
+  img_jpg->x = 400;
+  img_jpg->y = 0;
   S2D_DrawImage(img_jpg);
   
-  img_bmp.x = 500;
-  img_bmp.y = 0;
+  img_bmp->x = 500;
+  img_bmp->y = 0;
   S2D_DrawImage(img_bmp);
   
   // Text
@@ -187,7 +189,7 @@ void render() {
   
   S2D_DrawText(fps);
   snprintf(fps_str, 7, "%f", window->fps);
-  S2D_SetText(&fps_val, fps_str);
+  S2D_SetText(fps_val, fps_str);
   S2D_DrawText(fps_val);
   
   // Mouse positions
@@ -204,6 +206,8 @@ int main(int argc, const char *argv[]) {
   S2D_Diagnostics(true);
   
   window = S2D_CreateWindow("Simple 2D – Testcard", 600, 500, update, render, S2D_RESIZABLE);
+  if(!window)
+      return 1;
   
   window->on_key = on_key;
   window->on_key_down = on_key_down;
@@ -217,25 +221,25 @@ int main(int argc, const char *argv[]) {
   
   on_key_text = S2D_CreateText(font, "On Key:", font_size);
   on_key_char = S2D_CreateText(font, " ", font_size);
-  on_key_text.x = 5;
-  on_key_text.y = 270;
-  on_key_char.x = 90;
-  on_key_char.y = 270;
+  on_key_text->x = 5;
+  on_key_text->y = 270;
+  on_key_char->x = 90;
+  on_key_char->y = 270;
   
   key_down_text = S2D_CreateText(font, "On Key Down:", font_size);
   key_down_char = S2D_CreateText(font, " ", font_size);
-  key_down_text.x = 5;
-  key_down_text.y = 300;
-  key_down_char.x = 154;
-  key_down_char.y = 300;
+  key_down_text->x = 5;
+  key_down_text->y = 300;
+  key_down_char->x = 154;
+  key_down_char->y = 300;
   
   fps = S2D_CreateText(font, "FPS:", font_size);
-  fps.x = 460;
-  fps.y = 470;
+  fps->x = 460;
+  fps->y = 470;
   
   fps_val = S2D_CreateText(font, " ", font_size);
-  fps_val.x = 515;
-  fps_val.y = 470;
+  fps_val->x = 515;
+  fps_val->y = 470;
   
   S2D_Show(window);
   
