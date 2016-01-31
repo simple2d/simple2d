@@ -3,10 +3,10 @@
 bool is_sound = true;
 int sound = 1;
 int music = 2;
-Sound snd_1;
-Sound snd_2;
-Music mus_1;
-Music mus_2;
+Sound *snd_1 = NULL;
+Sound *snd_2 = NULL;
+Music *mus_1 = NULL;
+Music *mus_2 = NULL;
 Window *window;
 
 void print_help() {
@@ -103,10 +103,15 @@ void on_key(const char *key) {
 }
 
 int main(int argc, const char *argv[]) {
+
+  S2D_Diagnostics(true);
   
   window = S2D_CreateWindow(
     "Audio", 200, 150, NULL, NULL, 0
   );
+
+  if(!window)
+      return 1;
   
   window->on_key = on_key;
   

@@ -185,7 +185,7 @@ void S2D_GL_DrawTriangle(GLfloat x1,  GLfloat y1,
 /*
  * Draw an image
  */
-void S2D_GL_DrawImage(Image img) {
+void S2D_GL_DrawImage(Image *img) {
   #if GLES
     gles_draw_image(img);
   #else
@@ -201,7 +201,7 @@ void S2D_GL_DrawImage(Image img) {
 /*
  * Draw text
  */
-void S2D_GL_DrawText(Text txt) {
+void S2D_GL_DrawText(Text *txt) {
   #if GLES
     gles_draw_text(txt);
   #else

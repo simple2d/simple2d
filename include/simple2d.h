@@ -73,7 +73,7 @@ typedef struct Window {
   GLint S2D_GL_MINOR_VERSION;
   const GLubyte *S2D_GL_SHADING_LANGUAGE_VERSION;
   SDL_GLContext glcontext;
-  char *title;
+  const char *title;
   int width;    // actual dimentions
   int height;
   int s_width;  // scaled dimentions
@@ -108,7 +108,7 @@ typedef struct Text {
   GLuint texture_id;
   Color color;
   TTF_Font *font;
-  char *msg;
+  const char *msg;
   int x;
   int y;
   int w;
@@ -140,8 +140,8 @@ void S2D_GL_DrawTriangle(
   GLfloat c2r, GLfloat c2g, GLfloat c2b, GLfloat c2a,
   GLfloat x3,  GLfloat y3,
   GLfloat c3r, GLfloat c3g, GLfloat c3b, GLfloat c3a);
-void S2D_GL_DrawImage(Image img);
-void S2D_GL_DrawText(Text txt);
+void S2D_GL_DrawImage(Image *img);
+void S2D_GL_DrawText(Text *txt);
 void S2D_GL_FreeTexture(GLuint *id);
 void S2D_GL_Clear(Color clr);
 
@@ -158,8 +158,8 @@ void S2D_GL_Clear(Color clr);
     GLfloat c2r, GLfloat c2g, GLfloat c2b, GLfloat c2a,
     GLfloat x3,  GLfloat y3,
     GLfloat c3r, GLfloat c3g, GLfloat c3b, GLfloat c3a);
-  void gles_draw_image(Image img);
-  void gles_draw_text(Text txt);
+  void gles_draw_image(Image *img);
+  void gles_draw_text(Text *txt);
 #else
   void gl2_hello();
   void gl3_hello();
@@ -183,10 +183,10 @@ void S2D_GL_Clear(Color clr);
     GLfloat c2r, GLfloat c2g, GLfloat c2b, GLfloat c2a,
     GLfloat x3,  GLfloat y3,
     GLfloat c3r, GLfloat c3g, GLfloat c3b, GLfloat c3a);
-  void gl2_draw_image(Image img);
-  void gl3_draw_image(Image img);
-  void gl2_draw_text(Text txt);
-  void gl3_draw_text(Text txt);
+  void gl2_draw_image(Image *img);
+  void gl3_draw_image(Image *img);
+  void gl2_draw_text(Text *txt);
+  void gl3_draw_text(Text *txt);
 #endif
 
 // S2D Functions ///////////////////////////////////////////////////////////////
@@ -194,12 +194,12 @@ void S2D_GL_Clear(Color clr);
 /*
  * Logs standard messages to the console
  */
-void S2D_Log(char *msg, int type);
+void S2D_Log(const char *msg, int type);
 
 /*
  * Logs Simple 2D errors to the console, with caller and message body
  */
-void S2D_Error(char *caller, const char *msg);
+void S2D_Error(const char *caller, const char *msg);
 
 /*
  * Enable/disable logging of diagnostics
@@ -215,7 +215,7 @@ void print_gl_context();
  * Create the window
  */
 Window* S2D_CreateWindow(
-  char *title, int width, int height, Update, Render, int flags
+  const char *title, int width, int height, Update, Render, int flags
 );
 
 /*
@@ -257,62 +257,62 @@ void S2D_DrawQuad(
 /*
  * Create an image
  */
-Image S2D_CreateImage(char *path);
+Image *S2D_CreateImage(const char *path);
 
 /*
  * Draw an image
  */
-void S2D_DrawImage(Image img);
+void S2D_DrawImage(Image *img);
 
 /*
  * Free an image
  */
-void S2D_FreeImage(Image img);
+void S2D_FreeImage(Image *img);
 
 /*
  * Create text
  */
-Text S2D_CreateText(char *font, char *msg, int size);
+Text *S2D_CreateText(const char *font, const char *msg, int size);
 
 /*
 * Sets the text message
 */
-void S2D_SetText(Text *txt, char *msg);
+void S2D_SetText(Text *txt, const char *msg);
 
 /*
  * Draw text
  */
-void S2D_DrawText(Text txt);
+void S2D_DrawText(Text *txt);
 
 /*
  * Free the text
  */
-void S2D_FreeText(Text txt);
+void S2D_FreeText(Text *txt);
 
 /*
  * Create a sound
  */
-Sound S2D_CreateSound(char *path);
+Sound *S2D_CreateSound(const char *path);
 
 /*
  * Play the sound
  */
-void S2D_PlaySound(Sound sound);
+void S2D_PlaySound(Sound *sound);
 
 /*
  * Free the sound
  */
-void S2D_FreeSound(Sound sound);
+void S2D_FreeSound(Sound *sound);
 
 /*
  * Create music
  */
-Music S2D_CreateMusic(char *path);
+Music *S2D_CreateMusic(const char *path);
 
 /*
  * Play the music
  */
-void S2D_PlayMusic(Music music, int times);
+void S2D_PlayMusic(Music *music, int times);
 
 /*
  * Pause the playing music
@@ -337,4 +337,5 @@ void S2D_FadeOutMusic(int ms);
 /*
  * Free the music
  */
-void S2D_FreeMusic(Music music);
+void S2D_FreeMusic(Music *music);
+

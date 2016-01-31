@@ -210,7 +210,7 @@ void gles_draw_triangle(GLfloat x1,  GLfloat y1,
 /*
  * Draw image
  */
-void gles_draw_image(Image img) {
+void gles_draw_image(Image *img) {
   // TODO: Implement this
 }
 
@@ -218,6 +218,6 @@ void gles_draw_image(Image img) {
 /*
  * Draw text
  */
-void gles_draw_text(Text txt) {
+void gles_draw_text(Text *txt) {
   // TODO: Implement this
 }
