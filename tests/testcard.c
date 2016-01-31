@@ -26,6 +26,9 @@ Point pointer;
 void on_key(const char *key) {
   printf("Key pressed: %s\n", key);
   S2D_SetText(&on_key_char, (char*)key);
+  if(strcmp(key, "Escape")==0) {
+    S2D_Close();
+  }
 }
 
 void on_key_down(const char *key) {
@@ -236,6 +239,6 @@ int main(int argc, const char *argv[]) {
   
   S2D_Show(window);
   
-  S2D_Close(window);
+  S2D_FreeWindow(window);
   return 0;
 }

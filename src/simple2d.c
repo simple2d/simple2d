@@ -683,10 +683,17 @@ int S2D_Show(Window *window) {
 /*
  * Close the window, clean up SDL
  */
-int S2D_Close(Window *window) {
+int S2D_Close() {
   
   S2D_Log("Closing S2D", S2D_INFO);
   
+  quit = true;
+  
+  return 0;
+}
+
+int S2D_FreeWindow(Window *window) {
+
   // SDL
   IMG_Quit();
   Mix_CloseAudio();
@@ -696,7 +703,6 @@ int S2D_Close(Window *window) {
   SDL_DestroyWindow(window->sdl);
   SDL_Quit();
 
-  quit = true;
-  
   return 0;
 }
+

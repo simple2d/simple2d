@@ -226,7 +226,12 @@ int S2D_Show(Window *window);
 /*
  * Close the window
  */
-int S2D_Close(Window *window);
+int S2D_Close();
+
+/*
+ * Free all resources
+ */
+int S2D_FreeWindow(Window *window);
 
 /*
  * Draw triangle
