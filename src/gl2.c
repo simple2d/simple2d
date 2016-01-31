@@ -82,11 +82,11 @@ static void gl2_draw_texture(int x, int y, int w, int h,
 /*
  * Draw image
  */
-void gl2_draw_image(Image img) {
+void gl2_draw_image(Image *img) {
   gl2_draw_texture(
-    img.x, img.y, img.w, img.h,
+    img->x, img->y, img->w, img->h,
     img->color.r, img->color.g, img->color.b, img->color.a,
-    img.texture_id
+    img->texture_id
   );
 }
 
@@ -94,10 +94,10 @@ void gl2_draw_image(Image img) {
 /*
  * Draw text
  */
-void gl2_draw_text(Text txt) {
+void gl2_draw_text(Text *txt) {
   gl2_draw_texture(
-    txt.x, txt.y, txt.w, txt.h,
-    txt.color.r, txt.color.g, txt.color.b, txt.color.a,
-    txt.texture_id
+    txt->x, txt->y, txt->w, txt->h,
+    txt->color.r, txt->color.g, txt->color.b, txt->color.a,
+    txt->texture_id
   );
 }

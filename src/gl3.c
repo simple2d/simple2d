@@ -126,6 +126,29 @@ int gl3_init(int width, int height) {
     return GL_FALSE;
   }
   
+  
+  // Attach the shader objects to the program object
+  glAttachShader(shaderProgram, vertexShader);
+  glAttachShader(shaderProgram, fragmentShader);
+  
+  // Bind the varying out variables to the fragment shader color number
+  glBindFragDataLocation(shaderProgram, 0, "outColor");
+  
+  // Link the shader program
+  glLinkProgram(shaderProgram);
+  
+  // Check if linked
+  gl3_check_linked(shaderProgram);
+  
+  // Specify the layout of the vertex data
+  GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
+  glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), 0);
+  glEnableVertexAttribArray(posAttrib);
+  
+  GLint colAttrib = glGetAttribLocation(shaderProgram, "color");
+  glVertexAttribPointer(colAttrib, 4, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(2 * sizeof(GLfloat)));
+  glEnableVertexAttribArray(colAttrib);
+  
   // Create the texture shader program object
   texShaderProgram = glCreateProgram();
   
@@ -135,36 +158,28 @@ int gl3_init(int width, int height) {
     return GL_FALSE;
   }
   
-  // Attach the shader objects to the program object
-  glAttachShader(shaderProgram, vertexShader);
-  glAttachShader(shaderProgram, fragmentShader);
   glAttachShader(texShaderProgram, vertexShader);
   glAttachShader(texShaderProgram, texFragmentShader);
   
-  // Bind the varying out variables to the fragment shader color number
-  glBindFragDataLocation(shaderProgram, 0, "outColor");
   glBindFragDataLocation(texShaderProgram, 0, "outColor");
   
-  // Link the shader program
-  glLinkProgram(shaderProgram);
   glLinkProgram(texShaderProgram);
   
-  // Check if linked
-  gl3_check_linked(shaderProgram);
   gl3_check_linked(texShaderProgram);
   
   // Specify the layout of the vertex data
-  GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
-  glEnableVertexAttribArray(posAttrib);
+  posAttrib = glGetAttribLocation(texShaderProgram, "position");
   glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), 0);
+  glEnableVertexAttribArray(posAttrib);
   
-  GLint colAttrib = glGetAttribLocation(shaderProgram, "color");
-  glEnableVertexAttribArray(colAttrib);
+  colAttrib = glGetAttribLocation(texShaderProgram, "color");
   glVertexAttribPointer(colAttrib, 4, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(2 * sizeof(GLfloat)));
+  glEnableVertexAttribArray(colAttrib);
   
-  GLint texAttrib = glGetAttribLocation(shaderProgram, "texcoord");
-  glEnableVertexAttribArray(texAttrib);
+  GLint texAttrib = glGetAttribLocation(texShaderProgram, "texcoord");
   glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(6 * sizeof(GLfloat)));
+  glEnableVertexAttribArray(texAttrib);
+  
   
   gl3_set_view(width, height, width, height);
   
@@ -224,11 +239,11 @@ static void gl3_draw_texture(int x, int y, int w, int h,
 /*
  * Draw image
  */
-void gl3_draw_image(Image img) {
+void gl3_draw_image(Image *img) {
   gl3_draw_texture(
-    img.x, img.y, img.w, img.h,
+    img->x, img->y, img->w, img->h,
     img->color.r, img->color.g, img->color.b, img->color.a,
-    img.texture_id
+    img->texture_id
   );
 }
 
@@ -236,10 +251,10 @@ void gl3_draw_image(Image img) {
 /*
  * Draw text
  */
-void gl3_draw_text(Text txt) {
+void gl3_draw_text(Text *txt) {
   gl3_draw_texture(
-    txt.x, txt.y, txt.w, txt.h, 
-    txt.color.r, txt.color.g, txt.color.b, txt.color.a,
-    txt.texture_id
+    txt->x, txt->y, txt->w, txt->h, 
+    txt->color.r, txt->color.g, txt->color.b, txt->color.a,
+    txt->texture_id
   );
 }
