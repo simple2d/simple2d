@@ -120,6 +120,10 @@ Image *S2D_CreateImage(const char *path) {
   }
 
   // Initialize values
+  img->color.r = 1.f;
+  img->color.g = 1.f;
+  img->color.b = 1.f;
+  img->color.a = 1.f;
   img->x = 0;
   img->y = 0;
   img->w = surface->w;
