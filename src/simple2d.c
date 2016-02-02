@@ -12,6 +12,9 @@ static bool FORCE_GL2 = false;
 bool S2D_GL2 = false;
 char S2D_msg[1024];
 
+// Set to true to quit main loop
+static bool quit = false;
+
 
 /*
  * Logs standard messages to the console
@@ -623,7 +626,6 @@ int S2D_Show(Window *window) {
   
   // Main Event Loop ///////////////////////////////////////////////////////////
   
-  bool quit = false;
   while (!quit) {
     
     // Clear Frame /////////////////////////////////////////////////////////////
@@ -742,10 +744,17 @@ int S2D_Show(Window *window) {
 /*
  * Close the window, clean up SDL
  */
-int S2D_Close(Window *window) {
+int S2D_Close() {
   
   S2D_Log("Closing S2D", S2D_INFO);
   
+  quit = true;
+  
+  return 0;
+}
+
+int S2D_FreeWindow(Window *window) {
+
   // SDL
   IMG_Quit();
   Mix_CloseAudio();
@@ -754,6 +763,7 @@ int S2D_Close(Window *window) {
   SDL_GL_DeleteContext(window->glcontext);
   SDL_DestroyWindow(window->sdl);
   SDL_Quit();
-  
+
   return 0;
 }
+
