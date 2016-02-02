@@ -263,7 +263,7 @@ S2D_FreeImage(img);
 ### Drawing Text
 
 Text is drawn much like images. `simple2d` supports OpenType fonts (with a `.ttf` or `.otf` file extension) thanks to `SDL_ttf`. 
-`S2D_CreateText()` allocates `Text` strcture on heap. This function takes the location of the font file, the message to print, and the size.
+`S2D_CreateText()` allocates `Text` structure on heap. This function takes the location of the font file, the message to print, and the size.
 
 ```c
 Text *txt;
