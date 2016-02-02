@@ -139,7 +139,36 @@ Image *S2D_CreateImage(const char *path) {
   if(surface->format->BytesPerPixel == 4) {
     format = GL_RGBA;
   }
-  
+
+  Uint32 r = surface->format->Rmask;
+  Uint32 g = surface->format->Gmask;
+  Uint32 a = surface->format->Amask;
+
+  if(r&0xFF000000 || r&0xFF0000) {
+    char *p = (char *)surface->pixels;
+    int bpp = surface->format->BytesPerPixel;
+    int w = surface->w;
+    int h = surface->h;
+    char tmp;
+    for(int i = 0;i<bpp*w*h;i+=bpp) {
+        if(a&0xFF) {
+          tmp = p[i];
+          p[i] = p[i+3];
+          p[i+3] = tmp;
+        }
+        if(g&0xFF0000) {
+          tmp = p[i+1];
+          p[i+1] = p[i+2];
+          p[i+2] = tmp;
+        }
+        if(r&0xFF0000) {
+            tmp = p[i];
+            p[i] = p[i+2];
+            p[i+2] = tmp;
+        }
+    }
+  }
+
   S2D_GL_SetUpTexture(&img->texture_id, format, img->w, img->h, surface->pixels, GL_NEAREST);
   
   // Free the surface data, no longer needed
