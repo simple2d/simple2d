@@ -94,6 +94,7 @@ int main() {
   );
   
   S2D_Show(window);
+  S2D_FreeWindow(window);
   return 0;
 }
 ```
@@ -166,7 +167,7 @@ Event callback functions can also be changed anytime – more on that below. Man
 When you're done with the window, close it to free allocated memory and shut down drawing and audio subsystems:
 
 ```c
-S2D_Close(window);
+S2D_FreeWindow(window);
 ```
 
 ### Update and Render
@@ -178,6 +179,11 @@ The update and render functions should look like this:
 ```c
 void update() { /* update your application state */ }
 void render() { /* draw stuff */ }
+```
+To exit main loop call the following function:
+
+```c
+void S2D_Close();
 ```
 
 ## Drawing Basics
@@ -220,10 +226,17 @@ S2D_DrawQuad(x1, y1, r1, g1, b1, a1,
 
 ### Drawing Images
 
-Images in many popular formats, like JPEG, PNG, and BMP, can also be drawn in the window. Unlike shapes, images need to be read from files and stored in memory. First, define and initialize a new `Image` structure using `S2D_CreateImage()` passing the image file path.
+Images in many popular formats, like JPEG, PNG, and BMP, can also be drawn in the window. Unlike shapes, images need to be read from files and stored in memory. 
+`S2D_CreateImage()` is used to allocate images:
 
 ```c
-Image img;
+Image *S2D_CreateImage(const char *path_to_image);
+```
+
+In case of an error, `NULL` is returned.
+
+```c
+Image *img;
 
 img = S2D_CreateImage("image.png");
 ```
@@ -231,8 +244,8 @@ img = S2D_CreateImage("image.png");
 You can then change the `x, y` position of the image like so:
 
 ```c
-img.x = 125;
-img.y = 350;
+img->x = 125;
+img->y = 350;
 ```
 
 Finally, draw the image using:
@@ -249,10 +262,11 @@ S2D_FreeImage(img);
 
 ### Drawing Text
 
-Text is drawn much like images. First, find your favorite TrueType or OpenType font (with a `.ttf` or `.otf` file extension), then define and initialize a new `Text` structure using `S2D_CreateText()`. This function takes the location of the font file, the message to print, and the size.
+Text is drawn much like images. `simple2d` supports OpenType fonts (with a `.ttf` or `.otf` file extension) thanks to `SDL_ttf`. 
+`S2D_CreateText()` allocates `Text` structure on heap. This function takes the location of the font file, the message to print, and the size.
 
 ```c
-Text txt;
+Text *txt;
 
 txt = S2D_CreateText("vera.ttf", "Hello world!", 20);
 ```
@@ -260,8 +274,8 @@ txt = S2D_CreateText("vera.ttf", "Hello world!", 20);
 You can then change the `x, y` position of the text, for example:
 
 ```c
-txt.x = 127;
-txt.y = 740;
+txt->x = 127;
+txt->y = 740;
 ```
 
 Draw the text using:
@@ -270,10 +284,10 @@ Draw the text using:
 S2D_DrawText(txt);
 ```
 
-You can also change the text message at any time. Use `S2D_SetText()` and pass a pointer to the text structure along with the new message:
+You can also change the text message at any time. Use `S2D_SetText()` and pass a pointer to the `Text` structure along with the new message:
 
 ```c
-S2D_SetText(&txt, "A different message!");
+S2D_SetText(txt, "A different message!");
 ```
 
 Since the text was allocated dynamically, you'll eventually need to free it using:
@@ -338,10 +352,10 @@ Simple 2D supports a number of audio formats, including WAV, MP3, Ogg Vorbis, an
 
 ### Sounds
 
-To create and play a sound, first define and initialize a new `Sound` structure, and initialize it using `S2D_CreateSound()`:
+To create sound use `S2D_CreateSound()`, which takes path to sound file and returns pointer to `Sound` structure:
 
 ```c
-Sound snd;
+Sound *snd;
 
 snd = S2D_CreateSound("sound.wav");
 ```
@@ -360,15 +374,15 @@ S2D_FreeSound(snd);
 
 ### Music
 
-Similarly, create and play music by first defining and initializing a new `Music` structure, and initialize it using `S2D_CreateMusic()`:
+Similarly, to create music call `S2D_CreateMusic()` with path to music file:
 
 ```c
-Music mus;
+Music *mus;
 
 mus = S2D_CreateMusic("music.ogg");
 ```
 
-The music can then be played using `S2D_PlayMusic()`, providing the structure and the number of times to be repeated. Set the second parameter to `0` to play the music once, or `-1` to repeat forever, for example:
+The music can then be played using `S2D_PlayMusic()`, providing a pointer to `Music` structure and the number of times to be repeated. Set the second parameter to `0` to play the music once, or `-1` to repeat forever, for example:
 
 ```c
 S2D_PlayMusic(mus, -1);
