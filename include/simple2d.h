@@ -214,7 +214,7 @@ void print_gl_context();
 /*
  * Create the window
  */
-Window* S2D_CreateWindow(
+Window *S2D_CreateWindow(
   const char *title, int width, int height, Update, Render, int flags
 );
 
@@ -343,4 +343,3 @@ void S2D_FadeOutMusic(int ms);
  * Free the music
  */
 void S2D_FreeMusic(Music *music);
-

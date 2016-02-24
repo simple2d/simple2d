@@ -126,7 +126,6 @@ int gl3_init(int width, int height) {
     return GL_FALSE;
   }
   
-  
   // Attach the shader objects to the program object
   glAttachShader(shaderProgram, vertexShader);
   glAttachShader(shaderProgram, fragmentShader);
@@ -179,7 +178,6 @@ int gl3_init(int width, int height) {
   GLint texAttrib = glGetAttribLocation(texShaderProgram, "texcoord");
   glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(6 * sizeof(GLfloat)));
   glEnableVertexAttribArray(texAttrib);
-  
   
   gl3_set_view(width, height, width, height);
   

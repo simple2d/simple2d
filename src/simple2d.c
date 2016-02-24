@@ -20,7 +20,6 @@ static bool quit = false;
  * Logs standard messages to the console
  */
 void S2D_Log(const char *msg, int type) {
-  
   if (diagnostics) {
     switch (type) {
       case S2D_INFO:
@@ -98,30 +97,27 @@ void S2D_DrawQuad(GLfloat x1,  GLfloat y1,
  * Create an image
  */
 Image *S2D_CreateImage(const char *path) {
-  if(!path)
-      return NULL;
+  if (!path) return NULL;
+  
   // TODO: Implement images in GLES
   #if GLES
     S2D_Log("S2D_DrawImage not yet implemented!", S2D_INFO);
   #endif
   
-  Image *img;
-  SDL_Surface *surface;
-  
   // Load image from file as SDL_Surface
-  surface = IMG_Load(path);
+  SDL_Surface *surface = IMG_Load(path);
   if (!surface) {
     S2D_Error("IMG_Load", IMG_GetError());
     return NULL;
   }
-
-  img = (Image *)malloc(sizeof(Image));
+  
+  Image *img = (Image *)malloc(sizeof(Image));
   if(!img) {
     S2D_Error("IMG_Load", "Out of memory!");
     SDL_FreeSurface(surface);
     return NULL;
   }
-
+  
   // Initialize values
   img->color.r = 1.f;
   img->color.g = 1.f;
@@ -134,41 +130,40 @@ Image *S2D_CreateImage(const char *path) {
   img->texture_id = 0;
   
   // Detect image mode
-  // TODO: BMP is in BGR...?
   int format = GL_RGB;
   if(surface->format->BytesPerPixel == 4) {
     format = GL_RGBA;
   }
-
+  
   Uint32 r = surface->format->Rmask;
   Uint32 g = surface->format->Gmask;
   Uint32 a = surface->format->Amask;
-
-  if(r&0xFF000000 || r&0xFF0000) {
+  
+  if (r&0xFF000000 || r&0xFF0000) {
     char *p = (char *)surface->pixels;
     int bpp = surface->format->BytesPerPixel;
     int w = surface->w;
     int h = surface->h;
     char tmp;
-    for(int i = 0;i<bpp*w*h;i+=bpp) {
-        if(a&0xFF) {
-          tmp = p[i];
-          p[i] = p[i+3];
-          p[i+3] = tmp;
-        }
-        if(g&0xFF0000) {
-          tmp = p[i+1];
-          p[i+1] = p[i+2];
-          p[i+2] = tmp;
-        }
-        if(r&0xFF0000) {
-            tmp = p[i];
-            p[i] = p[i+2];
-            p[i+2] = tmp;
-        }
+    for (int i = 0; i < bpp * w * h; i += bpp) {
+      if (a&0xFF) {
+        tmp = p[i];
+        p[i] = p[i+3];
+        p[i+3] = tmp;
+      }
+      if (g&0xFF0000) {
+        tmp = p[i+1];
+        p[i+1] = p[i+2];
+        p[i+2] = tmp;
+      }
+      if (r&0xFF0000) {
+        tmp = p[i];
+        p[i] = p[i+2];
+        p[i+2] = tmp;
+      }
     }
   }
-
+  
   S2D_GL_SetUpTexture(&img->texture_id, format, img->w, img->h, surface->pixels, GL_NEAREST);
   
   // Free the surface data, no longer needed
@@ -182,8 +177,7 @@ Image *S2D_CreateImage(const char *path) {
  * Draw an image
  */
 void S2D_DrawImage(Image *img) {
-  if(!img)
-    return;
+  if (!img) return;
   S2D_GL_DrawImage(img);
 }
 
@@ -192,8 +186,7 @@ void S2D_DrawImage(Image *img) {
  * Free an image
  */
 void S2D_FreeImage(Image *img) {
-  if(!img)
-      return;
+  if (!img) return;
   S2D_GL_FreeTexture(&img->texture_id);
   free(img);
 }
@@ -208,10 +201,8 @@ Text *S2D_CreateText(const char *font, const char *msg, int size) {
     S2D_Log("S2D_DrawText not yet implemented!", S2D_WARN);
   #endif
   
-  Text *txt;
-
-  txt = (Text *)malloc(sizeof(Text));
-  if(!txt) {
+  Text *txt = (Text *)malloc(sizeof(Text));
+  if (!txt) {
     S2D_Error("S2D_CreateText", "Out of memory!");
     return NULL;
   }
@@ -242,9 +233,8 @@ Text *S2D_CreateText(const char *font, const char *msg, int size) {
   // Save the width and height of the text
   TTF_SizeText(txt->font, txt->msg, &txt->w, &txt->h);
   
-  SDL_Surface *surface;
   SDL_Color color = { 255, 255, 255 };
-  surface = TTF_RenderText_Blended(txt->font, txt->msg, color);
+  SDL_Surface *surface = TTF_RenderText_Blended(txt->font, txt->msg, color);
   
   S2D_GL_SetUpTexture(&txt->texture_id, GL_RGBA, txt->w, txt->h, surface->pixels, GL_NEAREST);
   
@@ -259,17 +249,14 @@ Text *S2D_CreateText(const char *font, const char *msg, int size) {
  * Sets the text message
  */
 void S2D_SetText(Text *txt, const char *msg) {
-  if(!txt) {
-      return;
-  }
-
+  if (!txt) return;
+  
   txt->msg = msg;
   
   TTF_SizeText(txt->font, txt->msg, &txt->w, &txt->h);
   
-  SDL_Surface *surface;
   SDL_Color color = { 255, 255, 255 };
-  surface = TTF_RenderText_Blended(txt->font, txt->msg, color);
+  SDL_Surface *surface = TTF_RenderText_Blended(txt->font, txt->msg, color);
   
   S2D_GL_SetUpTexture(&txt->texture_id, GL_RGBA, txt->w, txt->h, surface->pixels, GL_NEAREST);
   
@@ -281,9 +268,7 @@ void S2D_SetText(Text *txt, const char *msg) {
  * Draw text
  */
 void S2D_DrawText(Text *txt) {
-  if(!txt) {
-    return;
-  }
+  if (!txt) return;
   S2D_GL_DrawText(txt);
 }
 
@@ -292,9 +277,7 @@ void S2D_DrawText(Text *txt) {
  * Free the text
  */
 void S2D_FreeText(Text *txt) {
-  if(!txt) {
-    return;
-  }
+  if (!txt) return;
   S2D_GL_FreeTexture(&txt->texture_id);
   TTF_CloseFont(txt->font);
 }
@@ -304,14 +287,12 @@ void S2D_FreeText(Text *txt) {
  * Create a sound
  */
 Sound *S2D_CreateSound(const char *path) {
-  Sound *sound;
-
-  sound = (Sound *)malloc(sizeof(Sound));
+  Sound *sound = (Sound *)malloc(sizeof(Sound));
   
   sound->data = Mix_LoadWAV(path);
   if (!sound->data) {
-      S2D_Error("Mix_LoadWAV", Mix_GetError());
-      free(sound);
+    S2D_Error("Mix_LoadWAV", Mix_GetError());
+    free(sound);
   }
   
   return sound;
@@ -322,8 +303,7 @@ Sound *S2D_CreateSound(const char *path) {
  * Play the sound
  */
 void S2D_PlaySound(Sound *sound) {
-  if(!sound)
-      return;
+  if (!sound) return;
   Mix_PlayChannel(-1, sound->data, 0);
 }
 
@@ -332,8 +312,7 @@ void S2D_PlaySound(Sound *sound) {
  * Free the sound
  */
 void S2D_FreeSound(Sound *sound) {
-  if(!sound)
-      return;
+  if (!sound) return;
   Mix_FreeChunk(sound->data);
   free(sound);
 }
@@ -343,19 +322,18 @@ void S2D_FreeSound(Sound *sound) {
  * Create the music
  */
 Music *S2D_CreateMusic(const char *path) {
-  Music *music;
-
-  music = (Music *)malloc(sizeof(Music));
+  
+  Music *music = (Music *)malloc(sizeof(Music));
   if(!music) {
     S2D_Error("S2D_CreateMusic", "Out of memory!");
     return NULL;
   }
-
+  
   music->data = Mix_LoadMUS(path);
   if (!music->data) {
-      S2D_Error("Mix_LoadMUS", Mix_GetError());
-      free(music);
-      return NULL;
+    S2D_Error("Mix_LoadMUS", Mix_GetError());
+    free(music);
+    return NULL;
   }
   
   return music;
@@ -366,8 +344,8 @@ Music *S2D_CreateMusic(const char *path) {
  * Play the music
  */
 void S2D_PlayMusic(Music *music, int times) {
-  if(!music)
-      return;
+  if (!music) return;
+  
   // times: 0 == once, -1 == forever
   if (Mix_PlayMusic(music->data, times) == -1) {
     // No music for you
@@ -412,8 +390,7 @@ void S2D_FadeOutMusic(int ms) {
  * Free the music
  */
 void S2D_FreeMusic(Music *music) {
-  if(!music)
-      return;
+  if (!music) return;
   Mix_FreeMusic(music->data);
   free(music);
 }
@@ -422,7 +399,7 @@ void S2D_FreeMusic(Music *music) {
 /*
  * Create a window
  */
-Window* S2D_CreateWindow(const char *title, int width, int height,
+Window *S2D_CreateWindow(const char *title, int width, int height,
                          Update update, Render render, int flags) {
   
   // Allocate window and set default values
@@ -616,14 +593,14 @@ int S2D_Show(Window *window) {
       controller = SDL_GameControllerOpen(i);
       if (controller) {
         sprintf(S2D_msg, "Found a valid controller, named: %s\n",
-                 SDL_GameControllerName(controller));
+                SDL_GameControllerName(controller));
         S2D_Log(S2D_msg, S2D_INFO);
         break;  // Break after first available controller
       } else {
         sprintf(S2D_msg, "Could not open game controller %i: %s\n", i, SDL_GetError());
         S2D_Log(S2D_msg, S2D_ERROR);
       }
-    
+      
     // Controller interface not supported, try to open as joystick
     } else {
       sprintf(S2D_msg, "Joystick %i is not supported by the game controller interface", i);
@@ -653,7 +630,7 @@ int S2D_Show(Window *window) {
     }
   }
   
-  // Main Event Loop ///////////////////////////////////////////////////////////
+  // Main Loop /////////////////////////////////////////////////////////////////
   
   while (!quit) {
     
@@ -771,20 +748,20 @@ int S2D_Show(Window *window) {
 
 
 /*
- * Close the window, clean up SDL
+ * Close the window
  */
 int S2D_Close() {
-  
   S2D_Log("Closing S2D", S2D_INFO);
-  
   quit = true;
-  
   return 0;
 }
 
-int S2D_FreeWindow(Window *window) {
 
-  // SDL
+/*
+ * Free all resources
+ */
+int S2D_FreeWindow(Window *window) {
+  
   IMG_Quit();
   Mix_CloseAudio();
   Mix_Quit();
@@ -792,7 +769,8 @@ int S2D_FreeWindow(Window *window) {
   SDL_GL_DeleteContext(window->glcontext);
   SDL_DestroyWindow(window->sdl);
   SDL_Quit();
-
+  
+  free(window);
+  
   return 0;
 }
-

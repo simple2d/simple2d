@@ -162,7 +162,7 @@ window->background.b = 0.8;
 window->background.a = 1.0;
 ```
 
-Event callback functions can also be changed anytime – more on that below. Many values can also be read from the `Window` structure, see the [simple2d.h](simple2d.h) header file for details.
+Event callback functions can also be changed anytime – more on that below. Many values can also be read from the `Window` structure, see the [simple2d.h](include/simple2d.h) header file for details.
 
 When you're done with the window, close it to free allocated memory and shut down drawing and audio subsystems:
 
@@ -348,7 +348,7 @@ This feature isn't implemented yet, but Simple 2D will eventually be able to aut
 
 ## Audio
 
-Simple 2D supports a number of audio formats, including WAV, MP3, Ogg Vorbis, and FLAC. There are two kinds of audio concepts: sounds and music. Sounds are intended to be short samples, played without interruption. Music is intended to be longer pieces of audio which can be played, paused, stopped, resumed, and faded out. Technical optimizations are made to each respectively.
+Simple 2D supports a number of audio formats, including WAV, MP3, Ogg Vorbis, and FLAC. There are two kinds of audio concepts: sounds and music. Sounds are intended to be short samples, played without interruption. Music is intended to be longer pieces of audio which can be played, paused, stopped, resumed, and faded out. Technical optimizations are made to each, respectively.
 
 ### Sounds
 
