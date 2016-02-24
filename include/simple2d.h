@@ -151,6 +151,9 @@ void S2D_GL_Clear(Color clr);
   void gles_hello();
   int gles_check_linked(GLuint program, char *name);
   int gles_init(int width, int height, int s_width, int s_height);
+  void gles_set_view(
+    int window_width,       int window_height,
+    int s2d_viewport_width, int s2d_viewport_height);
   void gles_draw_triangle(
     GLfloat x1,  GLfloat y1,
     GLfloat c1r, GLfloat c1g, GLfloat c1b, GLfloat c1a,
@@ -166,6 +169,9 @@ void S2D_GL_Clear(Color clr);
   int gl3_check_linked(GLuint program);
   int gl2_init(int width, int height);
   int gl3_init(int width, int height);
+  void gl2_set_view(
+    int window_width,       int window_height,
+    int s2d_viewport_width, int s2d_viewport_height);
   void gl3_set_view(
     int window_width,       int window_height,
     int s2d_viewport_width, int s2d_viewport_height);

@@ -118,10 +118,10 @@ void S2D_GL_SetView(int window_width,       int window_height,
                     int s2d_viewport_width, int s2d_viewport_height) {
   
   #if GLES
-    // gles_set_view(window_width, window_height, s2d_viewport_width, s2d_viewport_height);
+    gles_set_view(window_width, window_height, s2d_viewport_width, s2d_viewport_height);
   #else
     if (S2D_GL2) {
-      // gl2_set_view(window_width, window_height, s2d_viewport_width, s2d_viewport_height);
+      gl2_set_view(window_width, window_height, s2d_viewport_width, s2d_viewport_height);
     } else {
       gl3_set_view(window_width, window_height, s2d_viewport_width, s2d_viewport_height);
     }
@@ -135,9 +135,7 @@ void S2D_GL_SetView(int window_width,       int window_height,
 void S2D_GL_SetUpTexture(GLuint *id, GLint format, int w, int h, const GLvoid *data, GLint filter) {
   
   // If 0, then a new texture; generate name
-  if (*id == 0) {
-    glGenTextures(1, id);
-  }
+  if (*id == 0) glGenTextures(1, id);
   
   // Bind the named texture to a texturing target
   glBindTexture(GL_TEXTURE_2D, *id);

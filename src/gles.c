@@ -37,6 +37,14 @@ int gles_check_linked(GLuint program, char *name) {
 
 
 /*
+ * Sets the view and matrix projection
+ */
+void gles_set_view(int window_width,       int window_height,
+                  int s2d_viewport_width, int s2d_viewport_height) {
+}
+
+
+/*
  * Initalize OpenGL ES
  */
 int gles_init(int width, int height, int s_width, int s_height) {

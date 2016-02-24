@@ -4,6 +4,14 @@
 
 
 /*
+ * Sets the view and matrix projection
+ */
+void gl2_set_view(int window_width,       int window_height,
+                  int s2d_viewport_width, int s2d_viewport_height) {
+}
+
+
+/*
  * Initalize OpenGL
  */
 int gl2_init(int width, int height) {
