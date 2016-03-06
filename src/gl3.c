@@ -13,7 +13,7 @@ static GLuint elements[] = {
 /*
  * Check if shader program was linked
  */
-int gl3_check_linked(GLuint program) {
+int S2D_gl3_check_linked(GLuint program) {
   GLint linked;
   
   glGetProgramiv(program, GL_LINK_STATUS, &linked);
@@ -30,8 +30,8 @@ int gl3_check_linked(GLuint program) {
 /*
  * Sets the view and matrix projection
  */
-void gl3_set_view(int window_width,       int window_height,
-                  int s2d_viewport_width, int s2d_viewport_height) {
+void S2D_gl3_set_view(int window_width,       int window_height,
+                      int s2d_viewport_width, int s2d_viewport_height) {
   
   glViewport(0, 0, window_width, window_height);
   
@@ -56,7 +56,7 @@ void gl3_set_view(int window_width,       int window_height,
 /*
  * Initalize OpenGL
  */
-int gl3_init(int width, int height) {
+int S2D_gl3_init(int width, int height) {
   
   // Enable transparency
   glEnable(GL_BLEND);
@@ -137,7 +137,7 @@ int gl3_init(int width, int height) {
   glLinkProgram(shaderProgram);
   
   // Check if linked
-  gl3_check_linked(shaderProgram);
+  S2D_gl3_check_linked(shaderProgram);
   
   // Specify the layout of the vertex data
   GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
@@ -164,7 +164,7 @@ int gl3_init(int width, int height) {
   
   glLinkProgram(texShaderProgram);
   
-  gl3_check_linked(texShaderProgram);
+  S2D_gl3_check_linked(texShaderProgram);
   
   // Specify the layout of the vertex data
   posAttrib = glGetAttribLocation(texShaderProgram, "position");
@@ -179,7 +179,7 @@ int gl3_init(int width, int height) {
   glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(6 * sizeof(GLfloat)));
   glEnableVertexAttribArray(texAttrib);
   
-  gl3_set_view(width, height, width, height);
+  S2D_gl3_set_view(width, height, width, height);
   
   // Clean up
   glDeleteShader(vertexShader);
@@ -193,12 +193,12 @@ int gl3_init(int width, int height) {
 /*
  * Draw triangle
  */
-void gl3_draw_triangle(GLfloat x1,  GLfloat y1,
-                       GLfloat c1r, GLfloat c1g, GLfloat c1b, GLfloat c1a,
-                       GLfloat x2,  GLfloat y2,
-                       GLfloat c2r, GLfloat c2g, GLfloat c2b, GLfloat c2a,
-                       GLfloat x3,  GLfloat y3,
-                       GLfloat c3r, GLfloat c3g, GLfloat c3b, GLfloat c3a) {
+void S2D_gl3_draw_triangle(GLfloat x1,  GLfloat y1,
+                           GLfloat c1r, GLfloat c1g, GLfloat c1b, GLfloat c1a,
+                           GLfloat x2,  GLfloat y2,
+                           GLfloat c2r, GLfloat c2g, GLfloat c2b, GLfloat c2a,
+                           GLfloat x3,  GLfloat y3,
+                           GLfloat c3r, GLfloat c3g, GLfloat c3b, GLfloat c3a) {
   
   GLfloat vertices[] =
     { x1, y1, c1r, c1g, c1b, c1a, 0, 0,
@@ -214,9 +214,9 @@ void gl3_draw_triangle(GLfloat x1,  GLfloat y1,
 /*
  * Draw a texture
  */
-static void gl3_draw_texture(int x, int y, int w, int h, 
-                             GLfloat r, GLfloat g, GLfloat b, GLfloat a,
-                             GLuint texture_id) {
+static void S2D_gl3_draw_texture(int x, int y, int w, int h, 
+                                 GLfloat r, GLfloat g, GLfloat b, GLfloat a,
+                                 GLuint texture_id) {
   
   GLfloat vertices[] =
   // |x, y coords | colors    | x, y texture coords
@@ -237,8 +237,8 @@ static void gl3_draw_texture(int x, int y, int w, int h,
 /*
  * Draw image
  */
-void gl3_draw_image(Image *img) {
-  gl3_draw_texture(
+void S2D_gl3_draw_image(S2D_Image *img) {
+  S2D_gl3_draw_texture(
     img->x, img->y, img->w, img->h,
     img->color.r, img->color.g, img->color.b, img->color.a,
     img->texture_id
@@ -249,8 +249,8 @@ void gl3_draw_image(Image *img) {
 /*
  * Draw text
  */
-void gl3_draw_text(Text *txt) {
-  gl3_draw_texture(
+void S2D_gl3_draw_text(S2D_Text *txt) {
+  S2D_gl3_draw_texture(
     txt->x, txt->y, txt->w, txt->h, 
     txt->color.r, txt->color.g, txt->color.b, txt->color.a,
     txt->texture_id

@@ -1,17 +1,18 @@
 // testcard.c
 #include <simple2d.h>
 
-Window *window;
-Image *img_bmp = NULL;
-Image *img_jpg = NULL;
-Image *img_png = NULL;
-Text *txt = NULL;
-Text *on_key_text = NULL;
-Text *on_key_char = NULL;
-Text *key_down_text = NULL;
-Text *key_down_char = NULL;
-Text *fps = NULL;
-Text *fps_val = NULL;
+S2D_Window *window        = NULL;
+S2D_Image  *img_bmp       = NULL;
+S2D_Image  *img_jpg       = NULL;
+S2D_Image  *img_png       = NULL;
+S2D_Text   *txt           = NULL;
+S2D_Text   *on_key_text   = NULL;
+S2D_Text   *on_key_char   = NULL;
+S2D_Text   *key_down_text = NULL;
+S2D_Text   *key_down_char = NULL;
+S2D_Text   *fps           = NULL;
+S2D_Text   *fps_val       = NULL;
+
 char fps_str[7];
 const char *font = "./media/bitstream_vera/vera.ttf";
 int font_size = 20;
@@ -206,18 +207,17 @@ int main(int argc, const char *argv[]) {
   S2D_Diagnostics(true);
   
   window = S2D_CreateWindow("Simple 2D – Testcard", 600, 500, update, render, S2D_RESIZABLE);
-  if(!window)
-      return 1;
+  if (!window) return 1;
   
-  window->on_key = on_key;
-  window->on_key_down = on_key_down;
-  window->on_mouse = on_mouse;
+  window->on_key        = on_key;
+  window->on_key_down   = on_key_down;
+  window->on_mouse      = on_mouse;
   window->on_controller = on_controller;
   
   img_bmp = S2D_CreateImage("media/image.bmp");
   img_jpg = S2D_CreateImage("media/image.jpg");
   img_png = S2D_CreateImage("media/image.png");
-  txt = S2D_CreateText(font, "Hello World", font_size);
+  txt     = S2D_CreateText(font, "Hello World", font_size);
   
   on_key_text = S2D_CreateText(font, "On Key:", font_size);
   on_key_char = S2D_CreateText(font, " ", font_size);
@@ -244,5 +244,6 @@ int main(int argc, const char *argv[]) {
   S2D_Show(window);
   
   S2D_FreeWindow(window);
+  
   return 0;
 }

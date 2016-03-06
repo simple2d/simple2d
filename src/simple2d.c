@@ -96,7 +96,7 @@ void S2D_DrawQuad(GLfloat x1,  GLfloat y1,
 /*
  * Create an image
  */
-Image *S2D_CreateImage(const char *path) {
+S2D_Image *S2D_CreateImage(const char *path) {
   if (!path) return NULL;
   
   // TODO: Implement images in GLES
@@ -111,7 +111,7 @@ Image *S2D_CreateImage(const char *path) {
     return NULL;
   }
   
-  Image *img = (Image *)malloc(sizeof(Image));
+  S2D_Image *img = (S2D_Image *) malloc(sizeof(S2D_Image));
   if(!img) {
     S2D_Error("IMG_Load", "Out of memory!");
     SDL_FreeSurface(surface);
@@ -176,7 +176,7 @@ Image *S2D_CreateImage(const char *path) {
 /*
  * Draw an image
  */
-void S2D_DrawImage(Image *img) {
+void S2D_DrawImage(S2D_Image *img) {
   if (!img) return;
   S2D_GL_DrawImage(img);
 }
@@ -185,7 +185,7 @@ void S2D_DrawImage(Image *img) {
 /*
  * Free an image
  */
-void S2D_FreeImage(Image *img) {
+void S2D_FreeImage(S2D_Image *img) {
   if (!img) return;
   S2D_GL_FreeTexture(&img->texture_id);
   free(img);
@@ -195,13 +195,13 @@ void S2D_FreeImage(Image *img) {
 /*
  * Create text
  */
-Text *S2D_CreateText(const char *font, const char *msg, int size) {
+S2D_Text *S2D_CreateText(const char *font, const char *msg, int size) {
   
   #if GLES
     S2D_Log("S2D_DrawText not yet implemented!", S2D_WARN);
   #endif
   
-  Text *txt = (Text *)malloc(sizeof(Text));
+  S2D_Text *txt = (S2D_Text *) malloc(sizeof(S2D_Text));
   if (!txt) {
     S2D_Error("S2D_CreateText", "Out of memory!");
     return NULL;
@@ -248,7 +248,7 @@ Text *S2D_CreateText(const char *font, const char *msg, int size) {
 /*
  * Sets the text message
  */
-void S2D_SetText(Text *txt, const char *msg) {
+void S2D_SetText(S2D_Text *txt, const char *msg) {
   if (!txt) return;
   
   txt->msg = msg;
@@ -267,7 +267,7 @@ void S2D_SetText(Text *txt, const char *msg) {
 /*
  * Draw text
  */
-void S2D_DrawText(Text *txt) {
+void S2D_DrawText(S2D_Text *txt) {
   if (!txt) return;
   S2D_GL_DrawText(txt);
 }
@@ -276,7 +276,7 @@ void S2D_DrawText(Text *txt) {
 /*
  * Free the text
  */
-void S2D_FreeText(Text *txt) {
+void S2D_FreeText(S2D_Text *txt) {
   if (!txt) return;
   S2D_GL_FreeTexture(&txt->texture_id);
   TTF_CloseFont(txt->font);
@@ -286,8 +286,8 @@ void S2D_FreeText(Text *txt) {
 /*
  * Create a sound
  */
-Sound *S2D_CreateSound(const char *path) {
-  Sound *sound = (Sound *)malloc(sizeof(Sound));
+S2D_Sound *S2D_CreateSound(const char *path) {
+  S2D_Sound *sound = (S2D_Sound *) malloc(sizeof(S2D_Sound));
   
   sound->data = Mix_LoadWAV(path);
   if (!sound->data) {
@@ -302,7 +302,7 @@ Sound *S2D_CreateSound(const char *path) {
 /*
  * Play the sound
  */
-void S2D_PlaySound(Sound *sound) {
+void S2D_PlaySound(S2D_Sound *sound) {
   if (!sound) return;
   Mix_PlayChannel(-1, sound->data, 0);
 }
@@ -311,7 +311,7 @@ void S2D_PlaySound(Sound *sound) {
 /*
  * Free the sound
  */
-void S2D_FreeSound(Sound *sound) {
+void S2D_FreeSound(S2D_Sound *sound) {
   if (!sound) return;
   Mix_FreeChunk(sound->data);
   free(sound);
@@ -321,9 +321,9 @@ void S2D_FreeSound(Sound *sound) {
 /*
  * Create the music
  */
-Music *S2D_CreateMusic(const char *path) {
+S2D_Music *S2D_CreateMusic(const char *path) {
   
-  Music *music = (Music *)malloc(sizeof(Music));
+  S2D_Music *music = (S2D_Music *) malloc(sizeof(S2D_Music));
   if(!music) {
     S2D_Error("S2D_CreateMusic", "Out of memory!");
     return NULL;
@@ -343,7 +343,7 @@ Music *S2D_CreateMusic(const char *path) {
 /*
  * Play the music
  */
-void S2D_PlayMusic(Music *music, int times) {
+void S2D_PlayMusic(S2D_Music *music, int times) {
   if (!music) return;
   
   // times: 0 == once, -1 == forever
@@ -389,7 +389,7 @@ void S2D_FadeOutMusic(int ms) {
 /*
  * Free the music
  */
-void S2D_FreeMusic(Music *music) {
+void S2D_FreeMusic(S2D_Music *music) {
   if (!music) return;
   Mix_FreeMusic(music->data);
   free(music);
@@ -399,11 +399,11 @@ void S2D_FreeMusic(Music *music) {
 /*
  * Create a window
  */
-Window *S2D_CreateWindow(const char *title, int width, int height,
-                         Update update, Render render, int flags) {
+S2D_Window *S2D_CreateWindow(const char *title, int width, int height,
+                             S2D_Update update, S2D_Render render, int flags) {
   
   // Allocate window and set default values
-  Window *window = (Window*)malloc(sizeof(Window));
+  S2D_Window *window = (S2D_Window *) malloc(sizeof(S2D_Window));
   window->title = title;
   window->width = width;
   window->height = height;
@@ -505,11 +505,11 @@ Window *S2D_CreateWindow(const char *title, int width, int height,
     
     #if GLES
       // Initialize OpenGL ES 2.0
-      gles_init(window->width, window->height, window->s_width, window->s_height);
+      S2D_gles_init(window->width, window->height, window->s_width, window->s_height);
       
     #else
       // Initialize OpenGL 3.3+
-      gl3_init(window->width, window->height);
+      S2D_gl3_init(window->width, window->height);
     #endif
     
   } else {
@@ -530,7 +530,7 @@ Window *S2D_CreateWindow(const char *title, int width, int height,
       if (window->glcontext) {
         // Valid context found
         S2D_GL2 = true;
-        gl2_init(window->width, window->height);
+        S2D_gl2_init(window->width, window->height);
         
       } else {
         // Could not create any OpenGL contexts, hard failure
@@ -553,7 +553,7 @@ Window *S2D_CreateWindow(const char *title, int width, int height,
 /*
  * Show the window
  */
-int S2D_Show(Window *window) {
+int S2D_Show(S2D_Window *window) {
   
   // Setting up variables
   int mouse_x, mouse_y;  // Mouse positions
@@ -760,7 +760,7 @@ int S2D_Close() {
 /*
  * Free all resources
  */
-int S2D_FreeWindow(Window *window) {
+int S2D_FreeWindow(S2D_Window *window) {
   
   IMG_Quit();
   Mix_CloseAudio();

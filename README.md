@@ -77,8 +77,6 @@ Making 2D apps is simple! Let's create a window and draw a triangle...
 ```c
 #include <simple2d.h>
 
-Window *window;
-
 void render() {
   S2D_DrawTriangle(
     320,  50, 1, 0, 0, 1,
@@ -89,7 +87,7 @@ void render() {
 
 int main() {
   
-  window = S2D_CreateWindow(
+  S2D_Window *window = S2D_CreateWindow(
     "Hello Triangle", 640, 480, NULL, render, 0
   );
   
@@ -105,7 +103,7 @@ Save the code above in a file called `triangle.c`, and compile it using:
 cc triangle.c `simple2d --libs` -o triangle
 ```
 
-Run it using `./triangle` and enjoy the stunning triangle in a 640x480 window at 60 frames per second.
+Run it using `./triangle` and enjoy your stunning triangle in a 640x480 window at 60 frames per second.
 
 ## 2D Basics
 
@@ -113,12 +111,10 @@ Let's learn about how to structure an application for 2D drawing and more.
 
 ### The Window
 
-All rendered content, input, and sound is controlled by the window, and so creating a window is the first thing you'll do. Start by defining a `Window` structure and initializing it using `S2D_CreateWindow()`.
+All rendered content, input, and sound is controlled by the window, and so creating a window is the first thing you'll do. Start by declaring a pointer to a `Window` structure and initializing it using `S2D_CreateWindow`.
 
 ```c
-Window *window;
-
-window = S2D_CreateWindow(
+S2D_Window *window = S2D_CreateWindow(
   "Hello World!",  // title of the window
   800, 600,        // width and height
   update, render,  // callback function pointers (these can be NULL)
@@ -172,7 +168,7 @@ S2D_FreeWindow(window);
 
 ### Update and Render
 
-The window loop is where all the action takes place: the frame rate is set, input is handled, the app state is updated, and visuals are rendered. You'll want to declare two essential functions which will be called by the main window loop: `update()` and `render()`. Like a traditional game loop, `update()` is used for updating the application state, and `render()` is used for drawing the scene. Simple 2D optimizes both functions for performance and accurate scene composition, so it's good practice to keep those updating and rendering tasks separate (although drawing can actually be done anywhere, but don't make a habit of it).
+The window loop is where all the action takes place: the frame rate is set, input is handled, the app state is updated, and visuals are rendered. You'll want to declare two essential functions which will be called by the window loop: `update` and `render`. Like a traditional game loop, `update` is used for updating the application state, and `render` is used for drawing the scene. Simple 2D optimizes both functions for performance and accurate scene composition, so it's good practice to keep those updating and rendering tasks separate (although drawing can actually be done anywhere, but don't make a habit of it).
 
 The update and render functions should look like this:
 
@@ -180,15 +176,18 @@ The update and render functions should look like this:
 void update() { /* update your application state */ }
 void render() { /* draw stuff */ }
 ```
-To exit main loop call the following function:
+
+Remember to add these function names when calling `S2D_CreateWindow` (see "The Window" section above for an example).
+
+To exit the window loop at anytime, call the following function:
 
 ```c
-void S2D_Close();
+S2D_Close();
 ```
 
 ## Drawing Basics
 
-Where a vertex is present, like with shapes, there will be six values which need to be set for each: the `x` and `y` coordinates, and four color values. All values are floats (technically `GLfloat`, but that shouldn't matter), although `x` and `y` coordinates are usually expressed as whole numbers (from 0 to whatever, that is). Color values at different vertices are blended with a gradient at their intersection.
+Where a vertex is present, like with shapes, there will be six values which need to be set for each: the `x` and `y` coordinates, and four color values. All values are floats, although `x` and `y` coordinates are typically expressed as whole numbers (from 0 to whatever). Color values at different vertices are blended with a gradient at their intersection.
 
 The shorthand for the examples below are:
 
@@ -205,9 +204,9 @@ a = alpha
 
 So, for example, `x2` would be the second `x` coordinate, and `b2` would be the blue value at that vertex.
 
-### Drawing Shapes
+### Shapes
 
-There are two fundamental shapes available: triangles and quadrilaterals. Triangles are drawn with the function `S2D_DrawTriangle()`:
+There are two fundamental shapes available: triangles and quadrilaterals. Triangles are drawn with the function `S2D_DrawTriangle`:
 
 ```c
 S2D_DrawTriangle(x1, y1, r1, g1, b1, a1,
@@ -215,7 +214,7 @@ S2D_DrawTriangle(x1, y1, r1, g1, b1, a1,
                  x3, y3, r3, g3, b3, a3);
 ```
 
-Quadrilaterals are drawn with `S2D_DrawQuad()`:
+Quadrilaterals are drawn with `S2D_DrawQuad`:
 
 ```c
 S2D_DrawQuad(x1, y1, r1, g1, b1, a1,
@@ -224,24 +223,17 @@ S2D_DrawQuad(x1, y1, r1, g1, b1, a1,
              x4, y4, r4, g4, b4, a4);
 ```
 
-### Drawing Images
+### Images
 
-Images in many popular formats, like JPEG, PNG, and BMP, can also be drawn in the window. Unlike shapes, images need to be read from files and stored in memory. 
-`S2D_CreateImage()` is used to allocate images:
-
-```c
-Image *S2D_CreateImage(const char *path_to_image);
-```
-
-In case of an error, `NULL` is returned.
+Images in many popular formats, like JPEG, PNG, and BMP, can also be drawn in the window. Unlike shapes, images need to be read from files and stored in memory. Simply declare a pointer to an `S2D_Image` structure and initialize it using `S2D_CreateImage`, giving it the file path to the image:
 
 ```c
-Image *img;
-
-img = S2D_CreateImage("image.png");
+S2D_Image *img = S2D_CreateImage("image.png");
 ```
 
-You can then change the `x, y` position of the image like so:
+If the image can't be found, `S2D_CreateImage` will return `NULL`.
+
+Once you have your image, you can then change the `x, y` position like so:
 
 ```c
 img->x = 125;
@@ -260,15 +252,12 @@ Since the image was allocated dynamically, you'll eventually need to free it usi
 S2D_FreeImage(img);
 ```
 
-### Drawing Text
+### Text
 
-Text is drawn much like images. `simple2d` supports OpenType fonts (with a `.ttf` or `.otf` file extension) thanks to `SDL_ttf`. 
-`S2D_CreateText()` allocates `Text` structure on heap. This function takes the location of the font file, the message to print, and the size.
+Text is drawn much like images. Start by finding your favorite OpenType font (with a `.ttf` or `.otf` file extension), then declare a pointer to a `S2D_Text` structure, and initialize it using `S2D_CreateText`, giving it the file path to the font, the message to display, and the size:
 
 ```c
-Text *txt;
-
-txt = S2D_CreateText("vera.ttf", "Hello world!", 20);
+S2D_Text *txt = S2D_CreateText("vera.ttf", "Hello world!", 20);
 ```
 
 You can then change the `x, y` position of the text, for example:
@@ -284,7 +273,7 @@ Draw the text using:
 S2D_DrawText(txt);
 ```
 
-You can also change the text message at any time. Use `S2D_SetText()` and pass a pointer to the `Text` structure along with the new message:
+You can also change the text message at any time. Use `S2D_SetText` and give it the `Text` pointer along with the new message:
 
 ```c
 S2D_SetText(txt, "A different message!");
@@ -302,20 +291,20 @@ Simple 2D can capture input from just about anything. Let's learn how to grab in
 
 ### Mouse
 
-The cursor position of the mouse or trackpad can be read at any time from the window, where the top, left corner is `0, 0`.
+The cursor position of the mouse or trackpad can be read at any time from the window. Note the top, left corner is the origin, or `(0, 0)`.
 
 ```c
 window->mouse.x;
 window->mouse.y;
 ```
 
-To capture mouse button presses, attach a callback to the window.
+To capture mouse button presses, attach a callback to the window:
 
 ```c
 window->on_mouse = on_mouse;
 ```
 
-Then define the function to do something.
+Then define the function to do something:
 
 ```c
 void on_mouse(int x, int y) {
@@ -325,9 +314,9 @@ void on_mouse(int x, int y) {
 
 ### Keyboard
 
-There are two types of keyboard events that are registered by the window: a single key press `on_key()`, and when a key is held down `on_key_down()`. This distinction is useful for when, say for example, the user is making a game character run by holding down the arrow keys, but still wants to catch other keys to make the character jump, shoot, etc.
+There are two types of keyboard events captured by the window: a single key press and a key held down. When a key is pressed, the window calls it's `on_key` function exactly once, and if the key is being held down, the `on_key_down` function will be repeatedly called with each cycle of the window loop.
 
-These two functions are also both optional, but here's what you'll need to do if you choose to implement both. First, create two functions, like so:
+To start capturing keyboard input, first define the `on_key` and `on_key_down` functions:
 
 ```c
 // Do something with `key` in each of these functions
@@ -335,7 +324,7 @@ void on_key(const char *key) { ... }
 void on_key_down(const char *key) { ... }
 ```
 
-They can be named anything – their names in this example match the window's member names for simplicity. Once declared, the function pointers have to be registered with the window:
+These functions can actually be named. In this example, their names just match the window structure's member names for simplicity. Once defined, register the function pointers with the window:
 
 ```c
 window->on_key = on_key;
@@ -344,23 +333,21 @@ window->on_key_down = on_key_down;
 
 ### Game Controllers
 
-This feature isn't implemented yet, but Simple 2D will eventually be able to automatically detect controllers plugged in.
+This feature hasn't been implemented yet, but Simple 2D will automatically detect controllers and capture their input.
 
 ## Audio
 
-Simple 2D supports a number of audio formats, including WAV, MP3, Ogg Vorbis, and FLAC. There are two kinds of audio concepts: sounds and music. Sounds are intended to be short samples, played without interruption. Music is intended to be longer pieces of audio which can be played, paused, stopped, resumed, and faded out. Technical optimizations are made to each, respectively.
+Simple 2D supports a number of audio formats, including WAV, MP3, Ogg Vorbis, and FLAC. There are two kinds of audio concepts: sounds and music. Sounds are intended to be short samples, played without interruption. Music is for longer pieces which can be played, paused, stopped, resumed, and faded out.
 
 ### Sounds
 
-To create sound use `S2D_CreateSound()`, which takes path to sound file and returns pointer to `Sound` structure:
+Create a sound by first declaring a pointer to a `S2D_Sound` structure and initialize it using `S2D_CreateSound` and providing the path to the audio file:
 
 ```c
-Sound *snd;
-
-snd = S2D_CreateSound("sound.wav");
+S2D_Sound *snd = S2D_CreateSound("sound.wav");
 ```
 
-The sound can then be played using:
+Then play the sound like this:
 
 ```c
 S2D_PlaySound(snd);
@@ -374,28 +361,26 @@ S2D_FreeSound(snd);
 
 ### Music
 
-Similarly, to create music call `S2D_CreateMusic()` with path to music file:
+Similarly, to create some music, declare a pointer to a `S2D_Music` structure and initialize it using `S2D_CreateMusic` providing the path to the audio file:
 
 ```c
-Music *mus;
-
-mus = S2D_CreateMusic("music.ogg");
+S2D_Music *mus = S2D_CreateMusic("music.ogg");
 ```
 
-The music can then be played using `S2D_PlayMusic()`, providing a pointer to `Music` structure and the number of times to be repeated. Set the second parameter to `0` to play the music once, or `-1` to repeat forever, for example:
+Play the music using `S2D_PlayMusic` providing the pointer and the number of times to be repeated. For example, to play the music once set the second parameter to `0`, and use `-1` to repeat forever.
 
 ```c
 S2D_PlayMusic(mus, -1);
 ```
 
-Since only one piece of music is intended to be playing, functions for pausing, resuming, stopping, and fading out apply globally. Use these to control the playing music:
+Only one piece of music can be played at a time. These functions for pausing, resuming, stopping, and fading out apply to whatever music is currently playing.
 
 ```c
 S2D_PauseMusic();
 S2D_ResumeMusic();
 S2D_StopMusic();
 
-// Set fade out duration in milliseconds
+// Fade out duration in milliseconds
 S2D_FadeOutMusic(2000);
 ```
 
@@ -409,14 +394,14 @@ S2D_FreeMusic(mus);
 
 > "Simple can be harder than complex: You have to work hard to get your thinking clean to make it simple. But it's worth it in the end because once you get there, you can move mountains." ― [Steve Jobs](http://blogs.wsj.com/digits/2011/08/24/steve-jobss-best-quotes)
 
-Despite the continuing advancement of graphics hardware and software, getting started with simple graphics programming isn't that easy or accessible. Join the community working to change this.
+Despite the continuing advancement of graphics hardware and software, getting started with simple graphics programming isn't that easy or accessible. We’re working to change that.
 
 Check out the [open issues](https://github.com/simple2d/simple2d/issues) and join the [mailing list](https://groups.google.com/d/forum/simple2d). If you're a hardcore C and OS hacker, you should seriously consider contributing to [SDL](https://www.libsdl.org) so we can continue writing games without worrying about the platforms underneath. Take a look at the talks from [Steam Dev Days](http://www.steamdevdays.com), especially [Ryan C. Gordon's](https://twitter.com/icculus) talk on [Game Development with SDL 2.0](https://www.youtube.com/watch?v=MeMPCSqQ-34&list=UUStZs-X5W6V3TFJLnwkzN5w).
 
 ## Preparing a Release
 
 1. [Run tests](#running-tests) on all supported platforms
-2. Update version number in files [`VERSION`](VERSION) and [`simple2d.sh`](simple2d.sh), commit changes
+2. Update the version number in files [`VERSION`](VERSION) and [`simple2d.sh`](simple2d.sh), commit changes
 3. Create a [new release](https://github.com/simple2d/simple2d/releases) in GitHub, with tag in the form `v#.#.#`
 4. Update the [Homebrew tap](https://github.com/simple2d/homebrew-tap):
   - Update formula with new `url`
@@ -426,7 +411,7 @@ Check out the [open issues](https://github.com/simple2d/simple2d/issues) and joi
 
 # About the Project
 
-Simple 2D was created by [Tom Black](https://twitter.com/blacktm) who thought simple graphics programming was way too difficult and decided to do something about it. And no, the web browser is not an acceptable alternative – it's a workaround.
+Simple 2D was created by [Tom Black](https://twitter.com/blacktm), who thought simple graphics programming was way too difficult and decided to do something about it.
 
 Everything is [MIT Licensed](LICENSE.md), so hack away.
 

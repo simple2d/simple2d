@@ -24,7 +24,7 @@ void S2D_GL_PrintError(char *error) {
 /*
  * Print info about the current OpenGL context
  */
-void S2D_GL_PrintContextInfo(Window *window) {
+void S2D_GL_PrintContextInfo(S2D_Window *window) {
   sprintf(S2D_msg,
     "OpenGL Context\n"
     "GL_VENDOR: %s\n"
@@ -47,7 +47,7 @@ void S2D_GL_PrintContextInfo(Window *window) {
 /*
  * Store info about the current OpenGL context
  */
-void S2D_GL_StoreContextInfo(Window *window) {
+void S2D_GL_StoreContextInfo(S2D_Window *window) {
   window->S2D_GL_VENDOR   = glGetString(GL_VENDOR);
   window->S2D_GL_RENDERER = glGetString(GL_RENDERER);
   window->S2D_GL_VERSION  = glGetString(GL_VERSION);
@@ -95,7 +95,7 @@ GLuint S2D_GL_LoadShader(GLenum type, const GLchar *shaderSrc, char *shaderName)
     
     if (infoLen > 1) {
       
-      char* infoLog = malloc(sizeof(char)*infoLen);
+      char *infoLog = malloc(sizeof(char) * infoLen);
       
       glGetShaderInfoLog(shader, infoLen, NULL, infoLog);
       printf("Error compiling shader %s:\n%s\n", shaderName, infoLog);
@@ -118,12 +118,12 @@ void S2D_GL_SetView(int window_width,       int window_height,
                     int s2d_viewport_width, int s2d_viewport_height) {
   
   #if GLES
-    gles_set_view(window_width, window_height, s2d_viewport_width, s2d_viewport_height);
+    S2D_gles_set_view(window_width, window_height, s2d_viewport_width, s2d_viewport_height);
   #else
     if (S2D_GL2) {
-      gl2_set_view(window_width, window_height, s2d_viewport_width, s2d_viewport_height);
+      S2D_gl2_set_view(window_width, window_height, s2d_viewport_width, s2d_viewport_height);
     } else {
-      gl3_set_view(window_width, window_height, s2d_viewport_width, s2d_viewport_height);
+      S2D_gl3_set_view(window_width, window_height, s2d_viewport_width, s2d_viewport_height);
     }
   #endif
 }
@@ -163,18 +163,18 @@ void S2D_GL_DrawTriangle(GLfloat x1,  GLfloat y1,
                          GLfloat c3r, GLfloat c3g, GLfloat c3b, GLfloat c3a) {
   
   #if GLES
-    gles_draw_triangle(x1, y1, c1r, c1g, c1b, c1a,
-                       x2, y2, c2r, c2g, c2b, c2a,
-                       x3, y3, c3r, c3g, c3b, c3a);
+    S2D_gles_draw_triangle(x1, y1, c1r, c1g, c1b, c1a,
+                           x2, y2, c2r, c2g, c2b, c2a,
+                           x3, y3, c3r, c3g, c3b, c3a);
   #else
     if (S2D_GL2) {
-      gl2_draw_triangle(x1, y1, c1r, c1g, c1b, c1a,
-                        x2, y2, c2r, c2g, c2b, c2a,
-                        x3, y3, c3r, c3g, c3b, c3a);
+      S2D_gl2_draw_triangle(x1, y1, c1r, c1g, c1b, c1a,
+                            x2, y2, c2r, c2g, c2b, c2a,
+                            x3, y3, c3r, c3g, c3b, c3a);
     } else {
-      gl3_draw_triangle(x1, y1, c1r, c1g, c1b, c1a,
-                        x2, y2, c2r, c2g, c2b, c2a,
-                        x3, y3, c3r, c3g, c3b, c3a);
+      S2D_gl3_draw_triangle(x1, y1, c1r, c1g, c1b, c1a,
+                            x2, y2, c2r, c2g, c2b, c2a,
+                            x3, y3, c3r, c3g, c3b, c3a);
     }
   #endif
 }
@@ -183,14 +183,14 @@ void S2D_GL_DrawTriangle(GLfloat x1,  GLfloat y1,
 /*
  * Draw an image
  */
-void S2D_GL_DrawImage(Image *img) {
+void S2D_GL_DrawImage(S2D_Image *img) {
   #if GLES
-    gles_draw_image(img);
+    S2D_gles_draw_image(img);
   #else
     if (S2D_GL2) {
-      gl2_draw_image(img);
+      S2D_gl2_draw_image(img);
     } else {
-      gl3_draw_image(img);
+      S2D_gl3_draw_image(img);
     }
   #endif
 }
@@ -199,14 +199,14 @@ void S2D_GL_DrawImage(Image *img) {
 /*
  * Draw text
  */
-void S2D_GL_DrawText(Text *txt) {
+void S2D_GL_DrawText(S2D_Text *txt) {
   #if GLES
-    gles_draw_text(txt);
+    S2D_gles_draw_text(txt);
   #else
     if (S2D_GL2) {
-      gl2_draw_text(txt);
+      S2D_gl2_draw_text(txt);
     } else {
-      gl3_draw_text(txt);
+      S2D_gl3_draw_text(txt);
     }
   #endif
 }
@@ -223,7 +223,7 @@ void S2D_GL_FreeTexture(GLuint *id) {
 /*
  * Clear buffers to given color values
  */
-void S2D_GL_Clear(Color clr) {
+void S2D_GL_Clear(S2D_Color clr) {
   glClearColor(clr.r, clr.g, clr.b, clr.a);
   glClear(GL_COLOR_BUFFER_BIT);
 }

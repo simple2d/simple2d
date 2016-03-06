@@ -42,29 +42,29 @@ extern GLfloat S2D_GL_orthoMatrix[16];
 
 // Type Definitions ////////////////////////////////////////////////////////////
 
-typedef struct Color {
+typedef struct S2D_Color {
   GLfloat r;
   GLfloat g;
   GLfloat b;
   GLfloat a;
-} Color;
+} S2D_Color;
 
-typedef struct Mouse {
+typedef struct S2D_Mouse {
   int visible;
   int x;       // scaled positions
   int y;
   int real_x;  // actual positions
   int real_y;
-} Mouse;
+} S2D_Mouse;
 
-typedef void (*Update)(void);
-typedef void (*Render)(void);
-typedef void (*On_key)(const char *key);
-typedef void (*On_key_down)(const char *key);
-typedef void (*On_mouse)(int x, int y);
-typedef void (*On_controller)(bool is_axis, int axis, int val, bool is_btn, int btn);
+typedef void (*S2D_Update)(void);
+typedef void (*S2D_Render)(void);
+typedef void (*S2D_On_key)(const char *key);
+typedef void (*S2D_On_key_down)(const char *key);
+typedef void (*S2D_On_mouse)(int x, int y);
+typedef void (*S2D_On_controller)(bool is_axis, int axis, int val, bool is_btn, int btn);
 
-typedef struct Window {
+typedef struct S2D_Window {
   SDL_Window *sdl;
   const GLubyte *S2D_GL_VENDOR;
   const GLubyte *S2D_GL_RENDERER;
@@ -80,54 +80,54 @@ typedef struct Window {
   int s_height;
   int fps_cap;
   bool vsync;
-  Color background;
-  Update update;
-  Render render;
-  On_key on_key;
-  On_key_down on_key_down;
-  On_mouse on_mouse;
-  On_controller on_controller;
-  Mouse mouse;
+  S2D_Color background;
+  S2D_Update update;
+  S2D_Render render;
+  S2D_On_key on_key;
+  S2D_On_key_down on_key_down;
+  S2D_On_mouse on_mouse;
+  S2D_On_controller on_controller;
+  S2D_Mouse mouse;
   Uint32 frames;
   Uint32 elapsed_ms;
   Uint32 loop_ms;
   Uint32 delay_ms;
   double fps;
-} Window;
+} S2D_Window;
 
-typedef struct Image {
+typedef struct S2D_Image {
   GLuint texture_id;
-  Color color;
+  S2D_Color color;
   int x;
   int y;
   int w;
   int h;
-} Image;
+} S2D_Image;
 
-typedef struct Text {
+typedef struct S2D_Text {
   GLuint texture_id;
-  Color color;
+  S2D_Color color;
   TTF_Font *font;
   const char *msg;
   int x;
   int y;
   int w;
   int h;
-} Text;
+} S2D_Text;
 
-typedef struct Sound {
+typedef struct S2D_Sound {
   Mix_Chunk *data;
-} Sound;
+} S2D_Sound;
 
-typedef struct Music {
+typedef struct S2D_Music {
   Mix_Music *data;
-} Music;
+} S2D_Music;
 
 // Simple 2D OpenGL Functions //////////////////////////////////////////////////
 
 void S2D_GL_PrintError(char *error);
-void S2D_GL_PrintContextInfo(Window *window);
-void S2D_GL_StoreContextInfo(Window *window);
+void S2D_GL_PrintContextInfo(S2D_Window *window);
+void S2D_GL_StoreContextInfo(S2D_Window *window);
 GLuint S2D_GL_LoadShader(GLenum type, const GLchar *shaderSrc, char *shaderName);
 void S2D_GL_SetView(
   int window_width,       int window_height,
@@ -140,59 +140,59 @@ void S2D_GL_DrawTriangle(
   GLfloat c2r, GLfloat c2g, GLfloat c2b, GLfloat c2a,
   GLfloat x3,  GLfloat y3,
   GLfloat c3r, GLfloat c3g, GLfloat c3b, GLfloat c3a);
-void S2D_GL_DrawImage(Image *img);
-void S2D_GL_DrawText(Text *txt);
+void S2D_GL_DrawImage(S2D_Image *img);
+void S2D_GL_DrawText(S2D_Text *txt);
 void S2D_GL_FreeTexture(GLuint *id);
-void S2D_GL_Clear(Color clr);
+void S2D_GL_Clear(S2D_Color clr);
 
 // OpenGL & GLES Internal Functions ////////////////////////////////////////////
 
 #if GLES
-  void gles_hello();
-  int gles_check_linked(GLuint program, char *name);
-  int gles_init(int width, int height, int s_width, int s_height);
-  void gles_set_view(
+  void S2D_gles_hello();
+  int S2D_gles_check_linked(GLuint program, char *name);
+  int S2D_gles_init(int width, int height, int s_width, int s_height);
+  void S2D_gles_set_view(
     int window_width,       int window_height,
     int s2d_viewport_width, int s2d_viewport_height);
-  void gles_draw_triangle(
+  void S2D_gles_draw_triangle(
     GLfloat x1,  GLfloat y1,
     GLfloat c1r, GLfloat c1g, GLfloat c1b, GLfloat c1a,
     GLfloat x2,  GLfloat y2,
     GLfloat c2r, GLfloat c2g, GLfloat c2b, GLfloat c2a,
     GLfloat x3,  GLfloat y3,
     GLfloat c3r, GLfloat c3g, GLfloat c3b, GLfloat c3a);
-  void gles_draw_image(Image *img);
-  void gles_draw_text(Text *txt);
+  void S2D_gles_draw_image(Image *img);
+  void S2D_gles_draw_text(Text *txt);
 #else
-  void gl2_hello();
-  void gl3_hello();
-  int gl3_check_linked(GLuint program);
-  int gl2_init(int width, int height);
-  int gl3_init(int width, int height);
-  void gl2_set_view(
+  void S2D_gl2_hello();
+  void S2D_gl3_hello();
+  int S2D_gl3_check_linked(GLuint program);
+  int S2D_gl2_init(int width, int height);
+  int S2D_gl3_init(int width, int height);
+  void S2D_gl2_set_view(
     int window_width,       int window_height,
     int s2d_viewport_width, int s2d_viewport_height);
-  void gl3_set_view(
+  void S2D_gl3_set_view(
     int window_width,       int window_height,
     int s2d_viewport_width, int s2d_viewport_height);
-  void gl2_draw_triangle(
+  void S2D_gl2_draw_triangle(
     GLfloat x1,  GLfloat y1,
     GLfloat c1r, GLfloat c1g, GLfloat c1b, GLfloat c1a,
     GLfloat x2,  GLfloat y2,
     GLfloat c2r, GLfloat c2g, GLfloat c2b, GLfloat c2a,
     GLfloat x3,  GLfloat y3,
     GLfloat c3r, GLfloat c3g, GLfloat c3b, GLfloat c3a);
-  void gl3_draw_triangle(
+  void S2D_gl3_draw_triangle(
     GLfloat x1,  GLfloat y1,
     GLfloat c1r, GLfloat c1g, GLfloat c1b, GLfloat c1a,
     GLfloat x2,  GLfloat y2,
     GLfloat c2r, GLfloat c2g, GLfloat c2b, GLfloat c2a,
     GLfloat x3,  GLfloat y3,
     GLfloat c3r, GLfloat c3g, GLfloat c3b, GLfloat c3a);
-  void gl2_draw_image(Image *img);
-  void gl3_draw_image(Image *img);
-  void gl2_draw_text(Text *txt);
-  void gl3_draw_text(Text *txt);
+  void S2D_gl2_draw_image(S2D_Image *img);
+  void S2D_gl3_draw_image(S2D_Image *img);
+  void S2D_gl2_draw_text(S2D_Text *txt);
+  void S2D_gl3_draw_text(S2D_Text *txt);
 #endif
 
 // S2D Functions ///////////////////////////////////////////////////////////////
@@ -213,21 +213,16 @@ void S2D_Error(const char *caller, const char *msg);
 void S2D_Diagnostics(bool status);
 
 /*
- * Print info about the current OpenGL context
- */
-void print_gl_context();
-
-/*
  * Create the window
  */
-Window *S2D_CreateWindow(
-  const char *title, int width, int height, Update, Render, int flags
+S2D_Window *S2D_CreateWindow(
+  const char *title, int width, int height, S2D_Update, S2D_Render, int flags
 );
 
 /*
  * Show the window
  */
-int S2D_Show(Window *window);
+int S2D_Show(S2D_Window *window);
 
 /*
  * Close the window
@@ -237,7 +232,7 @@ int S2D_Close();
 /*
  * Free all resources
  */
-int S2D_FreeWindow(Window *window);
+int S2D_FreeWindow(S2D_Window *window);
 
 /*
  * Draw triangle
@@ -268,62 +263,62 @@ void S2D_DrawQuad(
 /*
  * Create an image
  */
-Image *S2D_CreateImage(const char *path);
+S2D_Image *S2D_CreateImage(const char *path);
 
 /*
  * Draw an image
  */
-void S2D_DrawImage(Image *img);
+void S2D_DrawImage(S2D_Image *img);
 
 /*
  * Free an image
  */
-void S2D_FreeImage(Image *img);
+void S2D_FreeImage(S2D_Image *img);
 
 /*
  * Create text
  */
-Text *S2D_CreateText(const char *font, const char *msg, int size);
+S2D_Text *S2D_CreateText(const char *font, const char *msg, int size);
 
 /*
 * Sets the text message
 */
-void S2D_SetText(Text *txt, const char *msg);
+void S2D_SetText(S2D_Text *txt, const char *msg);
 
 /*
  * Draw text
  */
-void S2D_DrawText(Text *txt);
+void S2D_DrawText(S2D_Text *txt);
 
 /*
  * Free the text
  */
-void S2D_FreeText(Text *txt);
+void S2D_FreeText(S2D_Text *txt);
 
 /*
  * Create a sound
  */
-Sound *S2D_CreateSound(const char *path);
+S2D_Sound *S2D_CreateSound(const char *path);
 
 /*
  * Play the sound
  */
-void S2D_PlaySound(Sound *sound);
+void S2D_PlaySound(S2D_Sound *sound);
 
 /*
  * Free the sound
  */
-void S2D_FreeSound(Sound *sound);
+void S2D_FreeSound(S2D_Sound *sound);
 
 /*
  * Create music
  */
-Music *S2D_CreateMusic(const char *path);
+S2D_Music *S2D_CreateMusic(const char *path);
 
 /*
  * Play the music
  */
-void S2D_PlayMusic(Music *music, int times);
+void S2D_PlayMusic(S2D_Music *music, int times);
 
 /*
  * Pause the playing music
@@ -348,4 +343,4 @@ void S2D_FadeOutMusic(int ms);
 /*
  * Free the music
  */
-void S2D_FreeMusic(Music *music);
+void S2D_FreeMusic(S2D_Music *music);

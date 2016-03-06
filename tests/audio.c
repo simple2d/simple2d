@@ -3,11 +3,11 @@
 bool is_sound = true;
 int sound = 1;
 int music = 2;
-Sound *snd_1 = NULL;
-Sound *snd_2 = NULL;
-Music *mus_1 = NULL;
-Music *mus_2 = NULL;
-Window *window;
+S2D_Sound *snd_1 = NULL;
+S2D_Sound *snd_2 = NULL;
+S2D_Music *mus_1 = NULL;
+S2D_Music *mus_2 = NULL;
+S2D_Window *window;
 
 void print_help() {
   // ┌ ┬ ┐ ┤ ┘ ┴ └ ├ ┼ ─ │
@@ -113,9 +113,8 @@ int main(int argc, const char *argv[]) {
   window = S2D_CreateWindow(
     "Audio", 200, 150, NULL, NULL, 0
   );
-
-  if(!window)
-      return 1;
+  
+  if (!window) return 1;
   
   window->on_key = on_key;
   
@@ -130,5 +129,6 @@ int main(int argc, const char *argv[]) {
   S2D_Show(window);
 
   S2D_FreeWindow(window);
+  
   return 0;
 }

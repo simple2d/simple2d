@@ -10,7 +10,7 @@ static GLuint colorLocation;
 /*
  * Check if shader program was linked
  */
-int gles_check_linked(GLuint program, char *name) {
+int S2D_gles_check_linked(GLuint program, char *name) {
   GLint linked;
   
   glGetProgramiv(program, GL_LINK_STATUS, &linked);
@@ -22,7 +22,7 @@ int gles_check_linked(GLuint program, char *name) {
     
     if (infoLen > 1) {
       
-      char* infoLog = malloc (sizeof(char) * infoLen);
+      char *infoLog = malloc(sizeof(char) * infoLen);
       
       glGetProgramInfoLog(program, infoLen, NULL, infoLog);
       printf("Error linking program `%s`: %s\n", name, infoLog);
@@ -39,15 +39,15 @@ int gles_check_linked(GLuint program, char *name) {
 /*
  * Sets the view and matrix projection
  */
-void gles_set_view(int window_width,       int window_height,
-                  int s2d_viewport_width, int s2d_viewport_height) {
+void S2D_gles_set_view(int window_width,       int window_height,
+                       int s2d_viewport_width, int s2d_viewport_height) {
 }
 
 
 /*
  * Initalize OpenGL ES
  */
-int gles_init(int width, int height, int s_width, int s_height) {
+int S2D_gles_init(int width, int height, int s_width, int s_height) {
   
   // Enable transparency
   glEnable(GL_BLEND);
@@ -139,8 +139,8 @@ int gles_init(int width, int height, int s_width, int s_height) {
   glLinkProgram(texShaderProgram);
   
   // Check if linked
-  gles_check_linked(shaderProgram, "shaderProgram");
-  gles_check_linked(texShaderProgram, "texShaderProgram");
+  S2D_gles_check_linked(shaderProgram, "shaderProgram");
+  S2D_gles_check_linked(texShaderProgram, "texShaderProgram");
   
   // Compute scaling factors, if necessary
   GLfloat scale_x = 1.0f;
@@ -182,12 +182,12 @@ int gles_init(int width, int height, int s_width, int s_height) {
 /*
  * Draw triangle
  */
-void gles_draw_triangle(GLfloat x1,  GLfloat y1,
-                        GLfloat c1r, GLfloat c1g, GLfloat c1b, GLfloat c1a,
-                        GLfloat x2,  GLfloat y2,
-                        GLfloat c2r, GLfloat c2g, GLfloat c2b, GLfloat c2a,
-                        GLfloat x3,  GLfloat y3,
-                        GLfloat c3r, GLfloat c3g, GLfloat c3b, GLfloat c3a) {
+void S2D_gles_draw_triangle(GLfloat x1,  GLfloat y1,
+                            GLfloat c1r, GLfloat c1g, GLfloat c1b, GLfloat c1a,
+                            GLfloat x2,  GLfloat y2,
+                            GLfloat c2r, GLfloat c2g, GLfloat c2b, GLfloat c2a,
+                            GLfloat x3,  GLfloat y3,
+                            GLfloat c3r, GLfloat c3g, GLfloat c3b, GLfloat c3a) {
   
   GLfloat vVertices[] =
     { x1, y1, 0.0f,
@@ -218,7 +218,7 @@ void gles_draw_triangle(GLfloat x1,  GLfloat y1,
 /*
  * Draw image
  */
-void gles_draw_image(Image *img) {
+void S2D_gles_draw_image(S2D_Image *img) {
   // TODO: Implement this
 }
 
@@ -226,6 +226,6 @@ void gles_draw_image(Image *img) {
 /*
  * Draw text
  */
-void gles_draw_text(Text *txt) {
+void S2D_gles_draw_text(S2D_Text *txt) {
   // TODO: Implement this
 }
