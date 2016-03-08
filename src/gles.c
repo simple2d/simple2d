@@ -37,10 +37,9 @@ int S2D_gles_check_linked(GLuint program, char *name) {
 
 
 /*
- * Sets the view and matrix projection
+ * Sets the viewport and matrix projection
  */
-void S2D_gles_set_view(int window_width,       int window_height,
-                       int s2d_viewport_width, int s2d_viewport_height) {
+void S2D_gles_set_viewport(int x, int y, int w, int h, int ortho_w, int ortho_h) {
 }
 
 

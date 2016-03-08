@@ -2,14 +2,21 @@
 
 // Definitions /////////////////////////////////////////////////////////////////
 
+// Messages
 #define S2D_INFO  1
 #define S2D_WARN  2
 #define S2D_ERROR 3
 
+// Window attributes
 #define S2D_RESIZABLE  SDL_WINDOW_RESIZABLE
 #define S2D_BORDERLESS SDL_WINDOW_BORDERLESS
 #define S2D_FULLSCREEN SDL_WINDOW_FULLSCREEN_DESKTOP
 #define S2D_HIGHDPI    SDL_WINDOW_ALLOW_HIGHDPI
+
+// Viewport scaling
+#define S2D_FIXED   1
+#define S2D_SCALE   2
+#define S2D_STRETCH 3
 
 // If ARM, assume GLES
 #ifdef __arm__
@@ -21,6 +28,7 @@
 // Includes ////////////////////////////////////////////////////////////////////
 
 #include <stdbool.h>
+#include <math.h>
 #include <SDL2/SDL.h>
 
 #if GLES
@@ -74,10 +82,13 @@ typedef struct S2D_Window {
   const GLubyte *S2D_GL_SHADING_LANGUAGE_VERSION;
   SDL_GLContext glcontext;
   const char *title;
-  int width;    // actual dimentions
+  int orig_width;  // original dimentions
+  int orig_height;
+  int width;       // actual dimentions
   int height;
-  int s_width;  // scaled dimentions
+  int s_width;     // scaled dimentions
   int s_height;
+  int viewport;
   int fps_cap;
   bool vsync;
   S2D_Color background;
@@ -129,9 +140,7 @@ void S2D_GL_PrintError(char *error);
 void S2D_GL_PrintContextInfo(S2D_Window *window);
 void S2D_GL_StoreContextInfo(S2D_Window *window);
 GLuint S2D_GL_LoadShader(GLenum type, const GLchar *shaderSrc, char *shaderName);
-void S2D_GL_SetView(
-  int window_width,       int window_height,
-  int s2d_viewport_width, int s2d_viewport_height);
+void S2D_GL_SetViewport(S2D_Window *window);
 void S2D_GL_SetUpTexture(GLuint *id, GLint format, int w, int h, const GLvoid *data, GLint filter);
 void S2D_GL_DrawTriangle(
   GLfloat x1,  GLfloat y1,
@@ -151,9 +160,7 @@ void S2D_GL_Clear(S2D_Color clr);
   void S2D_gles_hello();
   int S2D_gles_check_linked(GLuint program, char *name);
   int S2D_gles_init(int width, int height, int s_width, int s_height);
-  void S2D_gles_set_view(
-    int window_width,       int window_height,
-    int s2d_viewport_width, int s2d_viewport_height);
+  void S2D_gles_set_viewport(int x, int y, int w, int h, int ortho_w, int ortho_h);
   void S2D_gles_draw_triangle(
     GLfloat x1,  GLfloat y1,
     GLfloat c1r, GLfloat c1g, GLfloat c1b, GLfloat c1a,
@@ -167,14 +174,10 @@ void S2D_GL_Clear(S2D_Color clr);
   void S2D_gl2_hello();
   void S2D_gl3_hello();
   int S2D_gl3_check_linked(GLuint program);
-  int S2D_gl2_init(int width, int height);
-  int S2D_gl3_init(int width, int height);
-  void S2D_gl2_set_view(
-    int window_width,       int window_height,
-    int s2d_viewport_width, int s2d_viewport_height);
-  void S2D_gl3_set_view(
-    int window_width,       int window_height,
-    int s2d_viewport_width, int s2d_viewport_height);
+  int S2D_gl2_init();
+  int S2D_gl3_init();
+  void S2D_gl2_set_viewport(int x, int y, int w, int h, int ortho_w, int ortho_h);
+  void S2D_gl3_set_viewport(int x, int y, int w, int h, int ortho_w, int ortho_h);
   void S2D_gl2_draw_triangle(
     GLfloat x1,  GLfloat y1,
     GLfloat c1r, GLfloat c1g, GLfloat c1b, GLfloat c1a,

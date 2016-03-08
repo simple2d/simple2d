@@ -112,18 +112,46 @@ GLuint S2D_GL_LoadShader(GLenum type, const GLchar *shaderSrc, char *shaderName)
 
 
 /*
- * Sets the view and matrix projection
+ * Sets the viewport and matrix projection
  */
-void S2D_GL_SetView(int window_width,       int window_height,
-                    int s2d_viewport_width, int s2d_viewport_height) {
+void S2D_GL_SetViewport(S2D_Window *window) {
+  
+  int ortho_w = window->orig_width;
+  int ortho_h = window->orig_height;
+  int x, y, w, h;  // GL viewport values: x, y, width, height
+  double scale;
+  
+  x = 0; y = 0; w = window->width; h = window->height;
+  
+  switch (window->viewport) {
+    case S2D_FIXED:
+      ortho_w = window->width;
+      ortho_h = window->height;
+      break;
+    case S2D_SCALE:
+      scale = fmin(
+        window->width  / (double)window->orig_width,
+        window->height / (double)window->orig_height
+      );
+      
+      w = window->orig_width  * scale;
+      h = window->orig_height * scale;
+      
+      // center the viewport
+      x = window->width  / 2 - w/2;
+      y = window->height / 2 - h/2;
+      break;
+    case S2D_STRETCH:
+      break;
+  }
   
   #if GLES
-    S2D_gles_set_view(window_width, window_height, s2d_viewport_width, s2d_viewport_height);
+    S2D_gles_set_viewport(x, y, w, h, ortho_w, ortho_h);
   #else
     if (S2D_GL2) {
-      S2D_gl2_set_view(window_width, window_height, s2d_viewport_width, s2d_viewport_height);
+      S2D_gl2_set_viewport(x, y, w, h, ortho_w, ortho_h);
     } else {
-      S2D_gl3_set_view(window_width, window_height, s2d_viewport_width, s2d_viewport_height);
+      S2D_gl3_set_viewport(x, y, w, h, ortho_w, ortho_h);
     }
   #endif
 }

@@ -4,32 +4,31 @@
 
 
 /*
- * Sets the view and matrix projection
+ * Sets the viewport and matrix projection
  */
-void S2D_gl2_set_view(int window_width,       int window_height,
-                      int s2d_viewport_width, int s2d_viewport_height) {
-}
-
-
-/*
- * Initalize OpenGL
- */
-int S2D_gl2_init(int width, int height) {
+void S2D_gl2_set_viewport(int x, int y, int w, int h, int ortho_w, int ortho_h) {
   
-  GLenum error = GL_NO_ERROR;
-  
-  glViewport(0, 0, width, height);
+  glViewport(x, y, w, h);
   
   // Initialize the projection matrix
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   
   // Multiply the current matrix with the orthographic matrix
-  glOrtho(0.f, width, height, 0.f, -1.f, 1.f);
+  glOrtho(0.f, ortho_w, ortho_h, 0.f, -1.f, 1.f);
   
   // Initialize the modelview matrix
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
+}
+
+
+/*
+ * Initalize OpenGL
+ */
+int S2D_gl2_init() {
+  
+  GLenum error = GL_NO_ERROR;
   
   // Enable transparency
   glEnable(GL_BLEND);

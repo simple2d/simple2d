@@ -28,16 +28,15 @@ int S2D_gl3_check_linked(GLuint program) {
 
 
 /*
- * Sets the view and matrix projection
+ * Sets the viewport and matrix projection
  */
-void S2D_gl3_set_view(int window_width,       int window_height,
-                      int s2d_viewport_width, int s2d_viewport_height) {
+void S2D_gl3_set_viewport(int x, int y, int w, int h, int ortho_w, int ortho_h) {
   
-  glViewport(0, 0, window_width, window_height);
+  glViewport(x, y, w, h);
   
   // Set orthographic projection matrix
-  S2D_GL_orthoMatrix[0] =  2.0f / (GLfloat)s2d_viewport_width;
-  S2D_GL_orthoMatrix[5] = -2.0f / (GLfloat)s2d_viewport_height;
+  S2D_GL_orthoMatrix[0] =  2.0f / (GLfloat)ortho_w;
+  S2D_GL_orthoMatrix[5] = -2.0f / (GLfloat)ortho_h;
   
   // Use the program object
   glUseProgram(shaderProgram);
@@ -56,7 +55,7 @@ void S2D_gl3_set_view(int window_width,       int window_height,
 /*
  * Initalize OpenGL
  */
-int S2D_gl3_init(int width, int height) {
+int S2D_gl3_init() {
   
   // Enable transparency
   glEnable(GL_BLEND);
@@ -178,8 +177,6 @@ int S2D_gl3_init(int width, int height) {
   GLint texAttrib = glGetAttribLocation(texShaderProgram, "texcoord");
   glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(6 * sizeof(GLfloat)));
   glEnableVertexAttribArray(texAttrib);
-  
-  S2D_gl3_set_view(width, height, width, height);
   
   // Clean up
   glDeleteShader(vertexShader);

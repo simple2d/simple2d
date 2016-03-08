@@ -403,22 +403,25 @@ S2D_Window *S2D_CreateWindow(const char *title, int width, int height,
                              S2D_Update update, S2D_Render render, int flags) {
   
   // Allocate window and set default values
-  S2D_Window *window = (S2D_Window *) malloc(sizeof(S2D_Window));
-  window->title = title;
-  window->width = width;
-  window->height = height;
-  window->fps_cap = 60;
-  window->vsync = true;
-  window->update = update;
-  window->render = render;
-  window->on_key = NULL;
-  window->on_key_down = NULL;
-  window->on_mouse = NULL;
+  S2D_Window *window    = (S2D_Window *) malloc(sizeof(S2D_Window));
+  window->title         = title;
+  window->orig_width    = width;
+  window->orig_height   = height;
+  window->width         = width;
+  window->height        = height;
+  window->viewport      = S2D_SCALE;
+  window->fps_cap       = 60;
+  window->vsync         = true;
+  window->update        = update;
+  window->render        = render;
+  window->on_key        = NULL;
+  window->on_key_down   = NULL;
+  window->on_mouse      = NULL;
   window->on_controller = NULL;
-  window->background.r = 0.0;
-  window->background.g = 0.0;
-  window->background.b = 0.0;
-  window->background.a = 1.0;
+  window->background.r  = 0.0;
+  window->background.g  = 0.0;
+  window->background.b  = 0.0;
+  window->background.a  = 1.0;
   
   // SDL Initialization ////////////////////////////////////////////////////////
   
@@ -506,10 +509,12 @@ S2D_Window *S2D_CreateWindow(const char *title, int width, int height,
     #if GLES
       // Initialize OpenGL ES 2.0
       S2D_gles_init(window->width, window->height, window->s_width, window->s_height);
+      S2D_GL_SetViewport(window);
       
     #else
       // Initialize OpenGL 3.3+
-      S2D_gl3_init(window->width, window->height);
+      S2D_gl3_init();
+      S2D_GL_SetViewport(window);
     #endif
     
   } else {
@@ -530,7 +535,8 @@ S2D_Window *S2D_CreateWindow(const char *title, int width, int height,
       if (window->glcontext) {
         // Valid context found
         S2D_GL2 = true;
-        S2D_gl2_init(window->width, window->height);
+        S2D_gl2_init();
+        S2D_GL_SetViewport(window);
         
       } else {
         // Could not create any OpenGL contexts, hard failure
@@ -555,17 +561,17 @@ S2D_Window *S2D_CreateWindow(const char *title, int width, int height,
  */
 int S2D_Show(S2D_Window *window) {
   
-  // Setting up variables
-  int mouse_x, mouse_y;  // Mouse positions
+  int mouse_x, mouse_y;
   const Uint8 *key_state;
-  Uint32 frames = 0;       // Total frames since start
+  
+  Uint32 frames = 0;           // Total frames since start
   Uint32 start_ms = SDL_GetTicks();  // Elapsed time since start
   Uint32 begin_ms = start_ms;  // Time at beginning of loop
-  Uint32 end_ms;    // Time at end of loop
-  Uint32 elapsed_ms;  // Total elapsed time
-  Uint32 loop_ms;   // Elapsed time of loop
-  int delay_ms;     // Amount of delay to achieve desired frame rate
-  double fps;       // The actual frame rate
+  Uint32 end_ms;               // Time at end of loop
+  Uint32 elapsed_ms;           // Total elapsed time
+  Uint32 loop_ms;              // Elapsed time of loop
+  int delay_ms;                // Amount of delay to achieve desired frame rate
+  double fps;                  // The actual frame rate
   
   // Enable VSync
   if (window->vsync) {
@@ -685,7 +691,11 @@ int S2D_Show(S2D_Window *window) {
         case SDL_WINDOWEVENT:
           switch (e.window.event) {
             case SDL_WINDOWEVENT_RESIZED:
-              S2D_GL_SetView(e.window.data1, e.window.data2, window->width, window->height);
+              // Store new window size
+              window->width  = e.window.data1;
+              window->height = e.window.data2;
+              
+              S2D_GL_SetViewport(window);
               break;
           }
           break;
