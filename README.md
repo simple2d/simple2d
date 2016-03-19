@@ -6,7 +6,7 @@ If you encounter any issues, ping the [mailing list](https://groups.google.com/d
 
 ## Getting Started
 
-Currently, Simple 2D officially supports OS X, Linux, and the [Raspberry Pi](http://www.raspberrypi.org) (Raspbian). To compile and install...
+Currently, Simple 2D officially supports OS X, Linux, and [Raspberry Pi](https://www.raspberrypi.org) (Raspbian). To compile and install...
 
 ### ...on OS X, use [Homebrew](http://brew.sh):
 
@@ -38,13 +38,13 @@ git submodule init
 git submodule update --remote
 ```
 
-Alternatively, you can clone the repo and update the submodule in one step using:
+Alternatively, you can clone the `simple2d` repo and init the `test_media` submodule in one step using:
 
 ```bash
 git clone --recursive https://github.com/simple2d/simple2d.git
 ```
 
-To get the latest changes from `test_media`, like when new commits are available, simply run `git submodule update --remote`.
+To get the latest changes from `test_media`, simply run `git submodule update --remote`.
 
 ### Building the Tests
 
