@@ -1,12 +1,12 @@
 # Welcome to Simple 2D!
 
-Simple 2D is a small, open-source graphics engine written in C providing basic 2D drawing abilities and access to input devices and sound. It works across many platforms, creating native windows and interacting with hardware using [SDL](http://www.libsdl.org) while rendering content with [OpenGL](https://www.opengl.org).
+Simple 2D is a small, open-source graphics engine providing essential 2D drawing, media, and input capabilities. It's written in C and works across many platforms, creating native windows and interacting with hardware using [SDL](http://www.libsdl.org) while rendering content with [OpenGL](https://www.opengl.org).
 
 If you encounter any issues, ping the [mailing list](https://groups.google.com/d/forum/simple2d). Learn about [contributing](#contributing) below.
 
 ## Getting Started
 
-Currently, Simple 2D officially supports OS X, Linux, and [Raspberry Pi](https://www.raspberrypi.org) (Raspbian). To compile and install...
+Simple 2D supports Unix-like systems and is tested on the latest versions of OS X, Ubuntu, and Raspbian on the Raspberry Pi. To compile and install...
 
 ### ...on OS X, use [Homebrew](http://brew.sh):
 
@@ -25,13 +25,21 @@ url='https://raw.githubusercontent.com/simple2d/simple2d/master/simple2d.sh'; wh
 
 Of course, you can always just download or clone this repo and run `make && make install`. This obviously won't check for installed dependancies, which is why the script above is helpful.
 
+### The Command-line Utility
+
 Once installed, use the `simple2d` command-line utility to update Simple 2D, check for issues, output the libraries needed to compile applications, and more. Run `simple2d --help` to see all available commands and options.
 
-## Running Tests
+## Tests
+
+Simple 2D has a few test programs to make sure all functionality is working as it should.
+
+- [`triangle.c`](tests/testcard.c) – The "Hello Triangle" example in this README.
+- [`testcard.c`](tests/testcard.c) – A graphical card, similar to [TV test cards](https://en.wikipedia.org/wiki/Test_card), with the goal of ensuring all visuals and inputs are working properly.
+- [`audio.c`](tests/audio.c) – Tests audio functions with various file formats interpreted as sound samples and music.
 
 ### Getting the Test Media
 
-To keep the size of this repository small, media needed for tests are checked into the [`test_media`](https://github.com/simple2d/test_media) repo and referenced as a [Git submodule](http://git-scm.com/book/en/v2/Git-Tools-Submodules). After cloning this repo, init the submodule and get its contents by using:
+To keep the size of this repository small, media required for tests are checked into the [`test_media`](https://github.com/simple2d/test_media) repo and referenced as a [Git submodule](http://git-scm.com/book/en/v2/Git-Tools-Submodules). After cloning this repo, init the submodule and get its contents by using:
 
 ```bash
 git submodule init
@@ -44,18 +52,11 @@ Alternatively, you can clone the `simple2d` repo and init the `test_media` submo
 git clone --recursive https://github.com/simple2d/simple2d.git
 ```
 
-To get the latest changes from `test_media`, simply run `git submodule update --remote`.
+To get the latest changes from `test_media`, simply run `git submodule update --remote` at any time.
 
-### Building the Tests
+### Building and Running Tests
 
-Simply run `make tests`. Tests are compiled and placed in the `tests/` directory with the same name as their C source file.
-
-### Available Tests
-
-- [`testcard.c`](tests/testcard.c) – A graphical card, similar to [testcards from TV](http://en.wikipedia.org/wiki/Testcard), with the goal of making sure all visual and inputs are working properly.
-- [`audio.c`](tests/audio.c) – Tests audio functions with various file formats interpreted as sound samples and music.
-
-Run a test using `make tests && cd tests/ && ./<name_of_test>`, for example:
+Run `make tests` to compile tests to the `tests/` directory. Compiled tests will have the same name as their C source file. Since media paths are set relatively in these test programs, make sure to `cd` into `tests/` before running a test, for example:
 
 ```bash
 make tests && cd tests/ && ./testcard
@@ -122,7 +123,7 @@ S2D_Window *window = S2D_CreateWindow(
 );
 ```
 
-The window flags can be any one of the following, and also combined using a bitwise OR, for example: `HELLO | WORLD`.
+The window flags can be any one of the following:
 
 ```c
 S2D_RESIZABLE
@@ -131,12 +132,12 @@ S2D_FULLSCREEN
 S2D_HIGHDPI
 ```
 
-Use `0` to not set any flags.
+Flags can be combined using the bitwise OR operator, for example: `S2D_RESIZABLE | S2D_BORDERLESS`. Use `0` if you don't want to set any flags.
 
-Before showing the window, these attributes can be set:
+Before showing the window, this attribute can be set:
 
 ```c
-window->vsync = false  // true by default
+window->vsync = false;  // set the vertical sync, true by default
 ```
 
 Once your window is ready to go, it can be shown using:
@@ -158,9 +159,9 @@ window->background.b = 0.8;
 window->background.a = 1.0;
 ```
 
-Event callback functions can also be changed anytime – more on that below. Many values can also be read from the `Window` structure, see the [simple2d.h](include/simple2d.h) header file for details.
+Callback functions can also be changed anytime – more on that below. Many values can also be read from the `Window` structure, see the [`simple2d.h`](include/simple2d.h) header file for details.
 
-When you're done with the window, close it to free allocated memory and shut down drawing and audio subsystems:
+When you're done with the window, shut down media subsystems and free allocated memory using:
 
 ```c
 S2D_FreeWindow(window);
@@ -168,7 +169,7 @@ S2D_FreeWindow(window);
 
 ### Update and Render
 
-The window loop is where all the action takes place: the frame rate is set, input is handled, the app state is updated, and visuals are rendered. You'll want to declare two essential functions which will be called by the window loop: `update` and `render`. Like a traditional game loop, `update` is used for updating the application state, and `render` is used for drawing the scene. Simple 2D optimizes both functions for performance and accurate scene composition, so it's good practice to keep those updating and rendering tasks separate (although drawing can actually be done anywhere, but don't make a habit of it).
+The window loop is where all the action takes place: the frame rate is set, input is handled, the app state is updated, and visuals are rendered. You'll want to declare two essential functions which will be called by the window loop: `update` and `render`. Like a traditional game loop, `update` is used for updating the application state, and `render` is used for drawing the scene. Simple 2D optimizes both functions for performance and accuracy, so it's good practice to keep those updating and rendering tasks separate.
 
 The update and render functions should look like this:
 
@@ -177,7 +178,7 @@ void update() { /* update your application state */ }
 void render() { /* draw stuff */ }
 ```
 
-Remember to add these function names when calling `S2D_CreateWindow` (see "The Window" section above for an example).
+Remember to add these function names when calling `S2D_CreateWindow` (see ["The Window"](#the-window) section above for an example).
 
 To exit the window loop at anytime, call the following function:
 
@@ -187,7 +188,7 @@ S2D_Close();
 
 ## Drawing Basics
 
-Where a vertex is present, like with shapes, there will be six values which need to be set for each: the `x` and `y` coordinates, and four color values. All values are floats, although `x` and `y` coordinates are typically expressed as whole numbers (from 0 to whatever). Color values at different vertices are blended with a gradient at their intersection.
+Where a vertex is present, like with shapes, there will be six values which need to be set for each: the `x` and `y` coordinates, and four color values. All values are floats, although `x` and `y` coordinates are typically expressed as whole numbers (from 0 to whatever). When vertices have different color values, the space between them are blended as a gradient.
 
 The shorthand for the examples below are:
 
@@ -195,7 +196,7 @@ The shorthand for the examples below are:
 x = x coordinate
 y = y coordinate
 
-// Color range is from 0 to 1
+// Color range is from 0.0 to 1.0
 r = red
 g = green
 b = blue
@@ -291,20 +292,14 @@ Simple 2D can capture input from just about anything. Let's learn how to grab in
 
 ### Mouse
 
-The cursor position of the mouse or trackpad can be read at any time from the window. Note the top, left corner is the origin, or `(0, 0)`.
+The cursor position of the mouse or trackpad can be read at any time from the window. Note that the top, left corner is the origin, `(0, 0)`.
 
 ```c
 window->mouse.x;
 window->mouse.y;
 ```
 
-To capture mouse button presses, attach a callback to the window:
-
-```c
-window->on_mouse = on_mouse;
-```
-
-Then define the function to do something:
+To capture mouse button presses, first define the `on_mouse` function:
 
 ```c
 void on_mouse(int x, int y) {
@@ -312,9 +307,15 @@ void on_mouse(int x, int y) {
 }
 ```
 
+Then attach the callback to the window:
+
+```c
+window->on_mouse = on_mouse;
+```
+
 ### Keyboard
 
-There are two types of keyboard events captured by the window: a single key press and a key held down. When a key is pressed, the window calls it's `on_key` function exactly once, and if the key is being held down, the `on_key_down` function will be repeatedly called with each cycle of the window loop.
+There are two types of keyboard events captured by the window: a single key press and a key held down continuously. When a key is pressed, the window calls its `on_key` function once, and if the key is being held down, the `on_key_down` function will be repeatedly called with each cycle of the window loop.
 
 To start capturing keyboard input, first define the `on_key` and `on_key_down` functions:
 
@@ -324,7 +325,7 @@ void on_key(const char *key) { ... }
 void on_key_down(const char *key) { ... }
 ```
 
-These functions can actually be named. In this example, their names just match the window structure's member names for simplicity. Once defined, register the function pointers with the window:
+Then attach the callbacks to the window:
 
 ```c
 window->on_key = on_key;
@@ -367,13 +368,13 @@ Similarly, to create some music, declare a pointer to a `S2D_Music` structure an
 S2D_Music *mus = S2D_CreateMusic("music.ogg");
 ```
 
-Play the music using `S2D_PlayMusic` providing the pointer and the number of times to be repeated. For example, to play the music once set the second parameter to `0`, and use `-1` to repeat forever.
+Play the music using `S2D_PlayMusic` providing the pointer and the number of times to be repeated. For example, to play the music once, set the second parameter to `0`, and to repeat forever, set it to `-1`.
 
 ```c
 S2D_PlayMusic(mus, -1);
 ```
 
-Only one piece of music can be played at a time. These functions for pausing, resuming, stopping, and fading out apply to whatever music is currently playing.
+Only one piece of music can be played at a time. The following functions for pausing, resuming, stopping, and fading out apply to whatever music is currently playing:
 
 ```c
 S2D_PauseMusic();
@@ -400,14 +401,14 @@ Check out the [open issues](https://github.com/simple2d/simple2d/issues) and joi
 
 ## Preparing a Release
 
-1. [Run tests](#running-tests) on all supported platforms
-2. Update the version number in files [`VERSION`](VERSION) and [`simple2d.sh`](simple2d.sh), commit changes
+1. [Run tests](#tests) on all supported platforms
+2. Update the version number in [`simple2d.sh`](simple2d.sh), commit changes
 3. Create a [new release](https://github.com/simple2d/simple2d/releases) in GitHub, with tag in the form `v#.#.#`
 4. Update the [Homebrew tap](https://github.com/simple2d/homebrew-tap):
   - Update formula with new `url`
   - Run `brew audit --strict ./simple2d.rb` to detect issues
   - Calculate new `sha256` using `brew install ./simple2d.rb` (note the "SHA256 mismatch" error, use the "Actual" value)
-  - Test installing using same command above
+  - Test installation using same command above
 
 # About the Project
 
