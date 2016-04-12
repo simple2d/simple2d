@@ -32,7 +32,7 @@ void S2D_GL_PrintContextInfo(S2D_Window *window) {
     "GL_VERSION: %s\n"
     "GL_MAJOR_VERSION: %i\n"
     "GL_MINOR_VERSION: %i\n"
-    "GL_SHADING_LANGUAGE_VERSION: %s",
+    "GL_SHADING_LANGUAGE_VERSION: %s\n",
     window->S2D_GL_VENDOR,
     window->S2D_GL_RENDERER,
     window->S2D_GL_VERSION,
@@ -52,6 +52,7 @@ void S2D_GL_StoreContextInfo(S2D_Window *window) {
   window->S2D_GL_RENDERER = glGetString(GL_RENDERER);
   window->S2D_GL_VERSION  = glGetString(GL_VERSION);
   
+  // These are not defined in GLES
   #if !GLES
     glGetIntegerv(GL_MAJOR_VERSION, &window->S2D_GL_MAJOR_VERSION);
     glGetIntegerv(GL_MINOR_VERSION, &window->S2D_GL_MINOR_VERSION);
@@ -112,6 +113,37 @@ GLuint S2D_GL_LoadShader(GLenum type, const GLchar *shaderSrc, char *shaderName)
 
 
 /*
+ * Check if shader program was linked
+ */
+int S2D_GL_CheckLinked(GLuint program, char *name) {
+  
+  GLint linked;
+  glGetProgramiv(program, GL_LINK_STATUS, &linked);
+  
+  if (!linked) {
+    
+    GLint infoLen = 0;
+    glGetProgramiv(program, GL_INFO_LOG_LENGTH, &infoLen);
+    
+    if (infoLen > 1) {
+      
+      char *infoLog = malloc(sizeof(char) * infoLen);
+      
+      glGetProgramInfoLog(program, infoLen, NULL, infoLog);
+      printf("Error linking program `%s`: %s\n", name, infoLog);
+      
+      free(infoLog);
+    }
+    
+    glDeleteProgram(program);
+    return GL_FALSE;
+  }
+  
+  return GL_TRUE;
+}
+
+
+/*
  * Sets the viewport and matrix projection
  */
 void S2D_GL_SetViewport(S2D_Window *window) {
@@ -124,10 +156,12 @@ void S2D_GL_SetViewport(S2D_Window *window) {
   x = 0; y = 0; w = window->width; h = window->height;
   
   switch (window->viewport) {
+    
     case S2D_FIXED:
       ortho_w = window->width;
       ortho_h = window->height;
       break;
+      
     case S2D_SCALE:
       scale = fmin(
         window->width  / (double)window->orig_width,
@@ -141,6 +175,7 @@ void S2D_GL_SetViewport(S2D_Window *window) {
       x = window->width  / 2 - w/2;
       y = window->height / 2 - h/2;
       break;
+      
     case S2D_STRETCH:
       break;
   }
@@ -158,7 +193,7 @@ void S2D_GL_SetViewport(S2D_Window *window) {
 
 
 /*
- * Prepares a texture for rendering.
+ * Prepares a texture for rendering
  */
 void S2D_GL_SetUpTexture(GLuint *id, GLint format, int w, int h, const GLvoid *data, GLint filter) {
   
@@ -174,7 +209,7 @@ void S2D_GL_SetUpTexture(GLuint *id, GLint format, int w, int h, const GLvoid *d
     0, format, GL_UNSIGNED_BYTE, data
   );
   
-  // Set texture parameters
+  // Set the filtering mode
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
 }

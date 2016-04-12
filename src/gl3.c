@@ -4,27 +4,10 @@
 
 static GLuint shaderProgram;
 static GLuint texShaderProgram;
-static GLuint elements[] = {
+static GLuint indices[] = {
   0, 1, 2,
   2, 3, 0
 };
-
-
-/*
- * Check if shader program was linked
- */
-int S2D_gl3_check_linked(GLuint program) {
-  GLint linked;
-  
-  glGetProgramiv(program, GL_LINK_STATUS, &linked);
-  
-  if (!linked) {
-    S2D_Log("GL3 shader was not linked", S2D_ERROR);
-    return GL_FALSE;
-  }
-  
-  return GL_TRUE;
-}
 
 
 /*
@@ -136,7 +119,7 @@ int S2D_gl3_init() {
   glLinkProgram(shaderProgram);
   
   // Check if linked
-  S2D_gl3_check_linked(shaderProgram);
+  S2D_GL_CheckLinked(shaderProgram, "GL3 shader");
   
   // Specify the layout of the vertex data
   GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
@@ -163,7 +146,8 @@ int S2D_gl3_init() {
   
   glLinkProgram(texShaderProgram);
   
-  S2D_gl3_check_linked(texShaderProgram);
+  // Check if linked
+  S2D_GL_CheckLinked(texShaderProgram, "GL3 texture shader");
   
   // Specify the layout of the vertex data
   posAttrib = glGetAttribLocation(texShaderProgram, "position");
@@ -226,7 +210,7 @@ static void S2D_gl3_draw_texture(int x, int y, int w, int h,
   glBindTexture(GL_TEXTURE_2D, texture_id);
   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
   
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 

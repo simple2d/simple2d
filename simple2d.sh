@@ -43,6 +43,7 @@ NORMAL='\033[0m'      # reset
 
 platform='unknown'
 platform_display='unknown'
+rpi_version='unknown'
 ret=''  # a return value used by some functions
 
 
@@ -230,9 +231,9 @@ install_sdl_linux() {
   prompt_to_continue "Install SDL now?"
   
   print_task "Updating packages" "\n\n"
-  print_and_run "sudo apt-get update"
+  print_and_run "sudo apt update"
   echo; print_task "Installing packages" "\n\n"
-  print_and_run "sudo apt-get install -y libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev"
+  print_and_run "sudo apt install -y libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev"
   echo
   
   if ! have_sdl2_libs?; then
@@ -255,7 +256,7 @@ install_sdl_rpi() {
   
   # Install library dependencies
   print_task "Installing SDL2 dependencies" "\n\n"
-  sudo apt-get update
+  sudo apt update
   
   libs=(
     # SDL2
@@ -277,7 +278,7 @@ install_sdl_rpi() {
     libfreetype6-dev
   )
   
-  sudo apt-get install -y ${libs[*]}
+  sudo apt install -y ${libs[*]}
   
   # Setting up variables
   url="http://www.libsdl.org"
@@ -370,7 +371,7 @@ install_sdl() {
   if [[ $platform == 'linux' ]]; then
     install_sdl_linux
   elif [[ $platform == 'rpi' ]]; then
-    install_sdl_rpi $sdl_install_options
+    install_sdl_linux
   fi
 }
 
@@ -515,7 +516,7 @@ uninstall_sdl_linux() {
   prompt_to_continue "Uninstall SDL now?"
   
   print_task "Uninstalling packages" "\n\n"
-  print_and_run "sudo apt-get remove -y --purge libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev"
+  print_and_run "sudo apt remove -y --purge libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev"
   echo
   
   if have_sdl2_libs?; then
@@ -541,8 +542,7 @@ uninstall_sdl() {
   if [[ $platform == 'linux' ]]; then
     uninstall_sdl_linux
   elif [[ $platform == 'rpi' ]]; then
-    # TODO: Implement this
-    echo "Not yet implemented, sorry!"; echo
+    uninstall_sdl_linux
   fi
 }
 
@@ -739,10 +739,13 @@ elif [[ $(uname -m) =~ 'arm' && $unamestr == 'Linux' ]]; then
   platform_display='Raspberry Pi'
   platform='rpi'
   
-  # Raspberry Pi 2
-  if [[ $(uname -m) == 'armv7l' ]]; then
-    rpi_version=2
-  fi
+  # Detect version
+  case $(uname -m) in
+    armv6l)
+      rpi_version=1;;
+    armv7)
+      rpi_version=2;;
+  esac
 
 # Linux
 elif [[ $unamestr == 'Linux' ]]; then
@@ -816,9 +819,9 @@ case $1 in
     if [[ $platform == 'osx' ]]; then
       LDFLAGS='-Wl,-framework,OpenGL'
     elif [[ $platform == 'linux' ]]; then
-      LDFLAGS='-lGL'
+      LDFLAGS='-lGL -lm'
     elif [[ $platform == 'rpi' ]]; then
-      LDFLAGS='-I/opt/vc/include/ -L/opt/vc/lib -lGLESv2'
+      LDFLAGS='-lm -I/opt/vc/include/ -L/opt/vc/lib -lGLESv2'
     fi
     echo "-lsimple2d `sdl2-config --cflags --libs`"\
          "${LDFLAGS} -lSDL2_image -lSDL2_mixer -lSDL2_ttf";;

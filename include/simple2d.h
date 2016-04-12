@@ -140,6 +140,7 @@ void S2D_GL_PrintError(char *error);
 void S2D_GL_PrintContextInfo(S2D_Window *window);
 void S2D_GL_StoreContextInfo(S2D_Window *window);
 GLuint S2D_GL_LoadShader(GLenum type, const GLchar *shaderSrc, char *shaderName);
+int S2D_GL_CheckLinked(GLuint program, char *name);
 void S2D_GL_SetViewport(S2D_Window *window);
 void S2D_GL_SetUpTexture(GLuint *id, GLint format, int w, int h, const GLvoid *data, GLint filter);
 void S2D_GL_DrawTriangle(
@@ -158,8 +159,7 @@ void S2D_GL_Clear(S2D_Color clr);
 
 #if GLES
   void S2D_gles_hello();
-  int S2D_gles_check_linked(GLuint program, char *name);
-  int S2D_gles_init(int width, int height, int s_width, int s_height);
+  int S2D_gles_init();
   void S2D_gles_set_viewport(int x, int y, int w, int h, int ortho_w, int ortho_h);
   void S2D_gles_draw_triangle(
     GLfloat x1,  GLfloat y1,
@@ -168,12 +168,11 @@ void S2D_GL_Clear(S2D_Color clr);
     GLfloat c2r, GLfloat c2g, GLfloat c2b, GLfloat c2a,
     GLfloat x3,  GLfloat y3,
     GLfloat c3r, GLfloat c3g, GLfloat c3b, GLfloat c3a);
-  void S2D_gles_draw_image(Image *img);
-  void S2D_gles_draw_text(Text *txt);
+  void S2D_gles_draw_image(S2D_Image *img);
+  void S2D_gles_draw_text(S2D_Text *txt);
 #else
   void S2D_gl2_hello();
   void S2D_gl3_hello();
-  int S2D_gl3_check_linked(GLuint program);
   int S2D_gl2_init();
   int S2D_gl3_init();
   void S2D_gl2_set_viewport(int x, int y, int w, int h, int ortho_w, int ortho_h);

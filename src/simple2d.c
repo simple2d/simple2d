@@ -99,11 +99,6 @@ void S2D_DrawQuad(GLfloat x1,  GLfloat y1,
 S2D_Image *S2D_CreateImage(const char *path) {
   if (!path) return NULL;
   
-  // TODO: Implement images in GLES
-  #if GLES
-    S2D_Log("S2D_DrawImage not yet implemented!", S2D_INFO);
-  #endif
-  
   // Load image from file as SDL_Surface
   SDL_Surface *surface = IMG_Load(path);
   if (!surface) {
@@ -196,10 +191,6 @@ void S2D_FreeImage(S2D_Image *img) {
  * Create text
  */
 S2D_Text *S2D_CreateText(const char *font, const char *msg, int size) {
-  
-  #if GLES
-    S2D_Log("S2D_DrawText not yet implemented!", S2D_WARN);
-  #endif
   
   S2D_Text *txt = (S2D_Text *) malloc(sizeof(S2D_Text));
   if (!txt) {
@@ -508,7 +499,7 @@ S2D_Window *S2D_CreateWindow(const char *title, int width, int height,
     
     #if GLES
       // Initialize OpenGL ES 2.0
-      S2D_gles_init(window->width, window->height, window->s_width, window->s_height);
+      S2D_gles_init();
       S2D_GL_SetViewport(window);
       
     #else

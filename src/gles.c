@@ -2,160 +2,34 @@
 
 #include "../include/simple2d.h"
 
+// Triangle shader
 static GLuint shaderProgram;
-static GLuint texShaderProgram;
+static GLuint positionLocation;
 static GLuint colorLocation;
 
+// Texture shader
+static GLuint texShaderProgram;
+static GLuint texPositionLocation;
+static GLuint texColorLocation;
+static GLuint texCoordLocation;
+static GLuint samplerLocation;
 
-/*
- * Check if shader program was linked
- */
-int S2D_gles_check_linked(GLuint program, char *name) {
-  GLint linked;
-  
-  glGetProgramiv(program, GL_LINK_STATUS, &linked);
-  
-  if (!linked) {
-    
-    GLint infoLen = 0;
-    glGetProgramiv(program, GL_INFO_LOG_LENGTH, &infoLen);
-    
-    if (infoLen > 1) {
-      
-      char *infoLog = malloc(sizeof(char) * infoLen);
-      
-      glGetProgramInfoLog(program, infoLen, NULL, infoLog);
-      printf("Error linking program `%s`: %s\n", name, infoLog);
-      
-      free(infoLog);
-    }
-    
-    glDeleteProgram(program);
-    return GL_FALSE;
-  }
-}
+static GLuint indices[] = {
+  0, 1, 2,
+  2, 3, 0
+};
 
 
 /*
  * Sets the viewport and matrix projection
  */
 void S2D_gles_set_viewport(int x, int y, int w, int h, int ortho_w, int ortho_h) {
-}
-
-
-/*
- * Initalize OpenGL ES
- */
-int S2D_gles_init(int width, int height, int s_width, int s_height) {
   
-  // Enable transparency
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  
-  // Set the viewport
-  glViewport(0, 0, width, height);
-  
-  // Vertex shader source string
-  GLchar vertexSource[] =
-    // uniforms used by the vertex shader
-    "uniform mat4 u_mvpMatrix;"  // model view and projection matrix
-    
-    // attributes input to the vertex shader
-    "attribute vec4 a_position;"  // position value
-    "attribute vec4 a_color;"     // input vertex color
-    "attribute vec2 a_texcoord;"  // input texture
-    
-    // varying variables, input to the fragment shader
-    "varying vec4 v_color;"     // output vertex color
-    "varying vec2 v_texcoord;"  // output texture
-    
-    // main
-    "void main()"
-    "{"
-    "  v_color = a_color;"
-    "  v_texcoord = a_texcoord;"
-    "  gl_Position = u_mvpMatrix * vec4(a_position.xyz, 1.0);"
-    "}";
-  
-  // Fragment shader source string
-  GLchar fragmentSource[] =
-    "precision mediump float;"
-    // input vertex color from vertex shader
-    "varying vec4 v_color;"
-    "void main()"
-    "{"
-    "  gl_FragColor = v_color;"
-    "}";
-  
-  // Fragment shader source string for textures
-  GLchar texFragmentSource[] =
-    "precision mediump float;"
-    // input vertex color from vertex shader
-    "varying vec4 v_color;"
-    "varying vec2 v_texcoord;"
-    "uniform sampler2D texture;"
-    "void main()"
-    "{"
-    "  gl_FragColor = texture(texture, v_texcoord) * v_color;"
-    "}";
-  
-  // Load the vertex and fragment shaders
-  GLuint vertexShader      = S2D_GL_LoadShader(  GL_VERTEX_SHADER,      vertexSource, "GLES Vertex");
-  GLuint fragmentShader    = S2D_GL_LoadShader(GL_FRAGMENT_SHADER,    fragmentSource, "GLES Fragment");
-  GLuint texFragmentShader = S2D_GL_LoadShader(GL_FRAGMENT_SHADER, texFragmentSource, "GLES Texture Fragment");
-  
-  // Create the shader program object
-  shaderProgram = glCreateProgram();
-  
-  // Check if program was created successfully
-  if (shaderProgram == 0) {
-    S2D_GL_PrintError("Failed to create shader program");
-    return GL_FALSE;
-  }
-  
-  // Create the texture shader program object
-  texShaderProgram = glCreateProgram();
-  
-  // Check if program was created successfully
-  if (texShaderProgram == 0) {
-    S2D_GL_PrintError("Failed to create shader program");
-    return GL_FALSE;
-  }
-  
-  // Attach the shader objects to the program object
-  glAttachShader(shaderProgram, vertexShader);
-  glAttachShader(shaderProgram, fragmentShader);
-  glAttachShader(texShaderProgram, vertexShader);
-  glAttachShader(texShaderProgram, texFragmentShader);
-  
-  // Associate user-defined attribute variables in the
-  // program object with the vertex attribute index
-  glBindAttribLocation(shaderProgram, 0, "a_position");
-  glBindAttribLocation(texShaderProgram, 0, "a_position");
-  
-  // Link the shader program
-  glLinkProgram(shaderProgram);
-  glLinkProgram(texShaderProgram);
-  
-  // Check if linked
-  S2D_gles_check_linked(shaderProgram, "shaderProgram");
-  S2D_gles_check_linked(texShaderProgram, "texShaderProgram");
-  
-  // Compute scaling factors, if necessary
-  GLfloat scale_x = 1.0f;
-  GLfloat scale_y = 1.0f;
-  
-  if (s_width != width) {
-    scale_x = (GLfloat)s_width / (GLfloat)width;
-  }
-  
-  if (s_height != height) {
-    scale_y = (GLfloat)s_height / (GLfloat)height;
-  }
+  glViewport(x, y, w, h);
   
   // Set orthographic projection matrix
-  S2D_GL_orthoMatrix[0] = 2.0f / ((GLfloat)width * scale_x);
-  S2D_GL_orthoMatrix[5] = -2.0f / ((GLfloat)height * scale_y);
+  S2D_GL_orthoMatrix[0] =  2.0f / (GLfloat)ortho_w;
+  S2D_GL_orthoMatrix[5] = -2.0f / (GLfloat)ortho_h;
   
   // Use the program object
   glUseProgram(shaderProgram);
@@ -168,6 +42,123 @@ int S2D_gles_init(int width, int height, int s_width, int s_height) {
   
   GLuint texmMvpLocation = glGetUniformLocation(texShaderProgram, "u_mvpMatrix");
   glUniformMatrix4fv(texmMvpLocation, 1, GL_FALSE, S2D_GL_orthoMatrix);
+}
+
+
+/*
+ * Initalize OpenGL ES
+ */
+int S2D_gles_init() {
+  
+  // Enable transparency
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  
+  // Vertex shader source string
+  GLchar vertexSource[] =
+    // uniforms used by the vertex shader
+    "uniform mat4 u_mvpMatrix;"   // model view and projection matrix
+    
+    // attributes input to the vertex shader
+    "attribute vec4 a_position;"  // position value
+    "attribute vec4 a_color;"     // input vertex color
+    "attribute vec2 a_texcoord;"  // input texture
+    
+    // varying variables, input to the fragment shader
+    "varying vec4 v_color;"       // output vertex color
+    "varying vec2 v_texcoord;"    // output texture
+    
+    "void main()"
+    "{"
+    "  v_color = a_color;"
+    "  v_texcoord = a_texcoord;"
+    "  gl_Position = u_mvpMatrix * vec4(a_position.xyz, 1.0);"
+    "}";
+  
+  // Fragment shader source string
+  GLchar fragmentSource[] =
+    // input vertex color from vertex shader
+    "varying vec4 v_color;"
+    
+    "void main()"
+    "{"
+    "  gl_FragColor = v_color;"
+    "}";
+  
+  // Fragment shader source string for textures
+  GLchar texFragmentSource[] =
+    // input vertex color from vertex shader
+    "varying vec4 v_color;"
+    "varying vec2 v_texcoord;"
+    "uniform sampler2D s_texture;"
+    
+    "void main()"
+    "{"
+    "  gl_FragColor = texture2D(s_texture, v_texcoord) * v_color;"
+    "}";
+  
+  
+  // Load the vertex and fragment shaders
+  GLuint vertexShader      = S2D_GL_LoadShader(  GL_VERTEX_SHADER,      vertexSource, "GLES Vertex");
+  GLuint fragmentShader    = S2D_GL_LoadShader(GL_FRAGMENT_SHADER,    fragmentSource, "GLES Fragment");
+  GLuint texFragmentShader = S2D_GL_LoadShader(GL_FRAGMENT_SHADER, texFragmentSource, "GLES Texture Fragment");
+  
+  
+  // Triangle Shader //
+  
+  // Create the shader program object
+  shaderProgram = glCreateProgram();
+  
+  // Check if program was created successfully
+  if (shaderProgram == 0) {
+    S2D_GL_PrintError("Failed to create shader program");
+    return GL_FALSE;
+  }
+  
+  // Attach the shader objects to the program object
+  glAttachShader(shaderProgram, vertexShader);
+  glAttachShader(shaderProgram, fragmentShader);
+  
+  // Link the shader program
+  glLinkProgram(shaderProgram);
+  
+  // Check if linked
+  S2D_GL_CheckLinked(shaderProgram, "GLES shader");
+  
+  // Get the attribute locations
+  positionLocation = glGetAttribLocation(shaderProgram, "a_position");
+  colorLocation    = glGetAttribLocation(shaderProgram, "a_color");
+  
+  
+  // Texture Shader //
+  
+  // Create the texture shader program object
+  texShaderProgram = glCreateProgram();
+  
+  // Check if program was created successfully
+  if (texShaderProgram == 0) {
+    S2D_GL_PrintError("Failed to create shader program");
+    return GL_FALSE;
+  }
+  
+  // Attach the shader objects to the program object
+  glAttachShader(texShaderProgram, vertexShader);
+  glAttachShader(texShaderProgram, texFragmentShader);
+  
+  // Link the shader program
+  glLinkProgram(texShaderProgram);
+  
+  // Check if linked
+  S2D_GL_CheckLinked(texShaderProgram, "GLES texture shader");
+  
+  // Get the attribute locations
+  texPositionLocation = glGetAttribLocation(texShaderProgram, "a_position");
+  texColorLocation    = glGetAttribLocation(texShaderProgram, "a_color");
+  texCoordLocation    = glGetAttribLocation(texShaderProgram, "a_texcoord");
+  
+  // Get the sampler location
+  samplerLocation = glGetUniformLocation(texShaderProgram, "s_texture");
+  
   
   // Clean up
   glDeleteShader(vertexShader);
@@ -189,9 +180,9 @@ void S2D_gles_draw_triangle(GLfloat x1,  GLfloat y1,
                             GLfloat c3r, GLfloat c3g, GLfloat c3b, GLfloat c3a) {
   
   GLfloat vVertices[] =
-    { x1, y1, 0.0f,
-      x2, y2, 0.0f,
-      x3, y3, 0.0f };
+    { x1, y1, 0.f,
+      x2, y2, 0.f,
+      x3, y3, 0.f };
   
   GLfloat vColors[] =
     { c1r, c1g, c1b, c1a,
@@ -200,14 +191,13 @@ void S2D_gles_draw_triangle(GLfloat x1,  GLfloat y1,
   
   glUseProgram(shaderProgram);
   
-  // Set the color
-  colorLocation = glGetAttribLocation(shaderProgram, "a_color");
+  // Load the vertex position
+  glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, 0, vVertices);
+  glEnableVertexAttribArray(positionLocation);
+  
+  // Load the colors
   glVertexAttribPointer(colorLocation, 4, GL_FLOAT, GL_FALSE, 0, vColors);
   glEnableVertexAttribArray(colorLocation);
-  
-  // Load the vertex data
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, vVertices);
-  glEnableVertexAttribArray(0);
   
   // draw
   glDrawArrays(GL_TRIANGLES, 0, 3);
@@ -215,10 +205,60 @@ void S2D_gles_draw_triangle(GLfloat x1,  GLfloat y1,
 
 
 /*
+ * Draw a texture
+ */
+static void S2D_gles_draw_texture(int x, int y, int w, int h, 
+                                  GLfloat r, GLfloat g, GLfloat b, GLfloat a,
+                                  GLuint texture_id) {
+  
+  GLfloat vVertices[] =
+    { x,     y,     0.f,   0.f, 0.f,
+      x + w, y,     0.f,   1.f, 0.f,
+      x + w, y + h, 0.f,   1.f, 1.f,
+      x,     y + h, 0.f,   0.f, 1.f };
+  
+  GLfloat vColors[] =
+    { r, g, b, a,
+      r, g, b, a,
+      r, g, b, a,
+      r, g, b, a };
+  
+  glUseProgram(texShaderProgram);
+  
+  // Load the vertex position
+  glVertexAttribPointer(texPositionLocation, 3, GL_FLOAT, GL_FALSE,
+                        5 * sizeof(GLfloat), vVertices);
+  glEnableVertexAttribArray(texPositionLocation);
+  
+  // Load the colors
+  glVertexAttribPointer(texColorLocation, 4, GL_FLOAT, GL_FALSE, 0, vColors);
+  glEnableVertexAttribArray(texColorLocation);
+  
+  // Load the texture coordinate
+  glVertexAttribPointer(texCoordLocation, 2, GL_FLOAT, GL_FALSE,
+                        5 * sizeof(GLfloat), &vVertices[3]);
+  glEnableVertexAttribArray(texCoordLocation);
+  
+  // Bind the texture
+  glActiveTexture(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D, texture_id);
+  
+  // Set the sampler texture unit to 0
+  glUniform1i(samplerLocation, 0);
+  
+  glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, indices);
+}
+
+
+/*
  * Draw image
  */
 void S2D_gles_draw_image(S2D_Image *img) {
-  // TODO: Implement this
+  S2D_gles_draw_texture(
+    img->x, img->y, img->w, img->h,
+    img->color.r, img->color.g, img->color.b, img->color.a,
+    img->texture_id
+  );
 }
 
 
@@ -226,5 +266,9 @@ void S2D_gles_draw_image(S2D_Image *img) {
  * Draw text
  */
 void S2D_gles_draw_text(S2D_Text *txt) {
-  // TODO: Implement this
+  S2D_gles_draw_texture(
+    txt->x, txt->y, txt->w, txt->h, 
+    txt->color.r, txt->color.g, txt->color.b, txt->color.a,
+    txt->texture_id
+  );
 }
