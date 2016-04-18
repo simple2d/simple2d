@@ -1,20 +1,19 @@
 // testcard.c
 #include <simple2d.h>
 
-S2D_Window *window        = NULL;
-S2D_Image  *img_bmp       = NULL;
-S2D_Image  *img_jpg       = NULL;
-S2D_Image  *img_png       = NULL;
-S2D_Text   *txt           = NULL;
-S2D_Text   *on_key_text   = NULL;
-S2D_Text   *on_key_char   = NULL;
-S2D_Text   *key_down_text = NULL;
-S2D_Text   *key_down_char = NULL;
-S2D_Text   *fps           = NULL;
-S2D_Text   *fps_val       = NULL;
+S2D_Window *window;
+S2D_Image  *img_bmp;
+S2D_Image  *img_jpg;
+S2D_Image  *img_png;
+S2D_Text   *on_key_text;
+S2D_Text   *on_key_char;
+S2D_Text   *key_down_text;
+S2D_Text   *key_down_char;
+S2D_Text   *fps;
+S2D_Text   *fps_val;
 
 char fps_str[7];
-const char *font = "./media/bitstream_vera/vera.ttf";
+const char *font = "media/bitstream_vera/vera.ttf";
 int font_size = 20;
 
 typedef struct Point {
@@ -27,10 +26,10 @@ Point pointer;
 void on_key(const char *key) {
   printf("Key pressed: %s\n", key);
   
-  if(strcmp(key, "Escape")==0) {
+  if (strcmp(key, "Escape") == 0) {
     S2D_Close();
   }
-
+  
   S2D_SetText(on_key_char, key);
 }
 
@@ -199,8 +198,8 @@ void render() {
                pointer.x + 5, pointer.y - 7,  1, 1, 1, 1,
                pointer.x + 5, pointer.y + 4,  1, 1, 1, 1,
                pointer.x - 5, pointer.y + 4,  1, 1, 1, 1);
-  
 }
+
 
 int main(int argc, const char *argv[]) {
   
@@ -217,17 +216,16 @@ int main(int argc, const char *argv[]) {
   img_bmp = S2D_CreateImage("media/image.bmp");
   img_jpg = S2D_CreateImage("media/image.jpg");
   img_png = S2D_CreateImage("media/image.png");
-  txt     = S2D_CreateText(font, "Hello World", font_size);
   
   on_key_text = S2D_CreateText(font, "On Key:", font_size);
-  on_key_char = S2D_CreateText(font, " ", font_size);
+  on_key_char = S2D_CreateText(font, "", font_size);
   on_key_text->x = 5;
   on_key_text->y = 270;
   on_key_char->x = 90;
   on_key_char->y = 270;
   
   key_down_text = S2D_CreateText(font, "On Key Down:", font_size);
-  key_down_char = S2D_CreateText(font, " ", font_size);
+  key_down_char = S2D_CreateText(font, "", font_size);
   key_down_text->x = 5;
   key_down_text->y = 300;
   key_down_char->x = 154;
@@ -237,7 +235,7 @@ int main(int argc, const char *argv[]) {
   fps->x = 460;
   fps->y = 470;
   
-  fps_val = S2D_CreateText(font, " ", font_size);
+  fps_val = S2D_CreateText(font, "", font_size);
   fps_val->x = 515;
   fps_val->y = 470;
   

@@ -1,6 +1,31 @@
 // simple2d.h
 
+// Includes ////////////////////////////////////////////////////////////////////
+
+#include <stdbool.h>
+#include <math.h>
+#include <unistd.h>
+#include <SDL2/SDL.h>
+
+#if GLES
+  #include <SDL2/SDL_opengles2.h>
+#else
+  #define GL_GLEXT_PROTOTYPES 1
+  #include <SDL2/SDL_opengl.h>
+#endif
+
+#include <SDL2/SDL_image.h>
+#include <SDL2/SDL_mixer.h>
+#include <SDL2/SDL_ttf.h>
+
 // Definitions /////////////////////////////////////////////////////////////////
+
+// If ARM, assume GLES
+#ifdef __arm__
+  #define GLES true
+#else
+  #define GLES false
+#endif
 
 // Messages
 #define S2D_INFO  1
@@ -17,30 +42,6 @@
 #define S2D_FIXED   1
 #define S2D_SCALE   2
 #define S2D_STRETCH 3
-
-// If ARM, assume GLES
-#ifdef __arm__
-  #define GLES true
-#else
-  #define GLES false
-#endif
-
-// Includes ////////////////////////////////////////////////////////////////////
-
-#include <stdbool.h>
-#include <math.h>
-#include <SDL2/SDL.h>
-
-#if GLES
-  #include <SDL2/SDL_opengles2.h>
-#else
-  #define GL_GLEXT_PROTOTYPES 1
-  #include <SDL2/SDL_opengl.h>
-#endif
-
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL_mixer.h>
-#include <SDL2/SDL_ttf.h>
 
 // Shared Data /////////////////////////////////////////////////////////////////
 
@@ -117,8 +118,8 @@ typedef struct S2D_Image {
 
 typedef struct S2D_Text {
   GLuint texture_id;
-  S2D_Color color;
   TTF_Font *font;
+  S2D_Color color;
   const char *msg;
   int x;
   int y;

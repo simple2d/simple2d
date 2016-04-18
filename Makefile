@@ -23,7 +23,7 @@ build:
 ifeq ($(PLATFORM),rpi)
 	cc $(CFLAGS) $(INCLUDES) src/gles.c -c -o build/gles.o
 	ar -vq build/libsimple2d.a build/simple2d.o build/gl.o build/gles.o
-	rm build/gles.o
+	rm build/gl.o build/gles.o
 else
 	cc $(CFLAGS) $(INCLUDES) src/gl2.c -c -o build/gl2.o
 	cc $(CFLAGS) $(INCLUDES) src/gl3.c -c -o build/gl3.o
@@ -43,10 +43,10 @@ install:
 clean:
 	rm -f build/libsimple2d.a
 	rm -f build/simple2d
-	rm -f tests/audio
-	rm -f tests/testcard
 	rm -f tests/auto
 	rm -f tests/triangle
+	rm -f tests/testcard
+	rm -f tests/audio
 
 uninstall:
 	rm -f /usr/local/include/simple2d.h
@@ -54,9 +54,9 @@ uninstall:
 	rm -f /usr/local/bin/simple2d
 
 tests:
-	cc $(CFLAGS) tests/audio.c    `simple2d --libs` -o tests/audio
-	cc $(CFLAGS) tests/testcard.c `simple2d --libs` -o tests/testcard
 	cc $(CFLAGS) tests/auto.c     `simple2d --libs` -o tests/auto
 	cc $(CFLAGS) tests/triangle.c `simple2d --libs` -o tests/triangle
+	cc $(CFLAGS) tests/testcard.c `simple2d --libs` -o tests/testcard
+	cc $(CFLAGS) tests/audio.c    `simple2d --libs` -o tests/audio
 
 .PHONY: build tests

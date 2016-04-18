@@ -32,7 +32,7 @@ void S2D_GL_PrintContextInfo(S2D_Window *window) {
     "GL_VERSION: %s\n"
     "GL_MAJOR_VERSION: %i\n"
     "GL_MINOR_VERSION: %i\n"
-    "GL_SHADING_LANGUAGE_VERSION: %s\n",
+    "GL_SHADING_LANGUAGE_VERSION: %s",
     window->S2D_GL_VENDOR,
     window->S2D_GL_RENDERER,
     window->S2D_GL_VERSION,

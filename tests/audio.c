@@ -3,11 +3,12 @@
 bool is_sound = true;
 int sound = 1;
 int music = 2;
-S2D_Sound *snd_1 = NULL;
-S2D_Sound *snd_2 = NULL;
-S2D_Music *mus_1 = NULL;
-S2D_Music *mus_2 = NULL;
+S2D_Sound *snd_1;
+S2D_Sound *snd_2;
+S2D_Music *mus_1;
+S2D_Music *mus_2;
 S2D_Window *window;
+
 
 void print_help() {
   // ┌ ┬ ┐ ┤ ┘ ┴ └ ├ ┼ ─ │
@@ -32,12 +33,16 @@ void print_help() {
   puts("│   2 -> music.ogg              │");
   puts("│                               │");
   puts("│ H -> Print this help message  │");
-  puts("│ X -> Exit                     │");
+  puts("│ Esc -> Exit                   │");
   puts("└───────────────────────────────┘");
   puts("");
 }
 
 void on_key(const char *key) {
+  
+  if (strcmp(key, "Escape") == 0) {
+    S2D_Close();
+  }
   
   switch (*key) {
     case 'H':
@@ -100,14 +105,12 @@ void on_key(const char *key) {
         music = 2;
       }
       break;
-    case 'X':
-      S2D_Close();
-      break;
   }
 }
 
-int main(int argc, const char *argv[]) {
 
+int main(int argc, const char *argv[]) {
+  
   S2D_Diagnostics(true);
   
   window = S2D_CreateWindow(
@@ -127,7 +130,7 @@ int main(int argc, const char *argv[]) {
   print_help();
   
   S2D_Show(window);
-
+  
   S2D_FreeWindow(window);
   
   return 0;
