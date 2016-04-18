@@ -2,4 +2,5 @@ build/
 
 tests/audio
 tests/testcard
+tests/auto
 tests/triangle

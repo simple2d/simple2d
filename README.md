@@ -33,6 +33,7 @@ Once installed, use the `simple2d` command-line utility to update Simple 2D, che
 
 Simple 2D has a few test programs to make sure all functionality is working as it should.
 
+- [`auto.c`](tests/auto.c) – A set of automated unit tests for the public interface.
 - [`triangle.c`](tests/testcard.c) – The "Hello Triangle" example in this README.
 - [`testcard.c`](tests/testcard.c) – A graphical card, similar to [TV test cards](https://en.wikipedia.org/wiki/Test_card), with the goal of ensuring all visuals and inputs are working properly.
 - [`audio.c`](tests/audio.c) – Tests audio functions with various file formats interpreted as sound samples and music.

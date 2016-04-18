@@ -45,6 +45,7 @@ clean:
 	rm -f build/simple2d
 	rm -f tests/audio
 	rm -f tests/testcard
+	rm -f tests/auto
 	rm -f tests/triangle
 
 uninstall:
@@ -55,6 +56,7 @@ uninstall:
 tests:
 	cc $(CFLAGS) tests/audio.c    `simple2d --libs` -o tests/audio
 	cc $(CFLAGS) tests/testcard.c `simple2d --libs` -o tests/testcard
+	cc $(CFLAGS) tests/auto.c     `simple2d --libs` -o tests/auto
 	cc $(CFLAGS) tests/triangle.c `simple2d --libs` -o tests/triangle
 
 .PHONY: build tests
