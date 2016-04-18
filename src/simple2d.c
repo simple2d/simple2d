@@ -17,6 +17,18 @@ static bool quit = false;
 
 
 /*
+ * Checks if a file exists and can be accessed
+ */
+static bool file_exists(const char *path) {
+  if (access(path, F_OK) != -1) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+
+/*
  * Logs standard messages to the console
  */
 void S2D_Log(const char *msg, int type) {
@@ -95,9 +107,15 @@ void S2D_DrawQuad(GLfloat x1,  GLfloat y1,
 
 /*
  * Create an image
+ * Params: path = image file path
  */
 S2D_Image *S2D_CreateImage(const char *path) {
-  if (!path) return NULL;
+  
+  // Check if image file exists
+  if (!file_exists(path)) {
+    S2D_Error("S2D_CreateImage", "Image file not found");
+    return NULL;
+  }
   
   // Load image from file as SDL_Surface
   SDL_Surface *surface = IMG_Load(path);
@@ -106,6 +124,7 @@ S2D_Image *S2D_CreateImage(const char *path) {
     return NULL;
   }
   
+  // Allocate the image structure
   S2D_Image *img = (S2D_Image *) malloc(sizeof(S2D_Image));
   if(!img) {
     S2D_Error("IMG_Load", "Out of memory!");
@@ -129,6 +148,8 @@ S2D_Image *S2D_CreateImage(const char *path) {
   if(surface->format->BytesPerPixel == 4) {
     format = GL_RGBA;
   }
+  
+  // Flip image bits if BGA
   
   Uint32 r = surface->format->Rmask;
   Uint32 g = surface->format->Gmask;
@@ -159,6 +180,7 @@ S2D_Image *S2D_CreateImage(const char *path) {
     }
   }
   
+  // Set up the texture for rendering
   S2D_GL_SetUpTexture(&img->texture_id, format, img->w, img->h, surface->pixels, GL_NEAREST);
   
   // Free the surface data, no longer needed
@@ -189,23 +211,29 @@ void S2D_FreeImage(S2D_Image *img) {
 
 /*
  * Create text
+ * Params: font = font file path; msg = text to display; size = font size
+ * Returns NULL if text could not be created
  */
 S2D_Text *S2D_CreateText(const char *font, const char *msg, int size) {
   
+  // Check if font file exists
+  if (!file_exists(font)) {
+    S2D_Error("S2D_CreateText", "Font file not found");
+    return NULL;
+  }
+  
+  // `msg` cannot be an empty string or NULL for TTF_SizeText
+  if (msg == NULL || strlen(msg) == 0) msg = " ";
+  
+  // Allocate the text structure
   S2D_Text *txt = (S2D_Text *) malloc(sizeof(S2D_Text));
   if (!txt) {
     S2D_Error("S2D_CreateText", "Out of memory!");
     return NULL;
   }
   
-  // `msg` cannot be an empty string; if so, return
-  if (strlen(msg) == 0) {
-    S2D_Error("S2D_CreateText", "Text message cannot be empty!");
-    return NULL;
-  } else {
-    txt->msg = msg;
-  }
-  
+  // Set default values
+  txt->msg = msg;
   txt->x = 0;
   txt->y = 0;
   txt->color.r = 1.0;
@@ -214,6 +242,7 @@ S2D_Text *S2D_CreateText(const char *font, const char *msg, int size) {
   txt->color.a = 1.0;
   txt->texture_id = 0;
   
+  // Open the font
   txt->font = TTF_OpenFont(font, size);
   if (!txt->font) {
     S2D_Error("TTF_OpenFont", TTF_GetError());
@@ -224,9 +253,9 @@ S2D_Text *S2D_CreateText(const char *font, const char *msg, int size) {
   // Save the width and height of the text
   TTF_SizeText(txt->font, txt->msg, &txt->w, &txt->h);
   
+  // Assign color and set up for rendering
   SDL_Color color = { 255, 255, 255 };
   SDL_Surface *surface = TTF_RenderText_Blended(txt->font, txt->msg, color);
-  
   S2D_GL_SetUpTexture(&txt->texture_id, GL_RGBA, txt->w, txt->h, surface->pixels, GL_NEAREST);
   
   // Free the surface data, no longer needed
@@ -241,6 +270,9 @@ S2D_Text *S2D_CreateText(const char *font, const char *msg, int size) {
  */
 void S2D_SetText(S2D_Text *txt, const char *msg) {
   if (!txt) return;
+  
+  // `msg` cannot be an empty string or NULL for TTF_SizeText
+  if (msg == NULL || strlen(msg) == 0) msg = " ";
   
   txt->msg = msg;
   
@@ -278,12 +310,22 @@ void S2D_FreeText(S2D_Text *txt) {
  * Create a sound
  */
 S2D_Sound *S2D_CreateSound(const char *path) {
+  
+  // Check if sound file exists
+  if (!file_exists(path)) {
+    S2D_Error("S2D_CreateSound", "Sound file not found");
+    return NULL;
+  }
+  
+  // Allocate the sound structure
   S2D_Sound *sound = (S2D_Sound *) malloc(sizeof(S2D_Sound));
   
+  // Load the sound data from file
   sound->data = Mix_LoadWAV(path);
   if (!sound->data) {
     S2D_Error("Mix_LoadWAV", Mix_GetError());
     free(sound);
+    return NULL;
   }
   
   return sound;
@@ -314,12 +356,20 @@ void S2D_FreeSound(S2D_Sound *sound) {
  */
 S2D_Music *S2D_CreateMusic(const char *path) {
   
+  // Check if music file exists
+  if (!file_exists(path)) {
+    S2D_Error("S2D_CreateMusic", "Music file not found");
+    return NULL;
+  }
+  
+  // Allocate the music structure
   S2D_Music *music = (S2D_Music *) malloc(sizeof(S2D_Music));
   if(!music) {
     S2D_Error("S2D_CreateMusic", "Out of memory!");
     return NULL;
   }
   
+  // Load the music data from file
   music->data = Mix_LoadMUS(path);
   if (!music->data) {
     S2D_Error("Mix_LoadMUS", Mix_GetError());
@@ -551,6 +601,10 @@ S2D_Window *S2D_CreateWindow(const char *title, int width, int height,
  * Show the window
  */
 int S2D_Show(S2D_Window *window) {
+  if (!window) {
+    S2D_Error("S2D_Show", "Window cannot be shown");
+    return -1;
+  }
   
   int mouse_x, mouse_y;
   const Uint8 *key_state;
