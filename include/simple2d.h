@@ -51,14 +51,21 @@ extern GLfloat S2D_GL_orthoMatrix[16];
 
 // Type Definitions ////////////////////////////////////////////////////////////
 
-typedef struct S2D_Color {
+typedef void (*S2D_Update)(void);
+typedef void (*S2D_Render)(void);
+typedef void (*S2D_On_Key)(const char *key);
+typedef void (*S2D_On_Key_Down)(const char *key);
+typedef void (*S2D_On_Mouse)(int x, int y);
+typedef void (*S2D_On_Controller)(bool is_axis, int axis, int val, bool is_btn, int btn);
+
+typedef struct {
   GLfloat r;
   GLfloat g;
   GLfloat b;
   GLfloat a;
 } S2D_Color;
 
-typedef struct S2D_Mouse {
+typedef struct {
   int visible;
   int x;       // scaled positions
   int y;
@@ -66,14 +73,7 @@ typedef struct S2D_Mouse {
   int real_y;
 } S2D_Mouse;
 
-typedef void (*S2D_Update)(void);
-typedef void (*S2D_Render)(void);
-typedef void (*S2D_On_key)(const char *key);
-typedef void (*S2D_On_key_down)(const char *key);
-typedef void (*S2D_On_mouse)(int x, int y);
-typedef void (*S2D_On_controller)(bool is_axis, int axis, int val, bool is_btn, int btn);
-
-typedef struct S2D_Window {
+typedef struct {
   SDL_Window *sdl;
   const GLubyte *S2D_GL_VENDOR;
   const GLubyte *S2D_GL_RENDERER;
@@ -95,10 +95,10 @@ typedef struct S2D_Window {
   S2D_Color background;
   S2D_Update update;
   S2D_Render render;
-  S2D_On_key on_key;
-  S2D_On_key_down on_key_down;
-  S2D_On_mouse on_mouse;
-  S2D_On_controller on_controller;
+  S2D_On_Key on_key;
+  S2D_On_Key_Down on_key_down;
+  S2D_On_Mouse on_mouse;
+  S2D_On_Controller on_controller;
   S2D_Mouse mouse;
   Uint32 frames;
   Uint32 elapsed_ms;
@@ -107,7 +107,7 @@ typedef struct S2D_Window {
   double fps;
 } S2D_Window;
 
-typedef struct S2D_Image {
+typedef struct {
   GLuint texture_id;
   S2D_Color color;
   int x;
@@ -116,7 +116,7 @@ typedef struct S2D_Image {
   int h;
 } S2D_Image;
 
-typedef struct S2D_Text {
+typedef struct {
   GLuint texture_id;
   TTF_Font *font;
   S2D_Color color;
@@ -127,11 +127,11 @@ typedef struct S2D_Text {
   int h;
 } S2D_Text;
 
-typedef struct S2D_Sound {
+typedef struct {
   Mix_Chunk *data;
 } S2D_Sound;
 
-typedef struct S2D_Music {
+typedef struct {
   Mix_Music *data;
 } S2D_Music;
 
