@@ -1,9 +1,10 @@
 #include <simple2d.h>
 
-int tests = 0;
-int failures = 0;
 #define FAIL false
 #define PASS true
+
+int tests = 0;
+int failures = 0;
 
 
 void start_test_suite() {
