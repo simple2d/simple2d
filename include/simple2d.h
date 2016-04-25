@@ -143,7 +143,10 @@ void S2D_GL_StoreContextInfo(S2D_Window *window);
 GLuint S2D_GL_LoadShader(GLenum type, const GLchar *shaderSrc, char *shaderName);
 int S2D_GL_CheckLinked(GLuint program, char *name);
 void S2D_GL_SetViewport(S2D_Window *window);
-void S2D_GL_SetUpTexture(GLuint *id, GLint format, int w, int h, const GLvoid *data, GLint filter);
+void S2D_GL_SetUpTexture(
+  GLuint *id, GLint format,
+  int w, int h,
+  const GLvoid *data, GLint filter);
 void S2D_GL_DrawTriangle(
   GLfloat x1,  GLfloat y1,
   GLfloat c1r, GLfloat c1g, GLfloat c1b, GLfloat c1a,
@@ -159,43 +162,40 @@ void S2D_GL_Clear(S2D_Color clr);
 // OpenGL & GLES Internal Functions ////////////////////////////////////////////
 
 #if GLES
-  void S2D_gles_hello();
-  int S2D_gles_init();
-  void S2D_gles_set_viewport(int x, int y, int w, int h, int ortho_w, int ortho_h);
-  void S2D_gles_draw_triangle(
+  int S2D_GLES_Init();
+  void S2D_GLES_SetViewport(int x, int y, int w, int h, int ortho_w, int ortho_h);
+  void S2D_GLES_DrawTriangle(
     GLfloat x1,  GLfloat y1,
     GLfloat c1r, GLfloat c1g, GLfloat c1b, GLfloat c1a,
     GLfloat x2,  GLfloat y2,
     GLfloat c2r, GLfloat c2g, GLfloat c2b, GLfloat c2a,
     GLfloat x3,  GLfloat y3,
     GLfloat c3r, GLfloat c3g, GLfloat c3b, GLfloat c3a);
-  void S2D_gles_draw_image(S2D_Image *img);
-  void S2D_gles_draw_text(S2D_Text *txt);
+  void S2D_GLES_DrawImage(S2D_Image *img);
+  void S2D_GLES_DrawText(S2D_Text *txt);
 #else
-  void S2D_gl2_hello();
-  void S2D_gl3_hello();
-  int S2D_gl2_init();
-  int S2D_gl3_init();
-  void S2D_gl2_set_viewport(int x, int y, int w, int h, int ortho_w, int ortho_h);
-  void S2D_gl3_set_viewport(int x, int y, int w, int h, int ortho_w, int ortho_h);
-  void S2D_gl2_draw_triangle(
+  int S2D_GL2_Init();
+  int S2D_GL3_Init();
+  void S2D_GL2_SetViewport(int x, int y, int w, int h, int ortho_w, int ortho_h);
+  void S2D_GL3_SetViewport(int x, int y, int w, int h, int ortho_w, int ortho_h);
+  void S2D_GL2_DrawTriangle(
     GLfloat x1,  GLfloat y1,
     GLfloat c1r, GLfloat c1g, GLfloat c1b, GLfloat c1a,
     GLfloat x2,  GLfloat y2,
     GLfloat c2r, GLfloat c2g, GLfloat c2b, GLfloat c2a,
     GLfloat x3,  GLfloat y3,
     GLfloat c3r, GLfloat c3g, GLfloat c3b, GLfloat c3a);
-  void S2D_gl3_draw_triangle(
+  void S2D_GL3_DrawTriangle(
     GLfloat x1,  GLfloat y1,
     GLfloat c1r, GLfloat c1g, GLfloat c1b, GLfloat c1a,
     GLfloat x2,  GLfloat y2,
     GLfloat c2r, GLfloat c2g, GLfloat c2b, GLfloat c2a,
     GLfloat x3,  GLfloat y3,
     GLfloat c3r, GLfloat c3g, GLfloat c3b, GLfloat c3a);
-  void S2D_gl2_draw_image(S2D_Image *img);
-  void S2D_gl3_draw_image(S2D_Image *img);
-  void S2D_gl2_draw_text(S2D_Text *txt);
-  void S2D_gl3_draw_text(S2D_Text *txt);
+  void S2D_GL2_DrawImage(S2D_Image *img);
+  void S2D_GL3_DrawImage(S2D_Image *img);
+  void S2D_GL2_DrawText(S2D_Text *txt);
+  void S2D_GL3_DrawText(S2D_Text *txt);
 #endif
 
 // S2D Functions ///////////////////////////////////////////////////////////////

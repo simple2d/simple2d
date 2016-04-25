@@ -181,12 +181,12 @@ void S2D_GL_SetViewport(S2D_Window *window) {
   }
   
   #if GLES
-    S2D_gles_set_viewport(x, y, w, h, ortho_w, ortho_h);
+    S2D_GLES_SetViewport(x, y, w, h, ortho_w, ortho_h);
   #else
     if (S2D_GL2) {
-      S2D_gl2_set_viewport(x, y, w, h, ortho_w, ortho_h);
+      S2D_GL2_SetViewport(x, y, w, h, ortho_w, ortho_h);
     } else {
-      S2D_gl3_set_viewport(x, y, w, h, ortho_w, ortho_h);
+      S2D_GL3_SetViewport(x, y, w, h, ortho_w, ortho_h);
     }
   #endif
 }
@@ -195,7 +195,9 @@ void S2D_GL_SetViewport(S2D_Window *window) {
 /*
  * Prepares a texture for rendering
  */
-void S2D_GL_SetUpTexture(GLuint *id, GLint format, int w, int h, const GLvoid *data, GLint filter) {
+void S2D_GL_SetUpTexture(GLuint *id, GLint format,
+                         int w, int h,
+                         const GLvoid *data, GLint filter) {
   
   // If 0, then a new texture; generate name
   if (*id == 0) glGenTextures(1, id);
@@ -226,18 +228,18 @@ void S2D_GL_DrawTriangle(GLfloat x1,  GLfloat y1,
                          GLfloat c3r, GLfloat c3g, GLfloat c3b, GLfloat c3a) {
   
   #if GLES
-    S2D_gles_draw_triangle(x1, y1, c1r, c1g, c1b, c1a,
-                           x2, y2, c2r, c2g, c2b, c2a,
-                           x3, y3, c3r, c3g, c3b, c3a);
+    S2D_GLES_DrawTriangle(x1, y1, c1r, c1g, c1b, c1a,
+                          x2, y2, c2r, c2g, c2b, c2a,
+                          x3, y3, c3r, c3g, c3b, c3a);
   #else
     if (S2D_GL2) {
-      S2D_gl2_draw_triangle(x1, y1, c1r, c1g, c1b, c1a,
-                            x2, y2, c2r, c2g, c2b, c2a,
-                            x3, y3, c3r, c3g, c3b, c3a);
+      S2D_GL2_DrawTriangle(x1, y1, c1r, c1g, c1b, c1a,
+                           x2, y2, c2r, c2g, c2b, c2a,
+                           x3, y3, c3r, c3g, c3b, c3a);
     } else {
-      S2D_gl3_draw_triangle(x1, y1, c1r, c1g, c1b, c1a,
-                            x2, y2, c2r, c2g, c2b, c2a,
-                            x3, y3, c3r, c3g, c3b, c3a);
+      S2D_GL3_DrawTriangle(x1, y1, c1r, c1g, c1b, c1a,
+                           x2, y2, c2r, c2g, c2b, c2a,
+                           x3, y3, c3r, c3g, c3b, c3a);
     }
   #endif
 }
@@ -248,12 +250,12 @@ void S2D_GL_DrawTriangle(GLfloat x1,  GLfloat y1,
  */
 void S2D_GL_DrawImage(S2D_Image *img) {
   #if GLES
-    S2D_gles_draw_image(img);
+    S2D_GLES_DrawImage(img);
   #else
     if (S2D_GL2) {
-      S2D_gl2_draw_image(img);
+      S2D_GL2_DrawImage(img);
     } else {
-      S2D_gl3_draw_image(img);
+      S2D_GL3_DrawImage(img);
     }
   #endif
 }
@@ -264,12 +266,12 @@ void S2D_GL_DrawImage(S2D_Image *img) {
  */
 void S2D_GL_DrawText(S2D_Text *txt) {
   #if GLES
-    S2D_gles_draw_text(txt);
+    S2D_GLES_DrawText(txt);
   #else
     if (S2D_GL2) {
-      S2D_gl2_draw_text(txt);
+      S2D_GL2_DrawText(txt);
     } else {
-      S2D_gl3_draw_text(txt);
+      S2D_GL3_DrawText(txt);
     }
   #endif
 }

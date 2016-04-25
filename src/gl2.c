@@ -6,7 +6,7 @@
 /*
  * Sets the viewport and matrix projection
  */
-void S2D_gl2_set_viewport(int x, int y, int w, int h, int ortho_w, int ortho_h) {
+void S2D_GL2_SetViewport(int x, int y, int w, int h, int ortho_w, int ortho_h) {
   
   glViewport(x, y, w, h);
   
@@ -26,7 +26,7 @@ void S2D_gl2_set_viewport(int x, int y, int w, int h, int ortho_w, int ortho_h) 
 /*
  * Initalize OpenGL
  */
-int S2D_gl2_init() {
+int S2D_GL2_Init() {
   
   GLenum error = GL_NO_ERROR;
   
@@ -48,12 +48,12 @@ int S2D_gl2_init() {
 /*
  * Draw triangle
  */
-void S2D_gl2_draw_triangle(GLfloat x1,  GLfloat y1,
-                           GLfloat c1r, GLfloat c1g, GLfloat c1b, GLfloat c1a,
-                           GLfloat x2,  GLfloat y2,
-                           GLfloat c2r, GLfloat c2g, GLfloat c2b, GLfloat c2a,
-                           GLfloat x3,  GLfloat y3,
-                           GLfloat c3r, GLfloat c3g, GLfloat c3b, GLfloat c3a) {
+void S2D_GL2_DrawTriangle(GLfloat x1,  GLfloat y1,
+                          GLfloat c1r, GLfloat c1g, GLfloat c1b, GLfloat c1a,
+                          GLfloat x2,  GLfloat y2,
+                          GLfloat c2r, GLfloat c2g, GLfloat c2b, GLfloat c2a,
+                          GLfloat x3,  GLfloat y3,
+                          GLfloat c3r, GLfloat c3g, GLfloat c3b, GLfloat c3a) {
   
   glBegin(GL_TRIANGLES);
     glColor4f(c1r, c1g, c1b, c1a); glVertex2f(x1, y1);
@@ -66,9 +66,9 @@ void S2D_gl2_draw_triangle(GLfloat x1,  GLfloat y1,
 /*
  * Draw texture
  */
-static void S2D_gl2_draw_texture(int x, int y, int w, int h, 
-                                 GLfloat r, GLfloat g, GLfloat b, GLfloat a,
-                                 GLuint texture_id) {
+static void S2D_GL2_DrawTexture(int x, int y, int w, int h, 
+                                GLfloat r, GLfloat g, GLfloat b, GLfloat a,
+                                GLuint texture_id) {
   
   glEnable(GL_TEXTURE_2D);
   
@@ -89,8 +89,8 @@ static void S2D_gl2_draw_texture(int x, int y, int w, int h,
 /*
  * Draw image
  */
-void S2D_gl2_draw_image(S2D_Image *img) {
-  S2D_gl2_draw_texture(
+void S2D_GL2_DrawImage(S2D_Image *img) {
+  S2D_GL2_DrawTexture(
     img->x, img->y, img->w, img->h,
     img->color.r, img->color.g, img->color.b, img->color.a,
     img->texture_id
@@ -101,8 +101,8 @@ void S2D_gl2_draw_image(S2D_Image *img) {
 /*
  * Draw text
  */
-void S2D_gl2_draw_text(S2D_Text *txt) {
-  S2D_gl2_draw_texture(
+void S2D_GL2_DrawText(S2D_Text *txt) {
+  S2D_GL2_DrawTexture(
     txt->x, txt->y, txt->w, txt->h,
     txt->color.r, txt->color.g, txt->color.b, txt->color.a,
     txt->texture_id

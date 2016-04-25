@@ -549,12 +549,12 @@ S2D_Window *S2D_CreateWindow(const char *title, int width, int height,
     
     #if GLES
       // Initialize OpenGL ES 2.0
-      S2D_gles_init();
+      S2D_GLES_Init();
       S2D_GL_SetViewport(window);
       
     #else
       // Initialize OpenGL 3.3+
-      S2D_gl3_init();
+      S2D_GL3_Init();
       S2D_GL_SetViewport(window);
     #endif
     
@@ -576,7 +576,7 @@ S2D_Window *S2D_CreateWindow(const char *title, int width, int height,
       if (window->glcontext) {
         // Valid context found
         S2D_GL2 = true;
-        S2D_gl2_init();
+        S2D_GL2_Init();
         S2D_GL_SetViewport(window);
         
       } else {
