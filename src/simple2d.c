@@ -14,6 +14,8 @@ char S2D_msg[1024];
 
 // Set to true to quit main loop
 static bool quit = false;
+// S2D initialization status
+static bool initted = false;
 
 
 /*
@@ -61,9 +63,54 @@ void S2D_Error(const char *caller, const char *msg) {
 
 /*
  * Enable/disable logging of diagnostics
+ * Initialize Simple 2D subsystems
  */
 void S2D_Diagnostics(bool status) {
   diagnostics = status;
+static bool S2D_Init() {
+  if (initted) return true;
+  
+  S2D_Log("Initializing Simple 2D", S2D_INFO);
+  
+  // Initialize SDL
+  if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
+    S2D_Error("SDL_Init", SDL_GetError());
+    return false;
+  }
+  
+  // Initialize SDL_ttf
+  if (TTF_Init() != 0) {
+    S2D_Error("TTF_Init", TTF_GetError());
+    return false;
+  }
+  
+  // Initialize SDL_mixer
+  int mix_flags = MIX_INIT_FLAC | MIX_INIT_OGG | MIX_INIT_MP3;
+  int mix_initted = Mix_Init(mix_flags);
+  if ((mix_initted&mix_flags) != mix_flags) {
+    S2D_Error("Mix_Init", Mix_GetError());
+  }
+  if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096) != 0) {
+    S2D_Error("Mix_OpenAudio", Mix_GetError());
+    return false;
+  }
+  
+  // All subsystems initted
+  initted = true;
+  return true;
+}
+
+
+/*
+ * Quits S2D subsystems
+ */
+static void S2D_Quit() {
+  IMG_Quit();
+  Mix_CloseAudio();
+  Mix_Quit();
+  TTF_Quit();
+  SDL_Quit();
+  initted = false;
 }
 
 
@@ -110,6 +157,7 @@ void S2D_DrawQuad(GLfloat x1,  GLfloat y1,
  * Params: path = image file path
  */
 S2D_Image *S2D_CreateImage(const char *path) {
+  S2D_Init();
   
   // Check if image file exists
   if (!file_exists(path)) {
@@ -215,6 +263,7 @@ void S2D_FreeImage(S2D_Image *img) {
  * Returns NULL if text could not be created
  */
 S2D_Text *S2D_CreateText(const char *font, const char *msg, int size) {
+  S2D_Init();
   
   // Check if font file exists
   if (!file_exists(font)) {
@@ -310,6 +359,7 @@ void S2D_FreeText(S2D_Text *txt) {
  * Create a sound
  */
 S2D_Sound *S2D_CreateSound(const char *path) {
+  S2D_Init();
   
   // Check if sound file exists
   if (!file_exists(path)) {
@@ -355,6 +405,7 @@ void S2D_FreeSound(S2D_Sound *sound) {
  * Create the music
  */
 S2D_Music *S2D_CreateMusic(const char *path) {
+  S2D_Init();
   
   // Check if music file exists
   if (!file_exists(path)) {
@@ -443,6 +494,8 @@ void S2D_FreeMusic(S2D_Music *music) {
 S2D_Window *S2D_CreateWindow(const char *title, int width, int height,
                              S2D_Update update, S2D_Render render, int flags) {
   
+  S2D_Init();
+  
   // Allocate window and set default values
   S2D_Window *window    = (S2D_Window *) malloc(sizeof(S2D_Window));
   window->title         = title;
@@ -463,36 +516,6 @@ S2D_Window *S2D_CreateWindow(const char *title, int width, int height,
   window->background.g  = 0.0;
   window->background.b  = 0.0;
   window->background.a  = 1.0;
-  
-  // SDL Initialization ////////////////////////////////////////////////////////
-  
-  // Initialize SDL
-  if (SDL_Init(SDL_INIT_EVERYTHING) != 0) S2D_Error("SDL_Init", SDL_GetError());
-  
-  // Initialize SDL_ttf
-  if (TTF_Init() != 0) {
-    S2D_Error("TTF_Init", TTF_GetError());
-    free(window);
-    return NULL;
-  }
-  
-  // Initialize SDL_mixer
-  int mix_flags = MIX_INIT_FLAC|MIX_INIT_OGG|MIX_INIT_MP3;
-  int mix_initted = Mix_Init(mix_flags);
-  if ((mix_initted&mix_flags) != mix_flags) {
-    S2D_Error("Mix_Init", Mix_GetError());
-  }
-  
-  int audio_rate = 44100;
-  Uint16 audio_format = AUDIO_S16SYS;
-  int audio_channels = 2;
-  int audio_buffers = 4096;
-  
-  if (Mix_OpenAudio(audio_rate, MIX_DEFAULT_FORMAT, audio_channels, audio_buffers) != 0) {
-    S2D_Error("Mix_OpenAudio", Mix_GetError());
-    free(window);
-    return NULL;
-  }
   
   // Init OpenGL / GLES ////////////////////////////////////////////////////////
   
@@ -816,16 +839,8 @@ int S2D_Close() {
  * Free all resources
  */
 int S2D_FreeWindow(S2D_Window *window) {
-  
-  IMG_Quit();
-  Mix_CloseAudio();
-  Mix_Quit();
-  TTF_Quit();
   SDL_GL_DeleteContext(window->glcontext);
   SDL_DestroyWindow(window->sdl);
-  SDL_Quit();
-  
   free(window);
-  
   return 0;
 }
