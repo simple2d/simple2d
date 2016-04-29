@@ -58,6 +58,7 @@ typedef void (*S2D_On_Key_Down)(const char *key);
 typedef void (*S2D_On_Mouse)(int x, int y);
 typedef void (*S2D_On_Controller)(bool is_axis, int axis, int val, bool is_btn, int btn);
 
+// S2D_Color
 typedef struct {
   GLfloat r;
   GLfloat g;
@@ -65,6 +66,7 @@ typedef struct {
   GLfloat a;
 } S2D_Color;
 
+// S2D_Mouse
 typedef struct {
   int visible;
   int x;       // scaled positions
@@ -73,6 +75,7 @@ typedef struct {
   int real_y;
 } S2D_Mouse;
 
+// S2D_Window
 typedef struct {
   SDL_Window *sdl;
   SDL_GLContext glcontext;
@@ -109,6 +112,7 @@ typedef struct {
   double fps;
 } S2D_Window;
 
+// S2D_Image
 typedef struct {
   SDL_Surface *surface;
   int format;
@@ -120,6 +124,7 @@ typedef struct {
   int h;
 } S2D_Image;
 
+// S2D_Text
 typedef struct {
   SDL_Surface *surface;
   GLuint texture_id;
@@ -132,10 +137,12 @@ typedef struct {
   int h;
 } S2D_Text;
 
+// S2D_Sound
 typedef struct {
   Mix_Chunk *data;
 } S2D_Sound;
 
+// S2D_Music
 typedef struct {
   Mix_Music *data;
 } S2D_Music;

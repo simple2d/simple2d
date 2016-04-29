@@ -55,12 +55,15 @@ void S2D_Error(const char *caller, const char *msg) {
 
 /*
  * Enable/disable logging of diagnostics
- * Initialize Simple 2D subsystems
  */
 void S2D_Diagnostics(bool status) {
   S2D_diagnostics = status;
 }
 
+
+/*
+ * Initialize Simple 2D subsystems
+ */
 static bool S2D_Init() {
   if (initted) return true;
   
@@ -161,7 +164,7 @@ S2D_Image *S2D_CreateImage(const char *path) {
   
   // Allocate the image structure
   S2D_Image *img = (S2D_Image *) malloc(sizeof(S2D_Image));
-  if(!img) {
+  if (!img) {
     S2D_Error("IMG_Load", "Out of memory!");
     return NULL;
   }
@@ -185,8 +188,8 @@ S2D_Image *S2D_CreateImage(const char *path) {
   img->texture_id = 0;
   
   // Detect image mode
-  if(surface->format->BytesPerPixel == 4) {
   img->format = GL_RGB;
+  if (img->surface->format->BytesPerPixel == 4) {
     img->format = GL_RGBA;
   }
   
@@ -350,6 +353,7 @@ void S2D_FreeText(S2D_Text *txt) {
   if (!txt) return;
   S2D_GL_FreeTexture(&txt->texture_id);
   TTF_CloseFont(txt->font);
+  free(txt);
 }
 
 
@@ -413,7 +417,7 @@ S2D_Music *S2D_CreateMusic(const char *path) {
   
   // Allocate the music structure
   S2D_Music *music = (S2D_Music *) malloc(sizeof(S2D_Music));
-  if(!music) {
+  if (!music) {
     S2D_Error("S2D_CreateMusic", "Out of memory!");
     return NULL;
   }

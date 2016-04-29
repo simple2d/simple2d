@@ -138,13 +138,13 @@ int main() {
   S2D_Music *mus7 = S2D_CreateMusic(NULL);
   end_test(mus5 == NULL && mus6 == NULL && mus7 == NULL);
   
-  start_test("(S2D_FreeMusic) free sound");
+  start_test("(S2D_FreeMusic) free music");
   S2D_FreeMusic(mus1); S2D_FreeMusic(mus2); S2D_FreeMusic(mus3);
   S2D_FreeMusic(mus4); S2D_FreeMusic(mus5); S2D_FreeMusic(mus6);
   S2D_FreeMusic(mus7);
   end_test(PASS);
   
-  start_test("(S2D_FreeMusic) free bad sound pointer");
+  start_test("(S2D_FreeMusic) free bad music pointer");
   S2D_FreeMusic(NULL);
   end_test(PASS);
   

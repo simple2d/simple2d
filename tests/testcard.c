@@ -16,10 +16,11 @@ char fps_str[7];
 const char *font = "media/bitstream_vera/vera.ttf";
 int font_size = 20;
 
-typedef struct Point {
+typedef struct {
   int x;
   int y;
 } Point;
+
 Point pointer;
 
 
