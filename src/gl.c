@@ -368,7 +368,10 @@ void S2D_GL_DrawText(S2D_Text *txt) {
  * Free a texture
  */
 void S2D_GL_FreeTexture(GLuint *id) {
-  glDeleteTextures(1, id);
+  if (*id != 0) {
+    glDeleteTextures(1, id);
+    *id = 0;
+  }
 }
 
 

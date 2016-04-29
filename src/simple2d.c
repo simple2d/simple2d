@@ -159,18 +159,17 @@ S2D_Image *S2D_CreateImage(const char *path) {
     return NULL;
   }
   
-  // Load image from file as SDL_Surface
-  SDL_Surface *surface = IMG_Load(path);
-  if (!surface) {
-    S2D_Error("IMG_Load", IMG_GetError());
-    return NULL;
-  }
-  
   // Allocate the image structure
   S2D_Image *img = (S2D_Image *) malloc(sizeof(S2D_Image));
   if(!img) {
     S2D_Error("IMG_Load", "Out of memory!");
-    SDL_FreeSurface(surface);
+    return NULL;
+  }
+  
+  // Load image from file as SDL_Surface
+  img->surface = IMG_Load(path);
+  if (!img->surface) {
+    S2D_Error("IMG_Load", IMG_GetError());
     return NULL;
   }
   
@@ -181,27 +180,27 @@ S2D_Image *S2D_CreateImage(const char *path) {
   img->color.a = 1.f;
   img->x = 0;
   img->y = 0;
-  img->w = surface->w;
-  img->h = surface->h;
+  img->w = img->surface->w;
+  img->h = img->surface->h;
   img->texture_id = 0;
   
   // Detect image mode
-  int format = GL_RGB;
   if(surface->format->BytesPerPixel == 4) {
-    format = GL_RGBA;
+  img->format = GL_RGB;
+    img->format = GL_RGBA;
   }
   
   // Flip image bits if BGA
   
-  Uint32 r = surface->format->Rmask;
-  Uint32 g = surface->format->Gmask;
-  Uint32 a = surface->format->Amask;
+  Uint32 r = img->surface->format->Rmask;
+  Uint32 g = img->surface->format->Gmask;
+  Uint32 a = img->surface->format->Amask;
   
   if (r&0xFF000000 || r&0xFF0000) {
-    char *p = (char *)surface->pixels;
-    int bpp = surface->format->BytesPerPixel;
-    int w = surface->w;
-    int h = surface->h;
+    char *p = (char *)img->surface->pixels;
+    int bpp = img->surface->format->BytesPerPixel;
+    int w = img->surface->w;
+    int h = img->surface->h;
     char tmp;
     for (int i = 0; i < bpp * w * h; i += bpp) {
       if (a&0xFF) {
@@ -222,12 +221,6 @@ S2D_Image *S2D_CreateImage(const char *path) {
     }
   }
   
-  // Set up the texture for rendering
-  S2D_GL_SetUpTexture(&img->texture_id, format, img->w, img->h, surface->pixels, GL_NEAREST);
-  
-  // Free the surface data, no longer needed
-  SDL_FreeSurface(surface);
-  
   return img;
 }
 
@@ -237,6 +230,14 @@ S2D_Image *S2D_CreateImage(const char *path) {
  */
 void S2D_DrawImage(S2D_Image *img) {
   if (!img) return;
+  
+  if (img->texture_id == 0) {
+    S2D_GL_SetUpTexture(&img->texture_id, img->format,
+                        img->w, img->h,
+                        img->surface->pixels, GL_NEAREST);
+    SDL_FreeSurface(img->surface);
+  }
+  
   S2D_GL_DrawImage(img);
 }
 
@@ -298,11 +299,7 @@ S2D_Text *S2D_CreateText(const char *font, const char *msg, int size) {
   
   // Assign color and set up for rendering
   SDL_Color color = { 255, 255, 255 };
-  SDL_Surface *surface = TTF_RenderText_Blended(txt->font, txt->msg, color);
-  S2D_GL_SetUpTexture(&txt->texture_id, GL_RGBA, txt->w, txt->h, surface->pixels, GL_NEAREST);
-  
-  // Free the surface data, no longer needed
-  SDL_FreeSurface(surface);
+  txt->surface = TTF_RenderText_Blended(txt->font, txt->msg, color);
   
   return txt;
 }
@@ -322,11 +319,10 @@ void S2D_SetText(S2D_Text *txt, const char *msg) {
   TTF_SizeText(txt->font, txt->msg, &txt->w, &txt->h);
   
   SDL_Color color = { 255, 255, 255 };
-  SDL_Surface *surface = TTF_RenderText_Blended(txt->font, txt->msg, color);
+  txt->surface = TTF_RenderText_Blended(txt->font, txt->msg, color);
   
-  S2D_GL_SetUpTexture(&txt->texture_id, GL_RGBA, txt->w, txt->h, surface->pixels, GL_NEAREST);
-  
-  SDL_FreeSurface(surface);
+  // Delete the current texture so a new one can be generated
+  S2D_GL_FreeTexture(&txt->texture_id);
 }
 
 
@@ -335,6 +331,14 @@ void S2D_SetText(S2D_Text *txt, const char *msg) {
  */
 void S2D_DrawText(S2D_Text *txt) {
   if (!txt) return;
+  
+  if (txt->texture_id == 0) {
+    S2D_GL_SetUpTexture(&txt->texture_id, GL_RGBA,
+                        txt->w, txt->h,
+                        txt->surface->pixels, GL_NEAREST);
+    SDL_FreeSurface(txt->surface);
+  }
+  
   S2D_GL_DrawText(txt);
 }
 

@@ -107,6 +107,8 @@ typedef struct {
 } S2D_Window;
 
 typedef struct {
+  SDL_Surface *surface;
+  int format;
   GLuint texture_id;
   S2D_Color color;
   int x;
@@ -116,6 +118,7 @@ typedef struct {
 } S2D_Image;
 
 typedef struct {
+  SDL_Surface *surface;
   GLuint texture_id;
   TTF_Font *font;
   S2D_Color color;
