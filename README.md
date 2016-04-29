@@ -68,6 +68,9 @@ Or, conveniently rebuild Simple 2D from source and run tests using `bash test.sh
 ```bash
 # Run testcard.c
 bash test.sh testcard
+
+# Run auto.c then testcard.c
+bash test.sh auto testcard
 ```
 
 ---

@@ -15,6 +15,9 @@ echo -e "\n${BLUE}==>${BOLD} make install${NORMAL}\n" && \
 make install && \
 echo -e "\n${BLUE}==>${BOLD} make tests${NORMAL}\n" && \
 make tests && \
-echo -e "\n${BLUE}==>${SUCCESS} Build successful!${NORMAL}\n" && \
-echo -e "${BLUE}==>${BOLD} Running ./tests/$1 ${NORMAL}\n" && \
-( cd tests/ ; ./$1 )
+echo -e "\n${BLUE}==>${SUCCESS} Build successful!${NORMAL}\n"
+
+for var in $@; do
+  echo -e "${BLUE}==>${BOLD} Running ./tests/$var ${NORMAL}\n"
+  ( cd tests/ ; ./$var )
+done
