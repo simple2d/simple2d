@@ -162,7 +162,7 @@ window->background.a = 1.0;
 
 Callback functions can also be changed anytime – more on that below. Many values can also be read from the `Window` structure, see the [`simple2d.h`](include/simple2d.h) header file for details.
 
-When you're done with the window, shut down media subsystems and free allocated memory using:
+When you're done with the window, free it using:
 
 ```c
 S2D_FreeWindow(window);

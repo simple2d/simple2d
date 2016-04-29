@@ -92,6 +92,9 @@ static bool S2D_Init() {
     return false;
   }
   
+  // Call `S2D_Quit` at program exit
+  atexit(S2D_Quit);
+  
   // All subsystems initted
   initted = true;
   return true;
