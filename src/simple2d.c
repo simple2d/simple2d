@@ -2,11 +2,9 @@
 
 #include "../include/simple2d.h"
 
-// Flag for printing diagnostic messages
-static bool diagnostics = false;
-
 // Initalize S2D shared data
 char S2D_msg[1024];
+bool S2D_diagnostics = false;
 
 // S2D initialization status
 static bool initted = false;
@@ -28,7 +26,7 @@ static bool file_exists(const char *path) {
  * Logs standard messages to the console
  */
 void S2D_Log(const char *msg, int type) {
-  if (diagnostics) {
+  if (S2D_diagnostics) {
     switch (type) {
       case S2D_INFO:
         printf("\033[4;36mInfo:\033[0m %s\n", msg);
@@ -60,7 +58,9 @@ void S2D_Error(const char *caller, const char *msg) {
  * Initialize Simple 2D subsystems
  */
 void S2D_Diagnostics(bool status) {
-  diagnostics = status;
+  S2D_diagnostics = status;
+}
+
 static bool S2D_Init() {
   if (initted) return true;
   

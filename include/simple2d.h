@@ -45,6 +45,8 @@
 
 // Shared Data /////////////////////////////////////////////////////////////////
 
+extern char S2D_msg[1024];    // for S2D_Log messages
+extern bool S2D_diagnostics;  // Flag whether to print diagnostics with S2D_Log
 extern GLfloat S2D_GL_orthoMatrix[16];
 
 // Type Definitions ////////////////////////////////////////////////////////////
