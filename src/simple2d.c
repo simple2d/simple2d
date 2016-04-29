@@ -494,31 +494,6 @@ S2D_Window *S2D_CreateWindow(const char *title, int width, int height,
     return NULL;
   }
   
-  // Create SDL window
-  window->sdl = SDL_CreateWindow(
-    window->title,                                   // title
-    SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,  // window position
-    window->width, window->height,                   // window size
-    SDL_WINDOW_OPENGL | flags                        // flags
-  );
-  
-  if (!window->sdl) S2D_Error("SDL_CreateWindow", SDL_GetError());
-  
-  // Window created by SDL might not actually be the requested size.
-  // If not, retrieve and set the actual window size.
-  window->s_width = window->width;
-  window->s_height = window->height;
-  SDL_GetWindowSize(window->sdl, &window->width, &window->height);
-  
-  if ((window->width != window->s_width) ||
-    (window->height != window->s_height)) {
-    
-    sprintf(S2D_msg,
-      "Resolution %dx%d unsupported by driver, scaling to %dx%d",
-      window->s_width, window->s_height, window->width, window->height);
-    S2D_Log(S2D_msg, S2D_WARN);
-  }
-  
   // Init OpenGL / GLES ////////////////////////////////////////////////////////
   
   // Specify the OpenGL Context
@@ -679,6 +654,31 @@ int S2D_Show(S2D_Window *window) {
       
       break;  // Break after first available joystick
     }
+  }
+  
+  // Create SDL window
+  window->sdl = SDL_CreateWindow(
+    window->title,                                   // title
+    SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,  // window position
+    window->width, window->height,                   // window size
+    SDL_WINDOW_OPENGL | window->flags                // flags
+  );
+  
+  if (!window->sdl) S2D_Error("SDL_CreateWindow", SDL_GetError());
+  
+  // Window created by SDL might not actually be the requested size.
+  // If not, retrieve and set the actual window size.
+  window->s_width = window->width;
+  window->s_height = window->height;
+  SDL_GetWindowSize(window->sdl, &window->width, &window->height);
+  
+  if ((window->width != window->s_width) ||
+     (window->height != window->s_height)) {
+    
+    sprintf(S2D_msg,
+      "Resolution %dx%d unsupported by driver, scaling to %dx%d",
+      window->s_width, window->s_height, window->width, window->height);
+    S2D_Log(S2D_msg, S2D_WARN);
   }
   
   // Main Loop /////////////////////////////////////////////////////////////////
