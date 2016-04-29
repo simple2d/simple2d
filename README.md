@@ -184,7 +184,7 @@ Remember to add these function names when calling `S2D_CreateWindow` (see ["The 
 To exit the window loop at anytime, call the following function:
 
 ```c
-S2D_Close();
+S2D_Close(window);
 ```
 
 ## Drawing Basics

@@ -27,7 +27,7 @@ void on_key(const char *key) {
   printf("Key pressed: %s\n", key);
   
   if (strcmp(key, "Escape") == 0) {
-    S2D_Close();
+    S2D_Close(window);
   }
   
   S2D_SetText(on_key_char, key);

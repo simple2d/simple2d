@@ -41,7 +41,7 @@ void print_help() {
 void on_key(const char *key) {
   
   if (strcmp(key, "Escape") == 0) {
-    S2D_Close();
+    S2D_Close(window);
   }
   
   switch (*key) {

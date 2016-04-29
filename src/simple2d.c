@@ -8,8 +8,6 @@ static bool diagnostics = false;
 // Initalize S2D shared data
 char S2D_msg[1024];
 
-// Set to true to quit main loop
-static bool quit = false;
 // S2D initialization status
 static bool initted = false;
 
@@ -494,6 +492,7 @@ S2D_Window *S2D_CreateWindow(const char *title, int width, int height,
   
   // Allocate window and set default values
   S2D_Window *window    = (S2D_Window *) malloc(sizeof(S2D_Window));
+  window->close         = true;
   window->title         = title;
   window->orig_width    = width;
   window->orig_height   = height;
@@ -601,6 +600,9 @@ int S2D_Show(S2D_Window *window) {
     }
   }
   
+  
+  window->close = false;
+  
   // Create SDL window
   window->sdl = SDL_CreateWindow(
     window->title,                                   // title
@@ -631,7 +633,7 @@ int S2D_Show(S2D_Window *window) {
   S2D_GL_Init(window);
   // Main Loop /////////////////////////////////////////////////////////////////
   
-  while (!quit) {
+  while (!window->close) {
     
     // Clear Frame /////////////////////////////////////////////////////////////
     
@@ -694,7 +696,7 @@ int S2D_Show(S2D_Window *window) {
           break;
         
         case SDL_QUIT:
-          quit = true;
+          S2D_Close(window);
           break;
       }
     }
@@ -753,9 +755,11 @@ int S2D_Show(S2D_Window *window) {
 /*
  * Close the window
  */
-int S2D_Close() {
-  S2D_Log("Closing S2D", S2D_INFO);
-  quit = true;
+int S2D_Close(S2D_Window *window) {
+  if (!window->close) {
+    S2D_Log("Closing window", S2D_INFO);
+    window->close = true;
+  }
   return 0;
 }
 
@@ -764,6 +768,7 @@ int S2D_Close() {
  * Free all resources
  */
 int S2D_FreeWindow(S2D_Window *window) {
+  S2D_Close(window);
   SDL_GL_DeleteContext(window->glcontext);
   SDL_DestroyWindow(window->sdl);
   free(window);

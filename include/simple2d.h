@@ -80,6 +80,7 @@ typedef struct {
   GLint S2D_GL_MINOR_VERSION;
   const GLubyte *S2D_GL_SHADING_LANGUAGE_VERSION;
   SDL_GLContext glcontext;
+  bool close;
   const char *title;
   int orig_width;  // original dimentions
   int orig_height;
@@ -229,7 +230,7 @@ int S2D_Show(S2D_Window *window);
 /*
  * Close the window
  */
-int S2D_Close();
+int S2D_Close(S2D_Window *window);
 
 /*
  * Free all resources
