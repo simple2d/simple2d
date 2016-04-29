@@ -104,7 +104,7 @@ static bool S2D_Init() {
 /*
  * Quits S2D subsystems
  */
-static void S2D_Quit() {
+void S2D_Quit() {
   IMG_Quit();
   Mix_CloseAudio();
   Mix_Quit();
