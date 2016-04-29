@@ -496,6 +496,8 @@ S2D_Window *S2D_CreateWindow(const char *title, int width, int height,
   
   // Allocate window and set default values
   S2D_Window *window    = (S2D_Window *) malloc(sizeof(S2D_Window));
+  window->sdl           = NULL;
+  window->glcontext     = NULL;
   window->close         = true;
   window->title         = title;
   window->orig_width    = width;
@@ -507,6 +509,7 @@ S2D_Window *S2D_CreateWindow(const char *title, int width, int height,
   window->vsync         = true;
   window->update        = update;
   window->render        = render;
+  window->flags         = flags;
   window->on_key        = NULL;
   window->on_key_down   = NULL;
   window->on_mouse      = NULL;
@@ -515,38 +518,6 @@ S2D_Window *S2D_CreateWindow(const char *title, int width, int height,
   window->background.g  = 0.0;
   window->background.b  = 0.0;
   window->background.a  = 1.0;
-  
-  return window;
-}
-
-
-/*
- * Show the window
- */
-int S2D_Show(S2D_Window *window) {
-  if (!window) {
-    S2D_Error("S2D_Show", "Window cannot be shown");
-    return -1;
-  }
-  
-  int mouse_x, mouse_y;
-  const Uint8 *key_state;
-  
-  Uint32 frames = 0;           // Total frames since start
-  Uint32 start_ms = SDL_GetTicks();  // Elapsed time since start
-  Uint32 begin_ms = start_ms;  // Time at beginning of loop
-  Uint32 end_ms;               // Time at end of loop
-  Uint32 elapsed_ms;           // Total elapsed time
-  Uint32 loop_ms;              // Elapsed time of loop
-  int delay_ms;                // Amount of delay to achieve desired frame rate
-  double fps;                  // The actual frame rate
-  
-  // Enable VSync
-  if (window->vsync) {
-    if (!SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1")) {
-      S2D_Log("VSync cannot be enabled", S2D_WARN);
-    }
-  }
   
   // Detect Controllers and Joysticks //////////////////////////////////////////
   
@@ -604,6 +575,19 @@ int S2D_Show(S2D_Window *window) {
     }
   }
   
+  return window;
+}
+
+
+/*
+ * Show the window
+ */
+int S2D_Show(S2D_Window *window) {
+  
+  if (!window) {
+    S2D_Error("S2D_Show", "Window cannot be shown (because it's NULL)");
+    return 1;
+  }
   
   window->close = false;
   
@@ -635,6 +619,28 @@ int S2D_Show(S2D_Window *window) {
   // Set Up OpenGL /////////////////////////////////////////////////////////////
   
   S2D_GL_Init(window);
+  
+  // Set Main Loop Data ////////////////////////////////////////////////////////
+  
+  int mouse_x, mouse_y;
+  const Uint8 *key_state;
+  
+  Uint32 frames = 0;           // Total frames since start
+  Uint32 start_ms = SDL_GetTicks();  // Elapsed time since start
+  Uint32 begin_ms = start_ms;  // Time at beginning of loop
+  Uint32 end_ms;               // Time at end of loop
+  Uint32 elapsed_ms;           // Total elapsed time
+  Uint32 loop_ms;              // Elapsed time of loop
+  int delay_ms;                // Amount of delay to achieve desired frame rate
+  double fps;                  // The actual frame rate
+  
+  // Enable VSync
+  if (window->vsync) {
+    if (!SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1")) {
+      S2D_Log("VSync cannot be enabled", S2D_WARN);
+    }
+  }
+  
   // Main Loop /////////////////////////////////////////////////////////////////
   
   while (!window->close) {

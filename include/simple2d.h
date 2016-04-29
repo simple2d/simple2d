@@ -75,13 +75,13 @@ typedef struct {
 
 typedef struct {
   SDL_Window *sdl;
+  SDL_GLContext glcontext;
   const GLubyte *S2D_GL_VENDOR;
   const GLubyte *S2D_GL_RENDERER;
   const GLubyte *S2D_GL_VERSION;
   GLint S2D_GL_MAJOR_VERSION;
   GLint S2D_GL_MINOR_VERSION;
   const GLubyte *S2D_GL_SHADING_LANGUAGE_VERSION;
-  SDL_GLContext glcontext;
   bool close;
   const char *title;
   int orig_width;  // original dimentions
@@ -96,6 +96,7 @@ typedef struct {
   S2D_Color background;
   S2D_Update update;
   S2D_Render render;
+  int flags;
   S2D_On_Key on_key;
   S2D_On_Key_Down on_key_down;
   S2D_On_Mouse on_mouse;
@@ -221,7 +222,7 @@ void S2D_Error(const char *caller, const char *msg);
 void S2D_Diagnostics(bool status);
 
 /*
- * Create the window
+ * Create a window structure and initiate subsystems
  */
 S2D_Window *S2D_CreateWindow(
   const char *title, int width, int height, S2D_Update, S2D_Render, int flags
