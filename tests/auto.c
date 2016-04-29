@@ -39,8 +39,6 @@ int main() {
   
   S2D_Diagnostics(true);
   
-  S2D_Window *window = S2D_CreateWindow("Hello World", 100, 100, NULL, NULL, 0);
-  
   start_test_suite();
   
   // Images ////////////////////////////////////////////////////////////////////
@@ -150,8 +148,16 @@ int main() {
   
   // Window ////////////////////////////////////////////////////////////////////
   
+  S2D_Window *window = S2D_CreateWindow("Hello World", 100, 100, NULL, NULL, 0);
+  
   start_test("(S2D_FreeWindow) free window");
   S2D_FreeWindow(window);
+  end_test(PASS);
+  
+  start_test("(S2D_FreeWindow) create multiple windows");
+  S2D_Window *win1 = S2D_CreateWindow("Window 1", 300, 100, NULL, NULL, 0);
+  S2D_Window *win2 = S2D_CreateWindow("Window 2", 300, 100, NULL, NULL, 0);
+  S2D_FreeWindow(win1); S2D_FreeWindow(win2);
   end_test(PASS);
   
   start_test("(S2D_Show) show a bad window pointer");
