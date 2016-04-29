@@ -5,11 +5,7 @@
 // Flag for printing diagnostic messages
 static bool diagnostics = false;
 
-// Set to `true` to force OpenGL 2.1 for testing
-static bool FORCE_GL2 = false;
-
 // Initalize S2D shared data
-bool S2D_GL2 = false;
 char S2D_msg[1024];
 
 // Set to true to quit main loop
@@ -517,80 +513,6 @@ S2D_Window *S2D_CreateWindow(const char *title, int width, int height,
   window->background.b  = 0.0;
   window->background.a  = 1.0;
   
-  // Init OpenGL / GLES ////////////////////////////////////////////////////////
-  
-  // Specify the OpenGL Context
-  #if !GLES
-    if (FORCE_GL2) {
-      // Use legacy OpenGL 2.1
-      SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
-      SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
-    } else {
-      // Request an OpenGL 3.3 forward-compatible core profile
-      SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-      SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-      SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
-    }
-  #endif
-  
-  // Create and store the OpenGL context
-  if (FORCE_GL2) {
-    window->glcontext = NULL;
-  } else {
-    // Ask SDL to create an OpenGL context
-    window->glcontext = SDL_GL_CreateContext(window->sdl);
-  }
-  
-  // Check if a valid OpenGL context was created
-  if (window->glcontext) {
-    // Valid context found
-    
-    #if GLES
-      // Initialize OpenGL ES 2.0
-      S2D_GLES_Init();
-      S2D_GL_SetViewport(window);
-      
-    #else
-      // Initialize OpenGL 3.3+
-      S2D_GL3_Init();
-      S2D_GL_SetViewport(window);
-    #endif
-    
-  } else {
-    // Context could not be created
-    
-    #if GLES
-      S2D_Error("GLES / SDL_GL_CreateContext", SDL_GetError());
-      
-    #else
-      // Try to fallback using an OpenGL 2.1 context
-      SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
-      SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
-      
-      // Try creating the context again
-      window->glcontext = SDL_GL_CreateContext(window->sdl);
-      
-      // Check if this context was created
-      if (window->glcontext) {
-        // Valid context found
-        S2D_GL2 = true;
-        S2D_GL2_Init();
-        S2D_GL_SetViewport(window);
-        
-      } else {
-        // Could not create any OpenGL contexts, hard failure
-        S2D_Error("GL2 / SDL_GL_CreateContext", SDL_GetError());
-        S2D_Log("An OpenGL context could not be created", S2D_ERROR);
-        free(window);
-        return NULL;
-      }
-    #endif
-  }
-  
-  // Store the context and print it if diagnostics is enabled
-  S2D_GL_StoreContextInfo(window);
-  if (diagnostics) S2D_GL_PrintContextInfo(window);
-  
   return window;
 }
 
@@ -704,6 +626,9 @@ int S2D_Show(S2D_Window *window) {
     S2D_Log(S2D_msg, S2D_WARN);
   }
   
+  // Set Up OpenGL /////////////////////////////////////////////////////////////
+  
+  S2D_GL_Init(window);
   // Main Loop /////////////////////////////////////////////////////////////////
   
   while (!quit) {

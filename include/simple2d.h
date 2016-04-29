@@ -45,8 +45,6 @@
 
 // Shared Data /////////////////////////////////////////////////////////////////
 
-extern char S2D_msg[1024];  // for S2D_Log messages
-extern bool S2D_GL2;        // Flag set if OpenGL 2.1
 extern GLfloat S2D_GL_orthoMatrix[16];
 
 // Type Definitions ////////////////////////////////////////////////////////////
@@ -137,6 +135,7 @@ typedef struct {
 
 // Simple 2D OpenGL Functions //////////////////////////////////////////////////
 
+int S2D_GL_Init(S2D_Window *window);
 void S2D_GL_PrintError(char *error);
 void S2D_GL_PrintContextInfo(S2D_Window *window);
 void S2D_GL_StoreContextInfo(S2D_Window *window);
