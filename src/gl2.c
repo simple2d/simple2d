@@ -4,18 +4,16 @@
 
 
 /*
- * Sets the viewport and matrix projection
+ * Applies the matrix projection
  */
-void S2D_GL2_SetViewport(int x, int y, int w, int h, int ortho_w, int ortho_h) {
-  
-  glViewport(x, y, w, h);
+void S2D_GL2_ApplyProjection(int w, int h) {
   
   // Initialize the projection matrix
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   
   // Multiply the current matrix with the orthographic matrix
-  glOrtho(0.f, ortho_w, ortho_h, 0.f, -1.f, 1.f);
+  glOrtho(0.f, w, h, 0.f, -1.f, 1.f);
   
   // Initialize the modelview matrix
   glMatrixMode(GL_MODELVIEW);

@@ -10,7 +10,7 @@ static bool S2D_GL2 = false;
 
 // The orthographic projection matrix for 2D rendering,
 // given in column-first order.
-GLfloat S2D_GL_orthoMatrix[16] = {
+static GLfloat orthoMatrix[16] = {
    2.0f,     0,             0,    0,
       0, -2.0f,             0,    0,
       0,     0, -2.0f / 128.0,    0,  // 128.0 == far_z
@@ -186,13 +186,19 @@ void S2D_GL_SetViewport(S2D_Window *window) {
       break;
   }
   
+  glViewport(x, y, w, h);
+  
+  // Set orthographic projection matrix
+  orthoMatrix[0] =  2.0f / (GLfloat)ortho_w;
+  orthoMatrix[5] = -2.0f / (GLfloat)ortho_h;
+  
   #if GLES
-    S2D_GLES_SetViewport(x, y, w, h, ortho_w, ortho_h);
+    S2D_GLES_ApplyProjection(orthoMatrix);
   #else
     if (S2D_GL2) {
-      S2D_GL2_SetViewport(x, y, w, h, ortho_w, ortho_h);
+      S2D_GL2_ApplyProjection(ortho_w, ortho_h);
     } else {
-      S2D_GL3_SetViewport(x, y, w, h, ortho_w, ortho_h);
+      S2D_GL3_ApplyProjection(orthoMatrix);
     }
   #endif
 }

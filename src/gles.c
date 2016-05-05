@@ -21,27 +21,21 @@ static GLuint indices[] = {
 
 
 /*
- * Sets the viewport and matrix projection
+ * Applies the matrix projection
  */
-void S2D_GLES_SetViewport(int x, int y, int w, int h, int ortho_w, int ortho_h) {
-  
-  glViewport(x, y, w, h);
-  
-  // Set orthographic projection matrix
-  S2D_GL_orthoMatrix[0] =  2.0f / (GLfloat)ortho_w;
-  S2D_GL_orthoMatrix[5] = -2.0f / (GLfloat)ortho_h;
+void S2D_GLES_ApplyProjection(GLfloat orthoMatrix[16]) {
   
   // Use the program object
   glUseProgram(shaderProgram);
   
   GLuint mMvpLocation = glGetUniformLocation(shaderProgram, "u_mvpMatrix");
-  glUniformMatrix4fv(mMvpLocation, 1, GL_FALSE, S2D_GL_orthoMatrix);
+  glUniformMatrix4fv(mMvpLocation, 1, GL_FALSE, orthoMatrix);
   
   // Use the texture program object
   glUseProgram(texShaderProgram);
   
   GLuint texmMvpLocation = glGetUniformLocation(texShaderProgram, "u_mvpMatrix");
-  glUniformMatrix4fv(texmMvpLocation, 1, GL_FALSE, S2D_GL_orthoMatrix);
+  glUniformMatrix4fv(texmMvpLocation, 1, GL_FALSE, orthoMatrix);
 }
 
 

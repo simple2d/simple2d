@@ -47,7 +47,6 @@
 
 extern char S2D_msg[1024];    // for S2D_Log messages
 extern bool S2D_diagnostics;  // Flag whether to print diagnostics with S2D_Log
-extern GLfloat S2D_GL_orthoMatrix[16];
 
 // Type Definitions ////////////////////////////////////////////////////////////
 
@@ -176,7 +175,7 @@ void S2D_GL_Clear(S2D_Color clr);
 
 #if GLES
   int S2D_GLES_Init();
-  void S2D_GLES_SetViewport(int x, int y, int w, int h, int ortho_w, int ortho_h);
+  void S2D_GLES_ApplyProjection(GLfloat orthoMatrix[16]);
   void S2D_GLES_DrawTriangle(
     GLfloat x1,  GLfloat y1,
     GLfloat c1r, GLfloat c1g, GLfloat c1b, GLfloat c1a,
@@ -189,8 +188,8 @@ void S2D_GL_Clear(S2D_Color clr);
 #else
   int S2D_GL2_Init();
   int S2D_GL3_Init();
-  void S2D_GL2_SetViewport(int x, int y, int w, int h, int ortho_w, int ortho_h);
-  void S2D_GL3_SetViewport(int x, int y, int w, int h, int ortho_w, int ortho_h);
+  void S2D_GL2_ApplyProjection(int w, int h);
+  void S2D_GL3_ApplyProjection(GLfloat orthoMatrix[16]);
   void S2D_GL2_DrawTriangle(
     GLfloat x1,  GLfloat y1,
     GLfloat c1r, GLfloat c1g, GLfloat c1b, GLfloat c1a,
