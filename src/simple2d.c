@@ -596,8 +596,6 @@ int S2D_Show(S2D_Window *window) {
     return 1;
   }
   
-  window->close = false;
-  
   // Create SDL window
   window->sdl = SDL_CreateWindow(
     window->title,                                   // title
@@ -647,6 +645,8 @@ int S2D_Show(S2D_Window *window) {
       S2D_Log("VSync cannot be enabled", S2D_WARN);
     }
   }
+  
+  window->close = false;
   
   // Main Loop /////////////////////////////////////////////////////////////////
   
