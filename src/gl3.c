@@ -42,7 +42,7 @@ int S2D_GL3_Init() {
   GLchar vertexSource[] =
     "#version 150 core\n"
     "uniform mat4 u_mvpMatrix;"
-    "in vec2 position;"
+    "in vec4 position;"
     "in vec4 color;"
     "in vec2 texcoord;"
     "out vec4 Color;"
@@ -50,7 +50,7 @@ int S2D_GL3_Init() {
     "void main() {"
     "  Color = color;"
     "  Texcoord = texcoord;"
-    "  gl_Position = u_mvpMatrix * vec4(position, 0.0, 1.0);"
+    "  gl_Position = u_mvpMatrix * position;"
     "}";
   
   // Fragment shader source string

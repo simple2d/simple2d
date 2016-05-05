@@ -66,7 +66,7 @@ int S2D_GLES_Init() {
     "{"
     "  v_color = a_color;"
     "  v_texcoord = a_texcoord;"
-    "  gl_Position = u_mvpMatrix * vec4(a_position.xyz, 1.0);"
+    "  gl_Position = u_mvpMatrix * a_position;"
     "}";
   
   // Fragment shader source string
