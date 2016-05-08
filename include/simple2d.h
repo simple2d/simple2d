@@ -90,8 +90,6 @@ typedef struct {
   int orig_height;
   int width;       // actual dimentions
   int height;
-  int s_width;     // scaled dimentions
-  int s_height;
   int viewport;
   int fps_cap;
   bool vsync;

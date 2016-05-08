@@ -608,17 +608,17 @@ int S2D_Show(S2D_Window *window) {
   
   // Window created by SDL might not actually be the requested size.
   // If not, retrieve and set the actual window size.
-  window->s_width = window->width;
-  window->s_height = window->height;
-  SDL_GetWindowSize(window->sdl, &window->width, &window->height);
+  int actual_width, actual_height;
+  SDL_GetWindowSize(window->sdl, &actual_width, &actual_height);
   
-  if ((window->width != window->s_width) ||
-     (window->height != window->s_height)) {
-    
+  if ((window->width != actual_width) || (window->height != actual_height)) {
     sprintf(S2D_msg,
-      "Resolution %dx%d unsupported by driver, scaling to %dx%d",
-      window->s_width, window->s_height, window->width, window->height);
+      "Resolution %dx%d unsupported, scaling to %dx%d",
+      window->width, window->height, actual_width, actual_height);
     S2D_Log(S2D_msg, S2D_WARN);
+    
+    window->width  = actual_width;
+    window->height = actual_height;
   }
   
   // Set Up OpenGL /////////////////////////////////////////////////////////////
