@@ -68,10 +68,8 @@ typedef struct {
 // S2D_Mouse
 typedef struct {
   int visible;
-  int x;       // scaled positions
+  int x;
   int y;
-  int real_x;  // actual positions
-  int real_y;
 } S2D_Mouse;
 
 // S2D_Window

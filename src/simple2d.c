@@ -627,7 +627,6 @@ int S2D_Show(S2D_Window *window) {
   
   // Set Main Loop Data ////////////////////////////////////////////////////////
   
-  int mouse_x, mouse_y;
   const Uint8 *key_state;
   
   Uint32 frames = 0;           // Total frames since start
@@ -731,31 +730,16 @@ int S2D_Show(S2D_Window *window) {
     }
     
     // Store the mouse position
-    SDL_GetMouseState(&mouse_x, &mouse_y);
+    SDL_GetMouseState(&window->mouse.x, &window->mouse.y);
     
     // Update Window State /////////////////////////////////////////////////////
     
     // Store new values in the window
-    window->mouse.x      = mouse_x;
-    window->mouse.y      = mouse_y;
-    window->mouse.real_x = mouse_x;
-    window->mouse.real_y = mouse_y;
-    window->frames       = frames;
-    window->elapsed_ms   = elapsed_ms;
-    window->loop_ms      = loop_ms;
-    window->delay_ms     = delay_ms;
-    window->fps          = fps;
-    
-    // scale the mouse position, if necessary
-    if (window->s_width != window->width) {
-      window->mouse.x = (int)((double)window->mouse.real_x *
-        ((double)window->s_width / (double)window->width) + 0.5);
-    }
-    
-    if (window->s_height != window->height) {
-      window->mouse.y = (int)((double)window->mouse.real_y *
-        ((double)window->s_height / (double)window->height) + 0.5);
-    }
+    window->frames     = frames;
+    window->elapsed_ms = elapsed_ms;
+    window->loop_ms    = loop_ms;
+    window->delay_ms   = delay_ms;
+    window->fps        = fps;
     
     // Call update and render callbacks
     if (window->update) window->update();
