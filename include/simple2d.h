@@ -38,7 +38,7 @@
 #define S2D_FULLSCREEN SDL_WINDOW_FULLSCREEN_DESKTOP
 #define S2D_HIGHDPI    SDL_WINDOW_ALLOW_HIGHDPI
 
-// Viewport scaling
+// Viewport scaling modes
 #define S2D_FIXED   1
 #define S2D_SCALE   2
 #define S2D_STRETCH 3
@@ -72,6 +72,13 @@ typedef struct {
   int y;
 } S2D_Mouse;
 
+// S2D_Viewport
+typedef struct {
+  int width;
+  int height;
+  int mode;
+} S2D_Viewport;
+
 // S2D_Window
 typedef struct {
   SDL_Window *sdl;
@@ -82,29 +89,27 @@ typedef struct {
   GLint S2D_GL_MAJOR_VERSION;
   GLint S2D_GL_MINOR_VERSION;
   const GLubyte *S2D_GL_SHADING_LANGUAGE_VERSION;
-  bool close;
   const char *title;
-  int orig_width;  // original dimentions
-  int orig_height;
-  int width;       // actual dimentions
+  int width;
   int height;
-  int viewport;
-  int fps_cap;
-  bool vsync;
-  S2D_Color background;
+  S2D_Viewport viewport;
   S2D_Update update;
   S2D_Render render;
   int flags;
+  S2D_Mouse mouse;
   S2D_On_Key on_key;
   S2D_On_Key_Down on_key_down;
   S2D_On_Mouse on_mouse;
   S2D_On_Controller on_controller;
-  S2D_Mouse mouse;
+  bool vsync;
+  int fps_cap;
+  S2D_Color background;
   Uint32 frames;
   Uint32 elapsed_ms;
   Uint32 loop_ms;
   Uint32 delay_ms;
   double fps;
+  bool close;
 } S2D_Window;
 
 // S2D_Image

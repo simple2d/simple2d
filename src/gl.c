@@ -154,14 +154,14 @@ int S2D_GL_CheckLinked(GLuint program, char *name) {
  */
 void S2D_GL_SetViewport(S2D_Window *window) {
   
-  int ortho_w = window->orig_width;
-  int ortho_h = window->orig_height;
-  int x, y, w, h;  // GL viewport values: x, y, width, height
+  int ortho_w = window->viewport.width;
+  int ortho_h = window->viewport.height;
+  int x, y, w, h;  // Calculated GL viewport values
   double scale;
   
   x = 0; y = 0; w = window->width; h = window->height;
   
-  switch (window->viewport) {
+  switch (window->viewport.mode) {
     
     case S2D_FIXED:
       ortho_w = window->width;
@@ -170,12 +170,12 @@ void S2D_GL_SetViewport(S2D_Window *window) {
       
     case S2D_SCALE:
       scale = fmin(
-        window->width  / (double)window->orig_width,
-        window->height / (double)window->orig_height
+        window->width  / (double)window->viewport.width,
+        window->height / (double)window->viewport.height
       );
       
-      w = window->orig_width  * scale;
-      h = window->orig_height * scale;
+      w = window->viewport.width  * scale;
+      h = window->viewport.height * scale;
       
       // center the viewport
       x = window->width  / 2 - w/2;

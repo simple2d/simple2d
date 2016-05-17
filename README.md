@@ -127,7 +127,7 @@ S2D_Window *window = S2D_CreateWindow(
 );
 ```
 
-The window flags can be any one of the following:
+The window flags can be `0` or any one of the following:
 
 ```c
 S2D_RESIZABLE
@@ -136,7 +136,20 @@ S2D_FULLSCREEN
 S2D_HIGHDPI
 ```
 
-Flags can be combined using the bitwise OR operator, for example: `S2D_RESIZABLE | S2D_BORDERLESS`. Use `0` if you don't want to set any flags.
+Flags can also be combined using the bitwise OR operator, for example: `S2D_RESIZABLE | S2D_BORDERLESS`.
+
+The viewport can also be set independently of the window size, for example:
+
+```c
+window->viewport.width  = 400;
+window->viewport.height = 300;
+```
+
+The viewport has various scaling modes, such as `S2D_FIXED` (viewport stays the same size as window size changes), `S2D_SCALE` (the default, where the viewport scales proportionately and is centered in the window), or `S2D_STRETCH` (viewport streches to fill the entire window). Set the mode like so:
+
+```c
+window->viewport.mode = S2D_FIXED;
+```
 
 Before showing the window, this attribute can be set:
 

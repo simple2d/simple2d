@@ -502,29 +502,29 @@ S2D_Window *S2D_CreateWindow(const char *title, int width, int height,
   S2D_Init();
   
   // Allocate window and set default values
-  S2D_Window *window    = (S2D_Window *) malloc(sizeof(S2D_Window));
-  window->sdl           = NULL;
-  window->glcontext     = NULL;
-  window->close         = true;
-  window->title         = title;
-  window->orig_width    = width;
-  window->orig_height   = height;
-  window->width         = width;
-  window->height        = height;
-  window->viewport      = S2D_SCALE;
-  window->fps_cap       = 60;
-  window->vsync         = true;
-  window->update        = update;
-  window->render        = render;
-  window->flags         = flags;
-  window->on_key        = NULL;
-  window->on_key_down   = NULL;
-  window->on_mouse      = NULL;
-  window->on_controller = NULL;
-  window->background.r  = 0.0;
-  window->background.g  = 0.0;
-  window->background.b  = 0.0;
-  window->background.a  = 1.0;
+  S2D_Window *window      = (S2D_Window *) malloc(sizeof(S2D_Window));
+  window->sdl             = NULL;
+  window->glcontext       = NULL;
+  window->title           = title;
+  window->width           = width;
+  window->height          = height;
+  window->viewport.width  = width;
+  window->viewport.height = height;
+  window->viewport.mode   = S2D_SCALE;
+  window->update          = update;
+  window->render          = render;
+  window->flags           = flags;
+  window->on_key          = NULL;
+  window->on_key_down     = NULL;
+  window->on_mouse        = NULL;
+  window->on_controller   = NULL;
+  window->vsync           = true;
+  window->fps_cap         = 60;
+  window->background.r    = 0.0;
+  window->background.g    = 0.0;
+  window->background.b    = 0.0;
+  window->background.a    = 1.0;
+  window->close           = true;
   
   // Detect Controllers and Joysticks //////////////////////////////////////////
   
