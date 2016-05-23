@@ -126,11 +126,11 @@ void render() {
   
   S2D_DrawTriangle(25, 200, 1, 0, 0, 1,
                    50, 250, 1, 0, 0, 1,
-                   0,  250, 1, 0, 0, 1);
+                    0, 250, 1, 0, 0, 1);
   
-  S2D_DrawTriangle(75,  200, 0, 1, 0, 1,
+  S2D_DrawTriangle( 75, 200, 0, 1, 0, 1,
                    100, 250, 0, 1, 0, 1,
-                   50,  250, 0, 1, 0, 1);
+                    50, 250, 0, 1, 0, 1);
   
   S2D_DrawTriangle(125, 200, 0, 0, 1, 1,
                    150, 250, 0, 0, 1, 1,
@@ -166,17 +166,8 @@ void render() {
                300, 250, 1, 1, 1, 0);
   
   // Images
-  
-  img_png->x = 300;
-  img_png->y = 0;
   S2D_DrawImage(img_png);
-  
-  img_jpg->x = 400;
-  img_jpg->y = 0;
   S2D_DrawImage(img_jpg);
-  
-  img_bmp->x = 500;
-  img_bmp->y = 0;
   S2D_DrawImage(img_bmp);
   
   // Text
@@ -215,20 +206,26 @@ int main(int argc, const char *argv[]) {
   window->on_controller = on_controller;
   
   img_bmp = S2D_CreateImage("media/image.bmp");
+  img_bmp->x = 500;
+  img_bmp->y = 0;
   img_jpg = S2D_CreateImage("media/image.jpg");
+  img_jpg->x = 400;
+  img_jpg->y = 0;
   img_png = S2D_CreateImage("media/image.png");
+  img_png->x = 300;
+  img_png->y = 0;
   
   on_key_text = S2D_CreateText(font, "On Key:", font_size);
-  on_key_char = S2D_CreateText(font, "", font_size);
   on_key_text->x = 5;
   on_key_text->y = 270;
+  on_key_char = S2D_CreateText(font, "", font_size);
   on_key_char->x = 90;
   on_key_char->y = 270;
   
   key_down_text = S2D_CreateText(font, "On Key Down:", font_size);
-  key_down_char = S2D_CreateText(font, "", font_size);
   key_down_text->x = 5;
   key_down_text->y = 300;
+  key_down_char = S2D_CreateText(font, "", font_size);
   key_down_char->x = 154;
   key_down_char->y = 300;
   
