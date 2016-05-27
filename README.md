@@ -270,6 +270,41 @@ Since the image was allocated dynamically, you'll eventually need to free it usi
 S2D_FreeImage(img);
 ```
 
+### Sprites
+
+Sprites are special kinds of images which can be used to create animations. To create a sprite, declare a pointer to an `S2D_Sprite` structure and initialize it with `S2D_CreateSprite` providing the file path to the sprite sheet image.
+
+```c
+S2D_Sprite spr = S2D_CreateSprite("sprite_sheet.png");
+```
+
+If the sprite image can't be found, `S2D_CreateSprite` will return `NULL`.
+
+Clip the sprite sheet to a single image using `S2D_ClipSprite` and provide a clipping rectangle:
+
+```c
+S2D_ClipSprite(spr, x, y, width, height);
+```
+
+The `x, y` position of the sprite itself can be changed like so:
+
+```c
+spr->x = 150;
+spr->y = 275;
+```
+
+Finally, draw the sprite using:
+
+```c
+S2D_DrawSprite(spr);
+```
+
+Since the sprite was allocated dynamically, you'll eventually need to free it using:
+
+```c
+S2D_FreeSprite(spr);
+```
+
 ### Text
 
 Text is drawn much like images. Start by finding your favorite OpenType font (with a `.ttf` or `.otf` file extension), then declare a pointer to a `S2D_Text` structure, and initialize it using `S2D_CreateText`, giving it the file path to the font, the message to display, and the size:

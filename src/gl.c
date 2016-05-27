@@ -355,6 +355,22 @@ void S2D_GL_DrawImage(S2D_Image *img) {
 
 
 /*
+ * Draw sprite
+ */
+void S2D_GL_DrawSprite(S2D_Sprite *spr) {
+  #if GLES
+    S2D_GLES_DrawSprite(spr);
+  #else
+    if (S2D_GL2) {
+      S2D_GL2_DrawSprite(spr);
+    } else {
+      S2D_GL3_DrawSprite(spr);
+    }
+  #endif
+}
+
+
+/*
  * Draw text
  */
 void S2D_GL_DrawText(S2D_Text *txt) {

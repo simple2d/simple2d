@@ -124,6 +124,23 @@ typedef struct {
   int h;
 } S2D_Image;
 
+// S2D_Sprite
+typedef struct {
+  S2D_Image *img;
+  int x;
+  int y;
+  int w;
+  int h;
+  GLfloat tx1;
+  GLfloat ty1;
+  GLfloat tx2;
+  GLfloat ty2;
+  GLfloat tx3;
+  GLfloat ty3;
+  GLfloat tx4;
+  GLfloat ty4;
+} S2D_Sprite;
+
 // S2D_Text
 typedef struct {
   SDL_Surface *surface;
@@ -168,6 +185,7 @@ void S2D_GL_DrawTriangle(
   GLfloat x3,  GLfloat y3,
   GLfloat c3r, GLfloat c3g, GLfloat c3b, GLfloat c3a);
 void S2D_GL_DrawImage(S2D_Image *img);
+void S2D_GL_DrawSprite(S2D_Sprite *spr);
 void S2D_GL_DrawText(S2D_Text *txt);
 void S2D_GL_FreeTexture(GLuint *id);
 void S2D_GL_Clear(S2D_Color clr);
@@ -185,6 +203,7 @@ void S2D_GL_Clear(S2D_Color clr);
     GLfloat x3,  GLfloat y3,
     GLfloat c3r, GLfloat c3g, GLfloat c3b, GLfloat c3a);
   void S2D_GLES_DrawImage(S2D_Image *img);
+  void S2D_GLES_DrawSprite(S2D_Sprite *spr);
   void S2D_GLES_DrawText(S2D_Text *txt);
 #else
   int S2D_GL2_Init();
@@ -207,6 +226,8 @@ void S2D_GL_Clear(S2D_Color clr);
     GLfloat c3r, GLfloat c3g, GLfloat c3b, GLfloat c3a);
   void S2D_GL2_DrawImage(S2D_Image *img);
   void S2D_GL3_DrawImage(S2D_Image *img);
+  void S2D_GL2_DrawSprite(S2D_Sprite *spr);
+  void S2D_GL3_DrawSprite(S2D_Sprite *spr);
   void S2D_GL2_DrawText(S2D_Text *txt);
   void S2D_GL3_DrawText(S2D_Text *txt);
 #endif
@@ -295,6 +316,26 @@ void S2D_DrawImage(S2D_Image *img);
  * Free an image
  */
 void S2D_FreeImage(S2D_Image *img);
+
+/*
+ * Create a sprite
+ */
+S2D_Sprite *S2D_CreateSprite(const char *path);
+
+/*
+ * Clip a sprite
+ */
+void S2D_ClipSprite(S2D_Sprite *spr, int x, int y, int w, int h);
+
+/*
+ * Draw a sprite
+ */
+void S2D_DrawSprite(S2D_Sprite *spr);
+
+/*
+ * Free a sprite
+ */
+void S2D_FreeSprite(S2D_Sprite *spr);
 
 /*
  * Create text

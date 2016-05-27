@@ -64,6 +64,35 @@ int main() {
   S2D_FreeImage(NULL);
   end_test(PASS);
   
+  // Sprites ///////////////////////////////////////////////////////////////////
+  
+  start_test("(S2D_CreateSprite) create sprites with supported formats");
+  S2D_Sprite *spr1 = S2D_CreateSprite("media/image.bmp");
+  S2D_Sprite *spr2 = S2D_CreateSprite("media/image.jpg");
+  S2D_Sprite *spr3 = S2D_CreateSprite("media/image.png");
+  end_test(spr1 != NULL && spr2 != NULL && spr3 != NULL);
+  
+  start_test("(S2D_CreateSprite) bad sprite image file path");
+  S2D_Sprite *spr4 = S2D_CreateSprite("image.bmp");
+  S2D_Sprite *spr5 = S2D_CreateSprite("");
+  S2D_Sprite *spr6 = S2D_CreateSprite(NULL);
+  end_test(spr4 == NULL && spr5 == NULL && spr6 == NULL);
+  
+  start_test("(S2D_CropSprite) crop sprites");
+  S2D_ClipSprite(spr3, 0, 0, 10, 20);
+  S2D_ClipSprite(spr3, -10, -20, 100, 200);
+  S2D_ClipSprite(spr3, 100, 200, -10, -20);
+  end_test(PASS);
+  
+  start_test("(S2D_FreeSprite) free sprites");
+  S2D_FreeSprite(spr1); S2D_FreeSprite(spr2); S2D_FreeSprite(spr3);
+  S2D_FreeSprite(spr4); S2D_FreeSprite(spr5); S2D_FreeSprite(spr6);
+  end_test(PASS);
+  
+  start_test("(S2D_FreeSprite) free bad sprite pointer");
+  S2D_FreeSprite(NULL);
+  end_test(PASS);
+  
   // Text //////////////////////////////////////////////////////////////////////
   
   start_test("(S2D_CreateText) good font file path");

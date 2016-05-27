@@ -191,14 +191,16 @@ void S2D_GL3_DrawTriangle(GLfloat x1,  GLfloat y1,
  */
 static void S2D_GL3_DrawTexture(int x, int y, int w, int h, 
                                 GLfloat r, GLfloat g, GLfloat b, GLfloat a,
+                                GLfloat tx1, GLfloat ty1, GLfloat tx2, GLfloat ty2,
+                                GLfloat tx3, GLfloat ty3, GLfloat tx4, GLfloat ty4,
                                 GLuint texture_id) {
   
   GLfloat vertices[] =
   // |x, y coords | colors    | x, y texture coords
-    { x    , y    , r, g, b, a, 0.f, 0.f,    // Top-left
-      x + w, y    , r, g, b, a, 1.f, 0.f,    // Top-right
-      x + w, y + h, r, g, b, a, 1.f, 1.f,    // Bottom-right
-      x    , y + h, r, g, b, a, 0.f, 1.f };  // Bottom-left
+    { x    , y    , r, g, b, a, tx1, ty1,    // Top-left
+      x + w, y    , r, g, b, a, tx2, ty2,    // Top-right
+      x + w, y + h, r, g, b, a, tx3, ty3,    // Bottom-right
+      x    , y + h, r, g, b, a, tx4, ty4 };  // Bottom-left
   
   glUseProgram(texShaderProgram);
   glBindTexture(GL_TEXTURE_2D, texture_id);
@@ -216,7 +218,21 @@ void S2D_GL3_DrawImage(S2D_Image *img) {
   S2D_GL3_DrawTexture(
     img->x, img->y, img->w, img->h,
     img->color.r, img->color.g, img->color.b, img->color.a,
+    0.f, 0.f, 1.f, 0.f, 1.f, 1.f, 0.f, 1.f,
     img->texture_id
+  );
+}
+
+
+/*
+ * Draw sprite
+ */
+void S2D_GL3_DrawSprite(S2D_Sprite *spr) {
+  S2D_GL3_DrawTexture(
+    spr->x, spr->y, spr->w, spr->h,
+    spr->img->color.r, spr->img->color.g, spr->img->color.b, spr->img->color.a,
+    spr->tx1, spr->ty1, spr->tx2, spr->ty2, spr->tx3, spr->ty3, spr->tx4, spr->ty4,
+    spr->img->texture_id
   );
 }
 
@@ -228,6 +244,7 @@ void S2D_GL3_DrawText(S2D_Text *txt) {
   S2D_GL3_DrawTexture(
     txt->x, txt->y, txt->w, txt->h, 
     txt->color.r, txt->color.g, txt->color.b, txt->color.a,
+    0.f, 0.f, 1.f, 0.f, 1.f, 1.f, 0.f, 1.f,
     txt->texture_id
   );
 }

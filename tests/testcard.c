@@ -5,6 +5,8 @@ S2D_Window *window;
 S2D_Image  *img_bmp;
 S2D_Image  *img_jpg;
 S2D_Image  *img_png;
+S2D_Sprite *spr;
+int sprite_step = 0;
 S2D_Text   *on_key_text;
 S2D_Text   *on_key_char;
 S2D_Text   *key_down_text;
@@ -170,6 +172,35 @@ void render() {
   S2D_DrawImage(img_jpg);
   S2D_DrawImage(img_bmp);
   
+  // Sprites
+  
+  if (window->frames % 6 == 0) {
+    if (sprite_step == 0) {
+      S2D_ClipSprite(spr, 0, 0, 50, 50);
+      sprite_step++;
+    } else if (sprite_step == 1) {
+      S2D_ClipSprite(spr, 50, 0, 50, 50);
+      sprite_step++;
+    } else if (sprite_step == 2) {
+      S2D_ClipSprite(spr, 100, 0, 50, 50);
+      sprite_step++;
+    } else if (sprite_step == 3) {
+      S2D_ClipSprite(spr, 150, 0, 50, 50);
+      sprite_step++;
+    } else if (sprite_step == 4) {
+      S2D_ClipSprite(spr, 100, 0, 50, 50);
+      sprite_step++;
+    } else if (sprite_step == 5) {
+      S2D_ClipSprite(spr, 50, 0, 50, 50);
+      sprite_step++;
+    } else if (sprite_step == 6) {
+      S2D_ClipSprite(spr, 0, 0, 50, 50);
+      sprite_step = 0;
+    }
+  }
+  
+  S2D_DrawSprite(spr);
+  
   // Text
   
   S2D_DrawText(on_key_text);
@@ -214,6 +245,9 @@ int main(int argc, const char *argv[]) {
   img_png = S2D_CreateImage("media/image.png");
   img_png->x = 300;
   img_png->y = 0;
+  spr = S2D_CreateSprite("media/sprite_sheet.png");
+  spr->x = 350;
+  spr->y = 200;
   
   on_key_text = S2D_CreateText(font, "On Key:", font_size);
   on_key_text->x = 5;

@@ -64,8 +64,10 @@ void S2D_GL2_DrawTriangle(GLfloat x1,  GLfloat y1,
 /*
  * Draw texture
  */
-static void S2D_GL2_DrawTexture(int x, int y, int w, int h, 
+static void S2D_GL2_DrawTexture(int x, int y, int w, int h,
                                 GLfloat r, GLfloat g, GLfloat b, GLfloat a,
+                                GLfloat tx1, GLfloat ty1, GLfloat tx2, GLfloat ty2,
+                                GLfloat tx3, GLfloat ty3, GLfloat tx4, GLfloat ty4,
                                 GLuint texture_id) {
   
   glEnable(GL_TEXTURE_2D);
@@ -74,10 +76,10 @@ static void S2D_GL2_DrawTexture(int x, int y, int w, int h,
   
   glBegin(GL_QUADS);
     glColor4f(r, g, b, a);
-    glTexCoord2f(0, 0); glVertex2f(x,     y    );
-    glTexCoord2f(1, 0); glVertex2f(x + w, y    );
-    glTexCoord2f(1, 1); glVertex2f(x + w, y + h);
-    glTexCoord2f(0, 1); glVertex2f(x,     y + h);
+    glTexCoord2f(tx1, ty1); glVertex2f(x,     y    );
+    glTexCoord2f(tx2, ty2); glVertex2f(x + w, y    );
+    glTexCoord2f(tx3, ty3); glVertex2f(x + w, y + h);
+    glTexCoord2f(tx4, ty4); glVertex2f(x,     y + h);
   glEnd();
   
   glDisable(GL_TEXTURE_2D);
@@ -91,7 +93,21 @@ void S2D_GL2_DrawImage(S2D_Image *img) {
   S2D_GL2_DrawTexture(
     img->x, img->y, img->w, img->h,
     img->color.r, img->color.g, img->color.b, img->color.a,
+    0.f, 0.f, 1.f, 0.f, 1.f, 1.f, 0.f, 1.f,
     img->texture_id
+  );
+}
+
+
+/*
+ * Draw sprite
+ */
+void S2D_GL2_DrawSprite(S2D_Sprite *spr) {
+  S2D_GL2_DrawTexture(
+    spr->x, spr->y, spr->w, spr->h,
+    spr->img->color.r, spr->img->color.g, spr->img->color.b, spr->img->color.a,
+    spr->tx1, spr->ty1, spr->tx2, spr->ty2, spr->tx3, spr->ty3, spr->tx4, spr->ty4,
+    spr->img->texture_id
   );
 }
 
@@ -103,6 +119,7 @@ void S2D_GL2_DrawText(S2D_Text *txt) {
   S2D_GL2_DrawTexture(
     txt->x, txt->y, txt->w, txt->h,
     txt->color.r, txt->color.g, txt->color.b, txt->color.a,
+    0.f, 0.f, 1.f, 0.f, 1.f, 1.f, 0.f, 1.f,
     txt->texture_id
   );
 }
