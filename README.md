@@ -251,7 +251,7 @@ S2D_Image *img = S2D_CreateImage("image.png");
 
 If the image can't be found, `S2D_CreateImage` will return `NULL`.
 
-Once you have your image, you can then change the `x, y` position like so:
+Once you have your image, you can then change its `x, y` position like so:
 
 ```c
 img->x = 125;

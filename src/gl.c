@@ -10,12 +10,11 @@ static bool S2D_GL2 = false;
 
 // The orthographic projection matrix for 2D rendering,
 // given in column-first order.
-static GLfloat orthoMatrix[16] = {
-   2.0f,     0,             0,    0,
-      0, -2.0f,             0,    0,
-      0,     0, -2.0f / 128.0,    0,  // 128.0 == far_z
-  -1.0f,  1.0f,         -1.0f, 1.0f
-};
+static GLfloat orthoMatrix[16] =
+  { 2.0f,     0,             0,    0,
+       0, -2.0f,             0,    0,
+       0,     0, -2.0f / 128.0,    0,  // 128.0 == far_z
+   -1.0f,  1.0f,         -1.0f, 1.0f };
 
 
 /*

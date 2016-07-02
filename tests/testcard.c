@@ -36,21 +36,25 @@ void on_key(const char *key) {
   S2D_SetText(on_key_char, key);
 }
 
+
 void on_key_down(const char *key) {
   S2D_SetText(key_down_char, key);
 }
+
 
 void on_mouse(int x, int y) {
   printf("Mouse down at: %i, %i\n", x, y);
 }
 
-void on_controller(bool is_axis, int axis, int val, bool is_btn, int btn) {
-}
+
+void on_controller(bool is_axis, int axis, int val, bool is_btn, int btn) {}
+
 
 void update() {
   pointer.x = window->mouse.x;
   pointer.y = window->mouse.y;
 }
+
 
 void render() {
   
@@ -168,6 +172,7 @@ void render() {
                300, 250, 1, 1, 1, 0);
   
   // Images
+  
   S2D_DrawImage(img_png);
   S2D_DrawImage(img_jpg);
   S2D_DrawImage(img_bmp);

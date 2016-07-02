@@ -14,10 +14,9 @@ static GLuint texColorLocation;
 static GLuint texCoordLocation;
 static GLuint samplerLocation;
 
-static GLuint indices[] = {
-  0, 1, 2,
-  2, 3, 0
-};
+static GLuint indices[] =
+  { 0, 1, 2,
+    2, 3, 0 };
 
 
 /*
@@ -91,12 +90,10 @@ int S2D_GLES_Init() {
     "  gl_FragColor = texture2D(s_texture, v_texcoord) * v_color;"
     "}";
   
-  
   // Load the vertex and fragment shaders
   GLuint vertexShader      = S2D_GL_LoadShader(  GL_VERTEX_SHADER,      vertexSource, "GLES Vertex");
   GLuint fragmentShader    = S2D_GL_LoadShader(GL_FRAGMENT_SHADER,    fragmentSource, "GLES Fragment");
   GLuint texFragmentShader = S2D_GL_LoadShader(GL_FRAGMENT_SHADER, texFragmentSource, "GLES Texture Fragment");
-  
   
   // Triangle Shader //
   
@@ -122,7 +119,6 @@ int S2D_GLES_Init() {
   // Get the attribute locations
   positionLocation = glGetAttribLocation(shaderProgram, "a_position");
   colorLocation    = glGetAttribLocation(shaderProgram, "a_color");
-  
   
   // Texture Shader //
   
@@ -152,7 +148,6 @@ int S2D_GLES_Init() {
   
   // Get the sampler location
   samplerLocation = glGetUniformLocation(texShaderProgram, "s_texture");
-  
   
   // Clean up
   glDeleteShader(vertexShader);

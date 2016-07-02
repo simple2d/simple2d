@@ -4,10 +4,9 @@
 
 static GLuint shaderProgram;
 static GLuint texShaderProgram;
-static GLuint indices[] = {
-  0, 1, 2,
-  2, 3, 0
-};
+static GLuint indices[] =
+  { 0, 1, 2,
+    2, 3, 0 };
 
 
 /*
