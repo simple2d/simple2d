@@ -258,7 +258,7 @@ void S2D_GLES_DrawImage(S2D_Image *img) {
  * Draw sprite
  */
 void S2D_GLES_DrawSprite(S2D_Sprite *spr) {
-  S2D_GL3_DrawTexture(
+  S2D_GLES_DrawTexture(
     spr->x, spr->y, spr->w, spr->h,
     spr->img->color.r, spr->img->color.g, spr->img->color.b, spr->img->color.a,
     spr->tx1, spr->ty1, spr->tx2, spr->ty2, spr->tx3, spr->ty3, spr->tx4, spr->ty4,
