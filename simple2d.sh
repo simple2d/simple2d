@@ -21,7 +21,7 @@
 
 # This is the installed version, once script is installed to:
 #   /usr/local/bin/simple2d
-VERSION='0.2.1'
+VERSION='0.3.0'
 
 # URL to this script in the repo
 SCRIPT_URL="https://raw.githubusercontent.com/simple2d/simple2d/master/simple2d.sh"
