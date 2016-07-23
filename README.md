@@ -384,9 +384,26 @@ window->on_key = on_key;
 window->on_key_down = on_key_down;
 ```
 
-### Game Controllers
+### Game Controllers and Joysticks
 
-This feature hasn't been implemented yet, but Simple 2D will automatically detect controllers and capture their input.
+There are two types of controller or joystick events captured by the window: axis motion and button press. When a button is pressed or a joystick moved, the window calls its `on_controller` function once.
+
+To start capturing game controller or joystick input, first define the `on_controller` function:
+
+```c
+// Do something with `axis` and `val` if `is_axis` is true 
+//  or
+// Do something with `btn` if `is_btn` is true 
+void on_controller(bool is_axis, int axis, int val, bool is_btn, int btn){}
+```
+
+Then attach the callback to the window:
+
+```c
+window->on_controller = on_controller;
+```
+
+A community sourced  database of game controller mappings is available at https://github.com/gabomdq/SDL_GameControllerDB . This can be used to map numeric button and axis identifiers to named buttons and axes.
 
 ## Audio
 
