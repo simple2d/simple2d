@@ -179,7 +179,7 @@ void render() {
   
   // Sprites
   
-  if (window->frames % 6 == 0) {
+  if (window->frames % 50 == 0) {
     if (sprite_step == 0) {
       S2D_ClipSprite(spr, 0, 0, 50, 50);
       sprite_step++;
@@ -191,15 +191,6 @@ void render() {
       sprite_step++;
     } else if (sprite_step == 3) {
       S2D_ClipSprite(spr, 150, 0, 50, 50);
-      sprite_step++;
-    } else if (sprite_step == 4) {
-      S2D_ClipSprite(spr, 100, 0, 50, 50);
-      sprite_step++;
-    } else if (sprite_step == 5) {
-      S2D_ClipSprite(spr, 50, 0, 50, 50);
-      sprite_step++;
-    } else if (sprite_step == 6) {
-      S2D_ClipSprite(spr, 0, 0, 50, 50);
       sprite_step = 0;
     }
   }
