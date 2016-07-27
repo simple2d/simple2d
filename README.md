@@ -477,13 +477,16 @@ Check out the [open issues](https://github.com/simple2d/simple2d/issues) and joi
 ## Preparing a Release
 
 1. [Run tests](#tests) on all supported platforms
-2. Update the version number in [`simple2d.sh`](simple2d.sh), commit changes
-3. Create a [new release](https://github.com/simple2d/simple2d/releases) in GitHub, with tag in the form `v#.#.#`
-4. Update the [Homebrew tap](https://github.com/simple2d/homebrew-tap):
-  - Update formula with new `url`
-  - Run `brew audit --strict ./simple2d.rb` to detect issues
-  - Calculate new `sha256` using `brew install ./simple2d.rb` (note the "SHA256 mismatch" error, use the "Actual" value)
-  - Test installation using same command above
+2. Update documentation to reflect the current API
+3. Update the version number in [`simple2d.sh`](simple2d.sh), commit changes
+4. Create a [new release](https://github.com/simple2d/simple2d/releases) in GitHub, with tag in the form `v#.#.#`
+5. Update the [Homebrew tap](https://github.com/simple2d/homebrew-tap):
+  - Update formula with new release archive `url`
+  - Run `brew audit --strict ./simple2d.rb` to detect any issues
+  - Calculate the new `sha256` using `brew install ./simple2d.rb` (note the "SHA256 mismatch" error, use the "Actual" value)
+  - Test installation using the same `brew install` command above
+  - Commit changes to the formula
+6. 🎉
 
 # About the Project
 
