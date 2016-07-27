@@ -53,6 +53,7 @@ extern bool S2D_diagnostics;  // Flag whether to print diagnostics with S2D_Log
 typedef void (*S2D_Update)(void);
 typedef void (*S2D_Render)(void);
 typedef void (*S2D_On_Key)(const char *key);
+typedef void (*S2D_On_Key_Up)(const char *key);
 typedef void (*S2D_On_Key_Down)(const char *key);
 typedef void (*S2D_On_Mouse)(int x, int y);
 typedef void (*S2D_On_Controller)(bool is_axis, int axis, int val, bool is_btn, int btn);
@@ -98,6 +99,7 @@ typedef struct {
   int flags;
   S2D_Mouse mouse;
   S2D_On_Key on_key;
+  S2D_On_Key_Up on_key_up;
   S2D_On_Key_Down on_key_down;
   S2D_On_Mouse on_mouse;
   S2D_On_Controller on_controller;

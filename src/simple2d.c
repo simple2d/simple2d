@@ -621,6 +621,7 @@ S2D_Window *S2D_CreateWindow(const char *title, int width, int height,
   window->render          = render;
   window->flags           = flags;
   window->on_key          = NULL;
+  window->on_key_up       = NULL;
   window->on_key_down     = NULL;
   window->on_mouse        = NULL;
   window->on_controller   = NULL;
@@ -788,6 +789,11 @@ int S2D_Show(S2D_Window *window) {
         case SDL_KEYDOWN:
           if (window->on_key)
             window->on_key(SDL_GetScancodeName(e.key.keysym.scancode));
+          break;
+        
+        case SDL_KEYUP:
+          if (window->on_key_up)
+            window->on_key_up(SDL_GetScancodeName(e.key.keysym.scancode));
           break;
         
         case SDL_MOUSEBUTTONDOWN:

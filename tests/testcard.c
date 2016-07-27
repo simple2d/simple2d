@@ -37,6 +37,11 @@ void on_key(const char *key) {
 }
 
 
+void on_key_up(const char *key) {
+  printf("Key up: %s\n", key);
+}
+
+
 void on_key_down(const char *key) {
   S2D_SetText(key_down_char, key);
 }
@@ -228,6 +233,7 @@ int main(int argc, const char *argv[]) {
   if (!window) return 1;
   
   window->on_key        = on_key;
+  window->on_key_up     = on_key_up;
   window->on_key_down   = on_key_down;
   window->on_mouse      = on_mouse;
   window->on_controller = on_controller;
