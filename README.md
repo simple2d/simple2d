@@ -15,6 +15,12 @@ brew tap simple2d/tap
 brew install simple2d
 ```
 
+Or, install the latest development release using:
+
+```bash
+brew install --HEAD simple2d
+```
+
 ### ...on Linux and Raspberry Pi, run the [`simple2d.sh`](simple2d.sh) Bash script.
 
 Everything will be explained along the way and you'll be prompted before any action is taken. To run this script from the web, copy and paste this in your terminal (make sure to copy the entire string – it's rather long):
