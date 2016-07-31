@@ -400,7 +400,9 @@ To start capturing game controller or joystick input, first define the `on_contr
 // Do something with `axis` and `val` if `is_axis` is true 
 //  or
 // Do something with `btn` if `is_btn` is true 
-void on_controller(bool is_axis, int axis, int val, bool is_btn, int btn){}
+//
+// Multiple controllers or joysticks may be distinguished by the id number in `which`
+void on_controller(int which, bool is_axis, int axis, int val, bool is_btn, int btn){}
 ```
 
 Then attach the callback to the window:

@@ -654,7 +654,6 @@ S2D_Window *S2D_CreateWindow(const char *title, int width, int height,
         sprintf(S2D_msg, "Found a valid controller, named: %s\n",
                 SDL_GameControllerName(controller));
         S2D_Log(S2D_msg, S2D_INFO);
-        break;  // Break after first available controller
       } else {
         sprintf(S2D_msg, "Could not open game controller %i: %s\n", i, SDL_GetError());
         S2D_Log(S2D_msg, S2D_ERROR);
@@ -684,8 +683,6 @@ S2D_Window *S2D_CreateWindow(const char *title, int width, int height,
         sprintf(S2D_msg, "Could not open Joystick %i", i);
         S2D_Log(S2D_msg, S2D_ERROR);
       }
-      
-      break;  // Break after first available joystick
     }
   }
   
@@ -803,12 +800,12 @@ int S2D_Show(S2D_Window *window) {
         
         case SDL_JOYAXISMOTION:
           if (window->on_controller)
-            window->on_controller(true, e.jaxis.axis, e.jaxis.value, false, 0);
+            window->on_controller(e.jaxis.which, true, e.jaxis.axis, e.jaxis.value, false, 0);
           break;
         
         case SDL_JOYBUTTONDOWN:
           if (window->on_controller)
-            window->on_controller(false, 0, 0, true, e.jbutton.button);
+            window->on_controller(e.jaxis.which, false, 0, 0, true, e.jbutton.button);
           break;
         
         case SDL_WINDOWEVENT:

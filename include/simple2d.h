@@ -56,7 +56,7 @@ typedef void (*S2D_On_Key)(const char *key);
 typedef void (*S2D_On_Key_Up)(const char *key);
 typedef void (*S2D_On_Key_Down)(const char *key);
 typedef void (*S2D_On_Mouse)(int x, int y);
-typedef void (*S2D_On_Controller)(bool is_axis, int axis, int val, bool is_btn, int btn);
+typedef void (*S2D_On_Controller)(int which, bool is_axis, int axis, int val, bool is_btn, int btn);
 
 // S2D_Color
 typedef struct {

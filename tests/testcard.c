@@ -52,7 +52,7 @@ void on_mouse(int x, int y) {
 }
 
 
-void on_controller(bool is_axis, int axis, int val, bool is_btn, int btn) {}
+void on_controller(int which, bool is_axis, int axis, int val, bool is_btn, int btn) {}
 
 
 void update() {
