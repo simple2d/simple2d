@@ -394,10 +394,10 @@ S2D_Text *S2D_CreateText(const char *font, const char *msg, int size) {
   txt->msg = msg;
   txt->x = 0;
   txt->y = 0;
-  txt->color.r = 1.0;
-  txt->color.g = 1.0;
-  txt->color.b = 1.0;
-  txt->color.a = 1.0;
+  txt->color.r = 1.f;
+  txt->color.g = 1.f;
+  txt->color.b = 1.f;
+  txt->color.a = 1.f;
   txt->texture_id = 0;
   
   // Open the font
