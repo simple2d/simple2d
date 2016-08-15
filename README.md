@@ -2,26 +2,32 @@
 
 Simple 2D is a small, open-source graphics engine providing essential 2D drawing, media, and input capabilities. It's written in C and works across many platforms, creating native windows and interacting with hardware using [SDL](http://www.libsdl.org) while rendering content with [OpenGL](https://www.opengl.org).
 
+This README will be continuously updated as new features are added, bugs are fixed, and other changes are made. [View the latest release notes](https://github.com/simple2d/simple2d/releases/latest) for a link to the documentation for that version.
+
 If you encounter any issues, ping the [mailing list](https://groups.google.com/d/forum/simple2d). Learn about [contributing](#contributing) below.
 
 ## Getting Started
 
-Simple 2D supports Unix-like systems and is tested on the latest versions of OS X, Ubuntu, and Raspbian on the Raspberry Pi. To compile and install...
+Simple 2D supports Unix-like systems and is tested on the latest versions of OS X, Ubuntu, and Raspbian on the Raspberry Pi.
 
-### ...on OS X, use [Homebrew](http://brew.sh):
+To compile and install the [latest release](https://github.com/simple2d/simple2d/releases/latest)...
+
+### ...on OS X, use [Homebrew](http://brew.sh)
 
 ```bash
 brew tap simple2d/tap
 brew install simple2d
 ```
 
-Or, install the latest development release using:
+Or, install the latest changes from the `master` development branch using:
 
 ```bash
 brew install --HEAD simple2d
 ```
 
-### ...on Linux and Raspberry Pi, run the [`simple2d.sh`](simple2d.sh) Bash script.
+Note `brew update` will not update formulas installed with `--HEAD`, but you can use `brew reinstall --HEAD simple2d` to manually grab the latest changes.
+
+### ...on Linux, run the [`simple2d.sh`](simple2d.sh) Bash script
 
 Everything will be explained along the way and you'll be prompted before any action is taken. To run this script from the web, copy and paste this in your terminal (make sure to copy the entire string – it's rather long):
 
@@ -219,6 +225,9 @@ The shorthand for the examples below are:
 x = x coordinate
 y = y coordinate
 
+w = width
+h = height
+
 // Color range is from 0.0 to 1.0
 r = red
 g = green
@@ -249,7 +258,7 @@ S2D_DrawQuad(x1, y1, r1, g1, b1, a1,
 
 ### Images
 
-Images in many popular formats, like JPEG, PNG, and BMP, can also be drawn in the window. Unlike shapes, images need to be read from files and stored in memory. Simply declare a pointer to an `S2D_Image` structure and initialize it using `S2D_CreateImage`, giving it the file path to the image:
+Images in many popular formats, like JPEG, PNG, and BMP can also be drawn in the window. Unlike shapes, images need to be read from files and stored in memory. Simply declare a pointer to an `S2D_Image` structure and initialize it using `S2D_CreateImage`, giving it the file path to the image:
 
 ```c
 S2D_Image *img = S2D_CreateImage("image.png");
@@ -262,6 +271,23 @@ Once you have your image, you can then change its `x, y` position like so:
 ```c
 img->x = 125;
 img->y = 350;
+```
+
+Change the size of the image by adjusting its width and height:
+
+```c
+img->w = 256;
+img->h = 512;
+```
+
+You can also adjust the color of the image like this:
+
+```c
+// default is 1.0 for each, a white color filter
+img->color.r = 1.0;
+img->color.g = 0.8;
+img->color.b = 0.2;
+img->color.a = 1.0;
 ```
 
 Finally, draw the image using:
@@ -299,6 +325,16 @@ spr->x = 150;
 spr->y = 275;
 ```
 
+You can also adjust the color of the sprite image like this:
+
+```c
+// default is 1.0 for each, a white color filter
+spr->img->color.r = 1.0;
+spr->img->color.g = 0.8;
+spr->img->color.b = 0.2;
+spr->img->color.a = 1.0;
+```
+
 Finally, draw the sprite using:
 
 ```c
@@ -324,6 +360,16 @@ You can then change the `x, y` position of the text, for example:
 ```c
 txt->x = 127;
 txt->y = 740;
+```
+
+Change the color of the text like this:
+
+```c
+// default is 1.0 for each
+txt->color.r = 0.5;
+txt->color.g = 1.0;
+txt->color.b = 0.0;
+txt->color.a = 0.7;
 ```
 
 Draw the text using:
@@ -392,17 +438,17 @@ window->on_key_down = on_key_down;
 
 ### Game Controllers and Joysticks
 
-There are two types of controller or joystick events captured by the window: axis motion and button press. When a button is pressed or a joystick moved, the window calls its `on_controller` function once.
+There are two types of controller or joystick events captured by the window: axis motion and button presses. When a button is pressed or a joystick moved, the window calls its `on_controller` function once.
 
 To start capturing game controller or joystick input, first define the `on_controller` function:
 
 ```c
-// Do something with `axis` and `val` if `is_axis` is true 
-//  or
-// Do something with `btn` if `is_btn` is true 
+// Do something with `axis` and `val` if `is_axis` is true
+//   or...
+// Do something with `btn` if `is_btn` is true
 //
-// Multiple controllers or joysticks may be distinguished by the id number in `which`
-void on_controller(int which, bool is_axis, int axis, int val, bool is_btn, int btn){}
+// Multiple controllers or joysticks may be distinguished by the ID number in `which`
+void on_controller(int which, bool is_axis, int axis, int val, bool is_btn, int btn) { ... }
 ```
 
 Then attach the callback to the window:
@@ -411,7 +457,7 @@ Then attach the callback to the window:
 window->on_controller = on_controller;
 ```
 
-A community sourced  database of game controller mappings is available at https://github.com/gabomdq/SDL_GameControllerDB . This can be used to map numeric button and axis identifiers to named buttons and axes.
+A [community-sourced database](https://github.com/gabomdq/SDL_GameControllerDB) of game controller mappings can be used to map numeric button and axis identifiers to named buttons and axes.
 
 ## Audio
 
