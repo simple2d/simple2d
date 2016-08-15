@@ -5,12 +5,18 @@ S2D_Window *window;
 S2D_Image  *img_bmp;
 S2D_Image  *img_jpg;
 S2D_Image  *img_png;
+S2D_Image  *img_clr_r;
+S2D_Image  *img_clr_g;
+S2D_Image  *img_clr_b;
 S2D_Sprite *spr;
 int sprite_step = 0;
 S2D_Text   *on_key_text;
 S2D_Text   *on_key_char;
 S2D_Text   *key_down_text;
 S2D_Text   *key_down_char;
+S2D_Text   *txt_clr_r;
+S2D_Text   *txt_clr_g;
+S2D_Text   *txt_clr_b;
 S2D_Text   *fps;
 S2D_Text   *fps_val;
 
@@ -181,6 +187,9 @@ void render() {
   S2D_DrawImage(img_png);
   S2D_DrawImage(img_jpg);
   S2D_DrawImage(img_bmp);
+  S2D_DrawImage(img_clr_r);
+  S2D_DrawImage(img_clr_g);
+  S2D_DrawImage(img_clr_b);
   
   // Sprites
   
@@ -208,6 +217,9 @@ void render() {
   S2D_DrawText(on_key_char);
   S2D_DrawText(key_down_text);
   S2D_DrawText(key_down_char);
+  S2D_DrawText(txt_clr_r);
+  S2D_DrawText(txt_clr_g);
+  S2D_DrawText(txt_clr_b);
   
   // Window stats
   
@@ -229,7 +241,7 @@ int main(int argc, const char *argv[]) {
   
   S2D_Diagnostics(true);
   
-  window = S2D_CreateWindow("Simple 2D – Testcard", 600, 500, update, render, S2D_RESIZABLE);
+  window = S2D_CreateWindow("Simple 2D – Test Card", 600, 500, update, render, S2D_RESIZABLE);
   if (!window) return 1;
   
   window->on_key        = on_key;
@@ -238,18 +250,56 @@ int main(int argc, const char *argv[]) {
   window->on_mouse      = on_mouse;
   window->on_controller = on_controller;
   
-  img_bmp = S2D_CreateImage("media/image.bmp");
-  img_bmp->x = 500;
-  img_bmp->y = 0;
-  img_jpg = S2D_CreateImage("media/image.jpg");
-  img_jpg->x = 400;
-  img_jpg->y = 0;
   img_png = S2D_CreateImage("media/image.png");
   img_png->x = 300;
   img_png->y = 0;
+  
+  img_jpg = S2D_CreateImage("media/image.jpg");
+  img_jpg->x = 400;
+  img_jpg->y = 0;
+  
+  img_bmp = S2D_CreateImage("media/image.bmp");
+  img_bmp->x = 500;
+  img_bmp->y = 0;
+  
+  img_clr_r = S2D_CreateImage("media/colors.png");
+  img_clr_r->x = 350;
+  img_clr_r->y = 200;
+  img_clr_r->w = 50;
+  img_clr_r->h = 50;
+  img_clr_r->color.r = 1.0;
+  img_clr_r->color.g = 0.3;
+  img_clr_r->color.b = 0.3;
+  img_clr_r->color.a = 1.0;
+  
+  img_clr_g = S2D_CreateImage("media/colors.png");
+  img_clr_g->x = 400;
+  img_clr_g->y = 200;
+  img_clr_g->w = 50;
+  img_clr_g->h = 50;
+  img_clr_g->color.r = 0.3;
+  img_clr_g->color.g = 1.0;
+  img_clr_g->color.b = 0.3;
+  img_clr_g->color.a = 1.0;
+  
+  img_clr_b = S2D_CreateImage("media/colors.png");
+  img_clr_b->x = 450;
+  img_clr_b->y = 200;
+  img_clr_b->w = 50;
+  img_clr_b->h = 50;
+  img_clr_b->color.r = 0.3;
+  img_clr_b->color.g = 0.3;
+  img_clr_b->color.b = 1.0;
+  img_clr_b->color.a = 1.0;
+  
   spr = S2D_CreateSprite("media/sprite_sheet.png");
-  spr->x = 350;
+  spr->x = 500;
   spr->y = 200;
+  // Change color of sprite image:
+  //   spr->img->color.r = 1.0;
+  //   spr->img->color.g = 1.0;
+  //   spr->img->color.b = 1.0;
+  //   spr->img->color.a = 1.0;
   
   on_key_text = S2D_CreateText(font, "On Key:", font_size);
   on_key_text->x = 5;
@@ -264,6 +314,30 @@ int main(int argc, const char *argv[]) {
   key_down_char = S2D_CreateText(font, "", font_size);
   key_down_char->x = 154;
   key_down_char->y = 300;
+  
+  txt_clr_r = S2D_CreateText(font, "R", font_size);
+  txt_clr_r->x = 44;
+  txt_clr_r->y = 202;
+  txt_clr_r->color.r = 1.0;
+  txt_clr_r->color.g = 0.0;
+  txt_clr_r->color.b = 0.0;
+  txt_clr_r->color.a = 1.0;
+  
+  txt_clr_g = S2D_CreateText(font, "G", font_size);
+  txt_clr_g->x = 92;
+  txt_clr_g->y = 202;
+  txt_clr_g->color.r = 0.0;
+  txt_clr_g->color.g = 1.0;
+  txt_clr_g->color.b = 0.0;
+  txt_clr_g->color.a = 1.0;
+  
+  txt_clr_b = S2D_CreateText(font, "B", font_size);
+  txt_clr_b->x = 144;
+  txt_clr_b->y = 202;
+  txt_clr_b->color.r = 0.0;
+  txt_clr_b->color.g = 0.0;
+  txt_clr_b->color.b = 1.0;
+  txt_clr_b->color.a = 1.0;
   
   fps = S2D_CreateText(font, "FPS:", font_size);
   fps->x = 460;
