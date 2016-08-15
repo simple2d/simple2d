@@ -180,14 +180,16 @@ S2D_Image *S2D_CreateImage(const char *path) {
   }
   
   // Initialize values
+  img->x = 0;
+  img->y = 0;
   img->color.r = 1.f;
   img->color.g = 1.f;
   img->color.b = 1.f;
   img->color.a = 1.f;
-  img->x = 0;
-  img->y = 0;
-  img->w = img->surface->w;
-  img->h = img->surface->h;
+  img->orig_w = img->surface->w;
+  img->orig_h = img->surface->h;
+  img->w = img->orig_w;
+  img->h = img->orig_h;
   img->texture_id = 0;
   
   // Detect image mode
@@ -239,7 +241,7 @@ void S2D_DrawImage(S2D_Image *img) {
   
   if (img->texture_id == 0) {
     S2D_GL_SetUpTexture(&img->texture_id, img->format,
-                        img->w, img->h,
+                        img->orig_w, img->orig_h,
                         img->surface->pixels, GL_NEAREST);
     SDL_FreeSurface(img->surface);
   }

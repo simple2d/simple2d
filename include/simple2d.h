@@ -124,6 +124,8 @@ typedef struct {
   int y;
   int w;
   int h;
+  int orig_w;
+  int orig_h;
 } S2D_Image;
 
 // S2D_Sprite
