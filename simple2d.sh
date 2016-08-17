@@ -4,7 +4,7 @@
 # The Simple 2D Command-Line Utility
 # 
 # This script can:
-#  - Install Simple 2D on OS X, Linux, and Raspberry Pi (Raspbian)
+#  - Install Simple 2D on OS X, Linux, and ARM platforms
 #  - Update Simple 2D in place
 #  - Provide all Simple 2D libraries needed for compiling applications
 #  - Check for issues with Simple 2D and SDL
@@ -43,7 +43,6 @@ NORMAL='\033[0m'      # reset
 
 platform='unknown'
 platform_display='unknown'
-rpi_version='unknown'
 ret=''  # a return value used by some functions
 
 
@@ -245,14 +244,11 @@ install_sdl_linux() {
 }
 
 
-# Installs SDL on Raspberry Pi
+# Installs SDL from source on ARM platforms
 # params:
 #   $1  String  Install options, e.g. 'reinstall'
-install_sdl_rpi() {
+install_sdl_arm() {
   
-  # TODO: Installing SDL2 on RPI 2 takes about 25 min; update this message.
-  warning_msg "Installing SDL can take up to an hour on the Raspberry Pi."
-  prompt_to_continue "Continue?"
   
   # Install library dependencies
   print_task "Installing SDL2 dependencies" "\n\n"
@@ -370,8 +366,8 @@ install_sdl() {
   
   if [[ $platform == 'linux' ]]; then
     install_sdl_linux
-  elif [[ $platform == 'rpi' ]]; then
-    install_sdl_linux
+  elif [[ $platform == 'arm' ]]; then
+    install_sdl_arm
   fi
 }
 
@@ -541,8 +537,8 @@ uninstall_sdl() {
   
   if [[ $platform == 'linux' ]]; then
     uninstall_sdl_linux
-  elif [[ $platform == 'rpi' ]]; then
     uninstall_sdl_linux
+  elif [[ $platform == 'arm' ]]; then
   fi
 }
 
@@ -733,20 +729,12 @@ unamestr=$(uname)
 if [[ $unamestr == 'Darwin' ]]; then
   platform_display='Mac OS X'
   platform='osx'
-
-# Raspberry Pi
-elif [[ $(uname -m) =~ 'arm' && $unamestr == 'Linux' ]]; then
-  platform_display='Raspberry Pi'
-  platform='rpi'
   
-  # Detect version
-  case $(uname -m) in
-    armv6l)
-      rpi_version=1;;
-    armv7)
-      rpi_version=2;;
-  esac
-
+# ARM
+elif [[ $(uname -m) =~ 'arm' && $unamestr == 'Linux' ]]; then
+  platform_display='ARM / Linux'
+  platform='arm'
+  
 # Linux
 elif [[ $unamestr == 'Linux' ]]; then
   platform_display='Linux'
@@ -755,7 +743,7 @@ fi
 
 # Unsupported platform
 if [[ $platform == 'unknown' ]]; then
-  echo; error_msg "Not a supported system (OS X, Linux, Raspberry Pi)"
+  echo; error_msg "Not a supported system (OS X, Linux, or ARM platform)"
   exit
 fi
 
@@ -820,7 +808,7 @@ case $1 in
       LDFLAGS='-Wl,-framework,OpenGL'
     elif [[ $platform == 'linux' ]]; then
       LDFLAGS='-lGL -lm'
-    elif [[ $platform == 'rpi' ]]; then
+    elif [[ $platform == 'arm' ]]; then
       LDFLAGS='-lm -I/opt/vc/include/ -L/opt/vc/lib -lGLESv2'
     fi
     echo "-lsimple2d `sdl2-config --cflags --libs`"\

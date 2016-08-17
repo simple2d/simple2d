@@ -1,9 +1,10 @@
 PREFIX?=/usr/local
 CFLAGS=-std=c99
 
-# Includes and libs for Raspberry Pi
+# For ARM platforms
 ifneq (,$(findstring arm,$(shell uname -m)))
-	PLATFORM=rpi
+	PLATFORM=arm
+	# Raspberry Pi includes
 	INCLUDES=-I/opt/vc/include/
 endif
 
@@ -20,7 +21,7 @@ build:
 	chmod 0777 build/simple2d
 	cc $(CFLAGS) $(INCLUDES) src/simple2d.c -c -o build/simple2d.o
 	cc $(CFLAGS) $(INCLUDES) src/gl.c -c -o build/gl.o
-ifeq ($(PLATFORM),rpi)
+ifeq ($(PLATFORM),arm)
 	cc $(CFLAGS) $(INCLUDES) src/gles.c -c -o build/gles.o
 	ar -vq build/libsimple2d.a build/simple2d.o build/gl.o build/gles.o
 	rm build/gl.o build/gles.o
