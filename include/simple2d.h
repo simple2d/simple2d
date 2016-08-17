@@ -7,6 +7,13 @@
 #include <unistd.h>
 #include <SDL2/SDL.h>
 
+// If ARM, assume GLES
+#ifdef __arm__
+  #define GLES true
+#else
+  #define GLES false
+#endif
+
 #if GLES
   #include <SDL2/SDL_opengles2.h>
 #else
@@ -19,13 +26,6 @@
 #include <SDL2/SDL_ttf.h>
 
 // Definitions /////////////////////////////////////////////////////////////////
-
-// If ARM, assume GLES
-#ifdef __arm__
-  #define GLES true
-#else
-  #define GLES false
-#endif
 
 // Messages
 #define S2D_INFO  1
