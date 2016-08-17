@@ -471,8 +471,8 @@ install() {
   /usr/local/bin/simple2d"
   echo
   
-  if [[ $1 == '--edge' ]]; then
-    echo -e "This will install to the bleeding edge (latest commit).\n"
+  if [[ $1 == '--HEAD' ]]; then
+    echo -e "This will install Simple 2D from the `master` development branch.\n"
   fi
   
   prompt_to_continue "Continue?"
@@ -485,7 +485,7 @@ install() {
     echo; install_sdl
   fi
   
-  if [[ $1 == '--edge' ]]; then
+  if [[ $1 == '--HEAD' ]]; then
     install_s2d 'master'
   else
     install_s2d $VERSION
@@ -587,7 +587,7 @@ uninstall() {
 
 # Updates Simple 2D to latest version or commit
 # params:
-#   $1  String  Flags used, e.g. `--edge`
+#   $1  String  Flags used, e.g. `--HEAD`
 update() {
   
   if [[ $platform == 'osx' ]]; then
@@ -613,8 +613,8 @@ update() {
     fi
   }
   
-  if [[ $1 == '--edge' ]]; then
-    echo -e "This will update Simple 2D to the bleeding edge (latest commit)."
+  if [[ $1 == '--HEAD' ]]; then
+    echo -e "This will update Simple 2D to the latest commit from the `master` development branch.\n"
     echo; prompt_to_continue "Continue?"
     update_check_sdl
     install_s2d 'master'
@@ -758,13 +758,13 @@ Usage: simple2d [--libs] [-v|--version]
                 <command> <options>
 
 Summary of commands and options:
-  install       Installs the latest stable version
-    --edge        Installs to the latest commit (possibly unstable)
+  install       Installs the latest release
+    --HEAD        Installs from the development branch
     --sdl         Installs SDL only
   uninstall     Removes Simple 2D files
     --sdl         Removes SDL only
-  update        Updates to latest stable version
-    --edge        Updates to the latest commit (possibly unstable)
+  update        Updates to latest release
+    --HEAD        Updates to latest commit from the development branch
   doctor        Runs diagnostics, checks installation, reports issues
   --libs        Outputs libraries needed to compile Simple 2D apps
   -v|--version  Prints the installed version
@@ -777,7 +777,7 @@ case $1 in
       '')
         install;;
       --edge)
-        install '--edge';;
+        install '--HEAD';;
       --sdl)
         install '--sdl';;
       *)
@@ -797,7 +797,7 @@ case $1 in
       '')
         update;;
       --edge)
-        update '--edge';;
+        update '--HEAD';;
       *)
         print_usage;;
     esac;;
