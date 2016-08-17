@@ -523,6 +523,70 @@ uninstall_sdl_linux() {
 }
 
 
+# Uninstalls SDL on ARM platforms
+uninstall_sdl_arm() {
+  
+  prompt_to_continue "Uninstall SDL now?"
+  
+  # Uninstall packages in case they were used
+  print_and_run "sudo apt remove -y --purge libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev"
+  
+  # Setting up variables
+  url="http://www.libsdl.org"
+  
+  sdl="SDL2-2.0.4"
+  sdl_url="${url}/release/${sdl}.tar.gz"
+  
+  image="SDL2_image-2.0.1"
+  image_url="${url}/projects/SDL_image/release/${image}.tar.gz"
+  
+  smpeg="smpeg2-2.0.0"  # An SDL_mixer dependency, no package available
+  smpeg_url="${url}/projects/smpeg/release/${smpeg}.tar.gz"
+  
+  mixer="SDL2_mixer-2.0.1"
+  mixer_url="${url}/projects/SDL_mixer/release/${mixer}.tar.gz"
+  
+  ttf="SDL2_ttf-2.0.14"
+  ttf_url="${url}/projects/SDL_ttf/release/${ttf}.tar.gz"
+  
+  uninstall_sdl_lib () {
+    cd /tmp
+    wget -N $1
+    tar -xzf $2.tar.gz
+    cd $2
+    print_task "Configuring" "\n\n"
+    ./configure $3
+    print_task "Uninstalling" "\n\n"
+    sudo make uninstall
+    rm /tmp/$2.tar.gz
+    rm -rf /tmp/$2
+  }
+  
+  sdl_config_flags="--disable-video-opengl --disable-video-x11 --disable-pulseaudio --disable-esd --disable-video-mir --disable-video-wayland"
+  
+  print_task "Uninstalling SDL2" "\n\n"
+  uninstall_sdl_lib $sdl_url $sdl "$sdl_config_flags"
+  
+  echo; print_task "Uninstalling SDL2_image" "\n\n"
+  uninstall_sdl_lib $image_url $image
+  
+  echo; print_task "Uninstalling SDL2_mixer" "\n\n"
+  uninstall_sdl_lib $smpeg_url $smpeg
+  uninstall_sdl_lib $mixer_url $mixer
+  
+  echo; print_task "Uninstalling SDL2_ttf" "\n\n"
+  uninstall_sdl_lib $ttf_url $ttf
+  
+  echo
+  if have_sdl2_libs?; then
+    echo; error_msg "SDL libraries did not uninstall correctly"
+    exit
+  else
+    echo; info_msg "SDL was uninstalled successfully"
+  fi
+}
+
+
 # Uninstalls SDL
 uninstall_sdl() {
   
@@ -537,8 +601,8 @@ uninstall_sdl() {
   
   if [[ $platform == 'linux' ]]; then
     uninstall_sdl_linux
-    uninstall_sdl_linux
   elif [[ $platform == 'arm' ]]; then
+    uninstall_sdl_arm
   fi
 }
 
