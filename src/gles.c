@@ -70,6 +70,7 @@ int S2D_GLES_Init() {
   
   // Fragment shader source string
   GLchar fragmentSource[] =
+    "precision mediump float;"
     // input vertex color from vertex shader
     "varying vec4 v_color;"
     
@@ -80,6 +81,7 @@ int S2D_GLES_Init() {
   
   // Fragment shader source string for textures
   GLchar texFragmentSource[] =
+    "precision mediump float;"
     // input vertex color from vertex shader
     "varying vec4 v_color;"
     "varying vec2 v_texcoord;"
