@@ -35,18 +35,10 @@ void S2D_GL_PrintContextInfo(S2D_Window *window) {
     "GL_VENDOR: %s\n"
     "GL_RENDERER: %s\n"
     "GL_VERSION: %s\n"
-    #if !GLES
-    "GL_MAJOR_VERSION: %i\n"
-    "GL_MINOR_VERSION: %i\n"
-    #endif
     "GL_SHADING_LANGUAGE_VERSION: %s",
     window->S2D_GL_VENDOR,
     window->S2D_GL_RENDERER,
     window->S2D_GL_VERSION,
-    #if !GLES
-    window->S2D_GL_MAJOR_VERSION,
-    window->S2D_GL_MINOR_VERSION,
-    #endif
     window->S2D_GL_SHADING_LANGUAGE_VERSION
   );
   S2D_Log(S2D_msg, S2D_INFO);
