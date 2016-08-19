@@ -26,6 +26,30 @@ VERSION='0.3.0'
 # URL to this script in the repo
 SCRIPT_URL="https://raw.githubusercontent.com/simple2d/simple2d/master/simple2d.sh"
 
+# SDL download paths
+libsdl_url="http://www.libsdl.org"
+
+sdl_fname="SDL2-2.0.4"
+sdl_url="${libsdl_url}/release/${sdl_fname}.tar.gz"
+
+image_fname="SDL2_image-2.0.1"
+image_url="${libsdl_url}/projects/SDL_image/release/${image_fname}.tar.gz"
+
+smpeg_fname="smpeg2-2.0.0"  # An SDL_mixer dependency, no package available
+smpeg_url="${libsdl_url}/projects/smpeg/release/${smpeg_fname}.tar.gz"
+
+mixer_fname="SDL2_mixer-2.0.1"
+mixer_url="${libsdl_url}/projects/SDL_mixer/release/${mixer_fname}.tar.gz"
+
+ttf_fname="SDL2_ttf-2.0.14"
+ttf_url="${libsdl_url}/projects/SDL_ttf/release/${ttf_fname}.tar.gz"
+
+# SDL config
+sdl_config_flags="\
+--disable-video-opengl --disable-video-x11 \
+--disable-pulseaudio --disable-esd \
+--disable-video-mir --disable-video-wayland"
+
 # Colors
 BOLD='\033[1;39m'     # default bold
 UNDERLINE='\033[4m'   # underline
@@ -191,23 +215,23 @@ have_sdl2_libs?() {
   have_ttf_lib=true
   
   if ! have_lib? 'SDL2'; then
-    have_all_libs=false
     have_sdl2_lib=false
+    have_all_libs=false
   fi
   
   if ! have_lib? 'SDL2_image'; then
-    have_all_libs=false
     have_image_lib=false
+    have_all_libs=false
   fi
   
   if ! have_lib? 'SDL2_mixer'; then
-    have_all_libs=false
     have_mixer_lib=false
+    have_all_libs=false
   fi
   
   if ! have_lib? 'SDL2_ttf'; then
-    have_all_libs=false
     have_ttf_lib=false
+    have_all_libs=false
   fi
   
   if $have_all_libs; then
@@ -245,54 +269,34 @@ install_sdl_linux() {
 
 
 # Installs SDL from source on ARM platforms
-# params:
-#   $1  String  Install options, e.g. 'reinstall'
 install_sdl_arm() {
   
-  
-  # Install library dependencies
+  # Install SDL dependencies
   print_task "Installing SDL2 dependencies" "\n\n"
   sudo apt update
   
   libs=(
+    build-essential  # This may be missing on some ARM platforms
+    
     # SDL2
     libudev-dev
-    libasound2-dev
     libdbus-1-dev
+    libasound2-dev
     
     # SDL2_image
-    libjpeg8-dev
+    libjpeg9-dev
     libpng12-dev
-    libtiff5-dev
-    libwebp-dev
     
     # SDL2_mixer
     libvorbis-dev
     libflac-dev
     
     # SDL2_ttf
+    libgl1-mesa-dev  # Solves error missing -lGL
     libfreetype6-dev
   )
   
   sudo apt install -y ${libs[*]}
-  
-  # Setting up variables
-  url="http://www.libsdl.org"
-  
-  sdl="SDL2-2.0.3"
-  sdl_url="${url}/release/${sdl}.tar.gz"
-  
-  image="SDL2_image-2.0.0"
-  image_url="${url}/projects/SDL_image/release/${image}.tar.gz"
-  
-  smpeg="smpeg2-2.0.0"  # An SDL_mixer dependency, no package available
-  smpeg_url="${url}/projects/smpeg/release/${smpeg}.tar.gz"
-  
-  mixer="SDL2_mixer-2.0.0"
-  mixer_url="${url}/projects/SDL_mixer/release/${mixer}.tar.gz"
-  
-  ttf="SDL2_ttf-2.0.12"
-  ttf_url="${url}/projects/SDL_ttf/release/${ttf}.tar.gz"
   
   # Downloads, compiles, and installs an SDL library from source
   # params:
@@ -305,48 +309,38 @@ install_sdl_arm() {
     tar -xzf $2.tar.gz
     cd $2
     print_task "Configuring" "\n\n"
-    ./configure $3
-    echo; print_task "Compiling"
-    make > /dev/null 2>&1
+    print_and_run "./configure $3"
+    echo; print_task "Compiling" "\n\n"
+    make
     echo -e " done"
-    print_task "Installing" "\n\n"
+    echo; print_task "Installing" "\n\n"
     sudo make install
     rm /tmp/$2.tar.gz
     rm -rf /tmp/$2
   }
   
-  # Note: `$have_*_lib` variables set by `have_sdl2_libs?()`
+  # Note that `$have_*_lib` variables are set by `have_sdl2_libs?()`
   
-  if [[ $have_sdl2_lib == 'false' || $1 == 'reinstall' ]]; then
+  if [[ $have_sdl2_lib == 'false' ]]; then
     echo; print_task "Installing SDL2" "\n\n"
-    
-    # May need to also add flags:
-    #   --disable-pulseaudio --disable-esd
-    #   --disable-video-mir --disable-video-wayland"
-    
-    sdl_config_flags="--disable-video-opengl --disable-video-x11"
-    
-    if [[ $rpi_version == 2 ]]; then
-      sdl_config_flags="--host=armv7l-raspberry-linux-gnueabihf $sdl_config_flags"
-    fi
-    
-    install_sdl_lib $sdl_url $sdl $sdl_config_flags
+    install_sdl_lib $sdl_url $sdl_fname "$sdl_config_flags"
   fi
   
-  if [[ $have_image_lib == 'false' || $1 == 'reinstall' ]]; then
+  if [[ $have_image_lib == 'false' ]]; then
     echo; print_task "Installing SDL2_image" "\n\n"
-    install_sdl_lib $image_url $image
+    install_sdl_lib $image_url $image_fname
   fi
   
-  if [[ $have_mixer_lib == 'false' || $1 == 'reinstall' ]]; then
+  if [[ $have_mixer_lib == 'false' ]]; then
+    echo; print_task "Installing SMPEG2" "\n\n"
+    install_sdl_lib $smpeg_url $smpeg_fname
     echo; print_task "Installing SDL2_mixer" "\n\n"
-    install_sdl_lib $smpeg_url $smpeg
-    install_sdl_lib $mixer_url $mixer
+    install_sdl_lib $mixer_url $mixer_fname
   fi
   
-  if [[ $have_ttf_lib == 'false' || $1 == 'reinstall' ]]; then
+  if [[ $have_ttf_lib == 'false' ]]; then
     echo; print_task "Installing SDL2_ttf" "\n\n"
-    install_sdl_lib $ttf_url $ttf
+    install_sdl_lib $ttf_url $ttf_fname
   fi
   
   echo
@@ -437,22 +431,20 @@ install_s2d() {
 #   $1  String  Flags used, e.g. `--sdl`
 install() {
   
+  # If OS X, print message and quit
   if [[ $platform == 'osx' ]]; then
     osx_homebrew_message $1
-  else
-    if [[ $1 == '--sdl' ]]; then
-      
-      echo
-      if have_sdl2_libs?; then
-        echo; info_msg "SDL is already installed"
-        prompt_to_continue "Reinstall SDL?"
-        install_sdl
-      else
-        echo; install_sdl
-      fi
-      exit
-      
+  fi
+  
+  # If SDL flag, install only SDL and quit
+  if [[ $1 == '--sdl' ]]; then
+    echo
+    if have_sdl2_libs?; then
+      echo; info_msg "SDL is already installed"
+    else
+      echo; install_sdl
     fi
+    exit
   fi
   
   # Welcome message
@@ -531,24 +523,6 @@ uninstall_sdl_arm() {
   # Uninstall packages in case they were used
   print_and_run "sudo apt remove -y --purge libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev"
   
-  # Setting up variables
-  url="http://www.libsdl.org"
-  
-  sdl="SDL2-2.0.4"
-  sdl_url="${url}/release/${sdl}.tar.gz"
-  
-  image="SDL2_image-2.0.1"
-  image_url="${url}/projects/SDL_image/release/${image}.tar.gz"
-  
-  smpeg="smpeg2-2.0.0"  # An SDL_mixer dependency, no package available
-  smpeg_url="${url}/projects/smpeg/release/${smpeg}.tar.gz"
-  
-  mixer="SDL2_mixer-2.0.1"
-  mixer_url="${url}/projects/SDL_mixer/release/${mixer}.tar.gz"
-  
-  ttf="SDL2_ttf-2.0.14"
-  ttf_url="${url}/projects/SDL_ttf/release/${ttf}.tar.gz"
-  
   uninstall_sdl_lib () {
     cd /tmp
     wget -N $1
@@ -562,20 +536,18 @@ uninstall_sdl_arm() {
     rm -rf /tmp/$2
   }
   
-  sdl_config_flags="--disable-video-opengl --disable-video-x11 --disable-pulseaudio --disable-esd --disable-video-mir --disable-video-wayland"
-  
-  print_task "Uninstalling SDL2" "\n\n"
-  uninstall_sdl_lib $sdl_url $sdl "$sdl_config_flags"
-  
   echo; print_task "Uninstalling SDL2_image" "\n\n"
-  uninstall_sdl_lib $image_url $image
+  uninstall_sdl_lib $image_url $image_fname
   
   echo; print_task "Uninstalling SDL2_mixer" "\n\n"
-  uninstall_sdl_lib $smpeg_url $smpeg
-  uninstall_sdl_lib $mixer_url $mixer
+  uninstall_sdl_lib $smpeg_url $smpeg_fname
+  uninstall_sdl_lib $mixer_url $mixer_fname
   
   echo; print_task "Uninstalling SDL2_ttf" "\n\n"
-  uninstall_sdl_lib $ttf_url $ttf
+  uninstall_sdl_lib $ttf_url $ttf_fname
+  
+  print_task "Uninstalling SDL2" "\n\n"
+  uninstall_sdl_lib $sdl_url $sdl_fname "$sdl_config_flags"
   
   echo
   if have_sdl2_libs?; then
@@ -685,7 +657,7 @@ update() {
     success_msg "Simple 2D updated to latest commit!"
     echo -e "View the revision history:
 ${UNDERLINE}https://github.com/simple2d/simple2d/commits/master${NORMAL}"; echo
-  
+    
   else
     # Read this script from repo, get the version number
     get_remote_str $SCRIPT_URL
@@ -700,7 +672,9 @@ ${UNDERLINE}https://github.com/simple2d/simple2d/commits/master${NORMAL}"; echo
       update_check_sdl
       install_s2d $LATEST_VERSION
       success_msg "Simple 2D has been updated to $LATEST_VERSION!"
-    
+      echo -e "View the release notes:
+${UNDERLINE}https://github.com/simple2d/simple2d/releases/latest${NORMAL}"; echo
+      
     # $LATEST_VERSION is the same as installed version
     else
       info_msg "Installed version ($VERSION) matches latest available"
@@ -752,7 +726,7 @@ osx_homebrew_message() {
     echo -e "
 We recommend using ${BOLD}Homebrew${NORMAL} to install, update, and uninstall
 SDL on OS X. If you installed Simple 2D using Homebrew, the
-following SDL packages we're installed:
+following SDL packages were installed:
 
   sdl2
   sdl2_image
