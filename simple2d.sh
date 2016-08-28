@@ -814,7 +814,7 @@ case $1 in
     case $2 in
       '')
         install;;
-      --edge)
+      --HEAD)
         install '--HEAD';;
       --sdl)
         install '--sdl';;
@@ -834,7 +834,7 @@ case $1 in
     case $2 in
       '')
         update;;
-      --edge)
+      --HEAD)
         update '--HEAD';;
       *)
         print_usage;;
