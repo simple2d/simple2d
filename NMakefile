@@ -1,0 +1,84 @@
+# Sources
+SRCS=src\simple2d.c src\gl.c src\gl2.c src\gl3.c
+
+# Includes
+INC_GLEW_DIR=deps\vc\glew\include
+INC_SDL2_DIR=deps\vc\SDL2\include
+INCLS=/I $(INC_GLEW_DIR) /I $(INC_SDL2_DIR)
+
+# Libraries
+LIB_GLEW_DIR=deps\vc\glew\lib
+LIB_GLEW=$(LIB_GLEW_DIR)\glew32.lib
+LIB_SDL2_DIR=deps\vc\SDL2\lib
+LIB_SDL2=$(LIB_SDL2_DIR)\SDL2.lib
+LIB_SDL2_MAIN=$(LIB_SDL2_DIR)\SDL2main.lib
+LIB_SDL2_IMAGE=$(LIB_SDL2_DIR)\SDL2_image.lib
+LIB_SDL2_MIXER=$(LIB_SDL2_DIR)\SDL2_mixer.lib
+LIB_SDL2_TTF=$(LIB_SDL2_DIR)\SDL2_ttf.lib
+LIBS=opengl32.lib $(LIB_GLEW) $(LIB_SDL2) $(LIB_SDL2_MAIN) $(LIB_SDL2_IMAGE) $(LIB_SDL2_MIXER) $(LIB_SDL2_TTF)
+
+# Install directory: C:\Users\<user_name>\AppData\Local
+INSTALL_DIR=$(LOCALAPPDATA)\simple2d
+
+# Install directory and filename for the VC Windows installer
+INSTALLER_DIR=build\win-installer-vc
+INSTALLER_FNAME=simple2d-windows-vc.zip
+
+all: build
+
+build: .phony
+	if not exist build mkdir build
+	cl /c /EHsc /Fo.\build\ $(SRCS) $(INCLS)
+	lib build\simple2d.obj build\gl.obj build\gl2.obj build\gl3.obj $(LIBS)
+	cl /LD /Fo.\build\ $(SRCS) $(INCLS) /link /LIBPATH $(LIBS) /SUBSYSTEM:CONSOLE /OUT:build\simple2d.dll
+	del build\*.obj
+
+install:
+	if not exist $(INSTALL_DIR) mkdir $(INSTALL_DIR)
+	xcopy /e /y $(INC_GLEW_DIR)\*     $(INSTALL_DIR)
+	xcopy /e /y $(LIB_GLEW_DIR)\*.dll $(INSTALL_DIR)
+	xcopy /e /y $(INC_SDL2_DIR)\*     $(INSTALL_DIR)
+	xcopy /e /y $(LIB_SDL2_DIR)\*.dll $(INSTALL_DIR)
+	copy include\simple2d.h           $(INSTALL_DIR)
+	copy build\simple2d.lib           $(INSTALL_DIR)
+	copy build\simple2d.dll           $(INSTALL_DIR)
+	copy bin\simple2d.cmd             $(INSTALL_DIR)
+
+installer: clean build install
+	if not exist $(INSTALLER_DIR)\simple2d mkdir $(INSTALLER_DIR)\simple2d
+	xcopy /e /y $(INSTALL_DIR) $(INSTALLER_DIR)\simple2d
+	copy bin\win-installer-vc.cmd $(INSTALLER_DIR)\install.cmd
+	PowerShell -Command "& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::CreateFromDirectory('$(INSTALLER_DIR)', 'build\$(INSTALLER_FNAME)'); }"
+
+clean:
+	if exist $(INSTALLER_DIR) rmdir /s /q $(INSTALLER_DIR)
+	del build\$(INSTALLER_FNAME)
+	del build\simple2d.lib
+	del build\simple2d.dll
+	del tests\*.exe
+
+uninstall:
+	if exist $(INSTALL_DIR) rmdir /s /q $(INSTALL_DIR)
+
+tests: .phony
+	cd tests
+	simple2d build auto.c
+	simple2d build triangle.c
+	simple2d build testcard.c
+	simple2d build audio.c
+
+rebuild: uninstall clean build install tests
+
+auto:
+	cd tests & auto.exe
+
+triangle:
+	cd tests & triangle.exe
+
+testcard:
+	cd tests & testcard.exe
+
+audio:
+	cd tests & audio.exe
+
+.phony:
