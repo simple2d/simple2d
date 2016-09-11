@@ -2,7 +2,7 @@
 
 Simple 2D is a small, open-source graphics engine providing essential 2D drawing, media, and input capabilities. It's written in C and works across many platforms, creating native windows and interacting with hardware using [SDL](http://www.libsdl.org) while rendering content with [OpenGL](https://www.opengl.org).
 
-This README will be continuously updated as new features are added, bugs are fixed, and other changes are made. [View the latest release notes](https://github.com/simple2d/simple2d/releases/latest) for a link to the documentation for that version.
+Note that this README will be continuously updated as new features are added, bugs are fixed, and other changes are made. [View the release notes](https://github.com/simple2d/simple2d/releases) for a link to that version's documentation.
 
 If you encounter any issues, ping the [mailing list](https://groups.google.com/d/forum/simple2d). Learn about [contributing](#contributing) below.
 
@@ -10,36 +10,67 @@ If you encounter any issues, ping the [mailing list](https://groups.google.com/d
 
 Simple 2D supports Unix-like systems and is tested on the latest versions of OS X, Ubuntu, and Raspbian on the Raspberry Pi.
 
-To compile and install the [latest release](https://github.com/simple2d/simple2d/releases/latest)...
+To install the [latest release](https://github.com/simple2d/simple2d/releases/latest)...
 
-### ...on OS X, use [Homebrew](http://brew.sh)
+### ...on macOS
+
+Use [Homebrew](http://brew.sh):
 
 ```bash
 brew tap simple2d/tap
 brew install simple2d
 ```
 
-Or, install the latest changes from the `master` development branch using:
+
+
+### ...on Linux
+
+Run the [`simple2d.sh`](bin/simple2d.sh) Bash script. Everything will be explained along the way and you'll be prompted before any action is taken. To run this script from the web, copy and paste this snippet in your terminal:
 
 ```bash
-brew install --HEAD simple2d
+url='https://raw.githubusercontent.com/simple2d/simple2d/master/bin/simple2d.sh'; which curl > /dev/null && cmd='curl -fsSL' || cmd='wget -qO -'; bash <($cmd $url) install
 ```
 
-Note `brew update` will not update formulas installed with `--HEAD`, but you can use `brew reinstall --HEAD simple2d` to manually grab the latest changes.
+#### A note on Linux/ARM platforms
 
-### ...on Linux, run the [`simple2d.sh`](simple2d.sh) Bash script
-
-Everything will be explained along the way and you'll be prompted before any action is taken. To run this script from the web, copy and paste this in your terminal (make sure to copy the entire string – it's rather long):
-
-```bash
-url='https://raw.githubusercontent.com/simple2d/simple2d/master/simple2d.sh'; which curl > /dev/null && cmd='curl -fsSL' || cmd='wget -qO -'; bash <($cmd $url) install
-```
-
-Of course, you can always just download or clone this repo and run `make && make install`. This obviously won't check for installed dependancies, which is why the script above is helpful.
+Simple 2D supports ARM platforms running Linux, like the [Raspberry Pi](https://www.raspberrypi.org) and [CHIP](https://nextthing.co). Since most Linux distributions have SDL packages configured for traditional desktop platforms, the install script will compile SDL from source when ARM is detected, disabling windowing systems (like X11) and OpenGL (forcing OpenGL ES).
 
 ### The Command-line Utility
 
 Once installed, use the `simple2d` command-line utility to update Simple 2D, check for issues, output the libraries needed to compile applications, and more. Run `simple2d --help` to see all available commands and options.
+
+## Building from Source
+
+Alternatively, you can compile and install Simple 2D from source. First clone the repo using:
+
+```bash
+git clone --recursive https://github.com/simple2d/simple2d.git
+```
+
+To keep the size of this repository small, [git submodules](https://git-scm.com/book/en/Git-Tools-Submodules) are used to reference test media and Windows dependencies. The `--recursive` flag ensures submodules are initialize and updated when this repo is cloned. If you happened to clone this repo without the `--recursive` flag, you can still initialize and update submodules with:
+
+```bash
+git submodule init
+git submodule update --remote
+```
+
+Update these submodules at any time using `git submodule update --remote`
+
+On Unix-like systems, including Windows using MinGW, run:
+
+```bash
+make && make install
+```
+
+On Windows using Visual C++, run:
+
+```cmd
+nmake /f NMakefile all install
+```
+
+Note, on macOS and Linux, the makefile will not check for or install dependencies, unlike installing via Homebrew or the `simple2d.sh` script, respectively. Dependencies for Windows, supporting both Visual C++ and MinGW, _are_ included in this repo (referenced by the [`windows-deps`](https://github.com/simple2d/windows-deps) submodule) and installed by both makefiles.
+
+On Windows using Visual C++, Simple 2D will be installed to `%LOCALAPPDATA%\simple2d`, so make sure to add that to your path (for example with `set PATH=%PATH%;%LOCALAPPDATA%\simple2d`). In all other cases, it will be installed to `/usr/local/`. On Windows using MinGW, make sure to add `/usr/local/bin` to your path.
 
 ## Tests
 
@@ -50,39 +81,31 @@ Simple 2D has a few test programs to make sure all functionality is working as i
 - [`testcard.c`](tests/testcard.c) – A graphical card, similar to [TV test cards](https://en.wikipedia.org/wiki/Test_card), with the goal of ensuring all visuals and inputs are working properly.
 - [`audio.c`](tests/audio.c) – Tests audio functions with various file formats interpreted as sound samples and music.
 
-### Getting the Test Media
-
-To keep the size of this repository small, media required for tests are checked into the [`test_media`](https://github.com/simple2d/test_media) repo and referenced as a [Git submodule](http://git-scm.com/book/en/v2/Git-Tools-Submodules). After cloning this repo, init the submodule and get its contents by using:
-
-```bash
-git submodule init
-git submodule update --remote
-```
-
-Alternatively, you can clone the `simple2d` repo and init the `test_media` submodule in one step using:
-
-```bash
-git clone --recursive https://github.com/simple2d/simple2d.git
-```
-
-To get the latest changes from `test_media`, simply run `git submodule update --remote` at any time.
-
 ### Building and Running Tests
 
-Run `make tests` to compile tests to the `tests/` directory. Compiled tests will have the same name as their C source file. Since media paths are set relatively in these test programs, make sure to `cd` into `tests/` before running a test, for example:
+Run `make tests`, or `nmake /f NMakefile tests` on Windows using Visual C++, to compile tests to the `tests/` directory, which will have the same name as their C source file. Since media paths are set relatively in these test programs, make sure to `cd` into `tests/` directory before running a test, for example:
 
 ```bash
+# on Unix-like systems
 make tests && cd tests/ && ./testcard
+
+# on Windows using MinGW
+make tests & cd tests\ & testcard.exe
+
+# on Windows using Visual C++
+nmake /f NMakefile tests & cd tests\ & testcard.exe
 ```
 
-Or, conveniently rebuild Simple 2D from source and run tests using `bash test.sh <name_of_test>`, for example:
+Each test also has a makefile target, so you build and run tests using `make tests testcard` for example. Or, conveniently uninstall everything, rebuild Simple 2D and tests from source, and run tests using `make rebuild <name_of_test>`, for example:
 
 ```bash
-# Run testcard.c
-bash test.sh testcard
+# rebuild and run `auto.c` then `testcard.c`
 
-# Run auto.c then testcard.c
-bash test.sh auto testcard
+# on Unix-like systems and Windows using MinGW
+make rebuild auto testcard
+
+# on Windows using Visual C++
+nmake /f NMakefile rebuild auto testcard
 ```
 
 ---
@@ -114,13 +137,22 @@ int main() {
 }
 ```
 
-Save the code above in a file called `triangle.c`, and compile it using:
+Save the code above to a file called `triangle.c`, and compile by running `simple2d build triangle.c` on the command line (in MinGW, run this in a Bash prompt). Then run the app using `./triangle` on macOS and Linux, or `triangle.exe` on Windows. Finally, enjoy your stunning triangle in a 640x480 window at 60 frames per second!
+
+The `simple2d build` command is a helpful shortcut for compiling a single source file. Of course, you can use a compiler directly, for example on Unix-like systems:
 
 ```bash
 cc triangle.c `simple2d --libs` -o triangle
 ```
 
-Run it using `./triangle` and enjoy your stunning triangle in a 640x480 window at 60 frames per second.
+And on Windows using Visual C++ in a developer command prompt:
+
+```bash
+cl triangle.c /I %LOCALAPPDATA%\simple2d /link /LIBPATH %LOCALAPPDATA%\simple2d\simple2d.lib /SUBSYSTEM:CONSOLE
+
+# as a PowerShell command
+iex "cl triangle.c $(simple2d --libs)"
+```
 
 ## 2D Basics
 
@@ -157,7 +189,7 @@ window->viewport.width  = 400;
 window->viewport.height = 300;
 ```
 
-The viewport has various scaling modes, such as `S2D_FIXED` (viewport stays the same size as window size changes), `S2D_SCALE` (the default, where the viewport scales proportionately and is centered in the window), or `S2D_STRETCH` (viewport streches to fill the entire window). Set the mode like so:
+The viewport has various scaling modes, such as `S2D_FIXED` (viewport stays the same size as window size changes), `S2D_SCALE` (the default, where the viewport scales proportionately and is centered in the window), or `S2D_STRETCH` (viewport stretches to fill the entire window). Set the mode like so:
 
 ```c
 window->viewport.mode = S2D_FIXED;
@@ -518,7 +550,7 @@ S2D_FreeMusic(mus);
 
 > "Simple can be harder than complex: You have to work hard to get your thinking clean to make it simple. But it's worth it in the end because once you get there, you can move mountains." ― [Steve Jobs](http://blogs.wsj.com/digits/2011/08/24/steve-jobss-best-quotes)
 
-Despite the continuing advancement of graphics hardware and software, getting started with simple graphics programming isn't that easy or accessible. We’re working to change that.
+Despite the continuing advancement of graphics hardware and software, getting started with simple graphics programming isn't that easy or accessible. We're working to change that.
 
 Check out the [open issues](https://github.com/simple2d/simple2d/issues) and join the [mailing list](https://groups.google.com/d/forum/simple2d). If you're a hardcore C and OS hacker, you should seriously consider contributing to [SDL](https://www.libsdl.org) so we can continue writing games without worrying about the platforms underneath. Take a look at the talks from [Steam Dev Days](http://www.steamdevdays.com), especially [Ryan C. Gordon's](https://twitter.com/icculus) talk on [Game Development with SDL 2.0](https://www.youtube.com/watch?v=MeMPCSqQ-34&list=UUStZs-X5W6V3TFJLnwkzN5w).
 
@@ -526,7 +558,7 @@ Check out the [open issues](https://github.com/simple2d/simple2d/issues) and joi
 
 1. [Run tests](#tests) on all supported platforms
 2. Update documentation to reflect the current API
-3. Update the version number in [`simple2d.sh`](simple2d.sh), commit changes
+3. Update the version number in [`simple2d.sh`](bin/simple2d.sh) and [`simple2d.cmd`](bin/simple2d.cmd), commit changes
 4. Create a [new release](https://github.com/simple2d/simple2d/releases) in GitHub, with tag in the form `v#.#.#`
 5. Update the [Homebrew tap](https://github.com/simple2d/homebrew-tap):
   - Update formula with new release archive `url`
