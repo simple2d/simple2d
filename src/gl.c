@@ -209,12 +209,12 @@ int S2D_GL_Init(S2D_Window *window) {
   
   // Specify the OpenGL Context
   #if !GLES
+    // Use legacy OpenGL 2.1
     if (FORCE_GL2) {
-      // Use legacy OpenGL 2.1
       SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
       SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+    // Request an OpenGL 3.3 forward-compatible core profile
     } else {
-      // Request an OpenGL 3.3 forward-compatible core profile
       SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
       SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
       SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
@@ -233,19 +233,24 @@ int S2D_GL_Init(S2D_Window *window) {
   if (window->glcontext) {
     // Valid context found
     
+    // Initialize OpenGL ES 2.0
     #if GLES
-      // Initialize OpenGL ES 2.0
       S2D_GLES_Init();
       S2D_GL_SetViewport(window);
       
+    // Initialize OpenGL 3.3+
     #else
-      // Initialize OpenGL 3.3+
+      // Initialize GLEW on Windows
+      #if WINDOWS
+        GLenum err = glewInit();
+        if (GLEW_OK != err) S2D_Error("GLEW", glewGetErrorString(err));
+      #endif
       S2D_GL3_Init();
       S2D_GL_SetViewport(window);
     #endif
     
+  // Context could not be created
   } else {
-    // Context could not be created
     
     #if GLES
       S2D_Error("GLES / SDL_GL_CreateContext", SDL_GetError());
@@ -265,11 +270,10 @@ int S2D_GL_Init(S2D_Window *window) {
         S2D_GL2_Init();
         S2D_GL_SetViewport(window);
         
+      // Could not create any OpenGL contexts, hard failure
       } else {
-        // Could not create any OpenGL contexts, hard failure
         S2D_Error("GL2 / SDL_GL_CreateContext", SDL_GetError());
         S2D_Log("An OpenGL context could not be created", S2D_ERROR);
-        free(window);
         return -1;
       }
     #endif
