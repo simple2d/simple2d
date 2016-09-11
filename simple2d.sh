@@ -1,12 +1,12 @@
 #!/bin/bash
 
 # ------------------------------------------------------------------------------
-# The Simple 2D Command-Line Utility
+# The Simple 2D Command-Line Utility for Unix-like Systems
 # 
 # This script can:
-#  - Install Simple 2D on OS X, Linux, and ARM platforms
+#  - Install Simple 2D on macOS, Linux, and ARM platforms
 #  - Update Simple 2D in place
-#  - Provide all Simple 2D libraries needed for compiling applications
+#  - Provide all includes and libraries needed for compiling Simple 2D apps
 #  - Check for issues with Simple 2D and SDL
 # 
 # Run from the web using:
@@ -15,12 +15,9 @@
 #   bash <(wget -qO - http://script_url_here)
 # ------------------------------------------------------------------------------
 
-
 # Set Constants ################################################################
 
-
-# This is the installed version, once script is installed to:
-#   /usr/local/bin/simple2d
+# The installed version
 VERSION='0.3.0'
 
 # URL to this script in the repo
@@ -61,14 +58,11 @@ ERROR='\033[4;31m'    # red     underline
 SUCCESS='\033[1;32m'  # green   bold
 NORMAL='\033[0m'      # reset
 
-
 # Set Variables ################################################################
-
 
 platform='unknown'
 platform_display='unknown'
 ret=''  # a return value used by some functions
-
 
 # Helper Functions #############################################################
 
@@ -199,6 +193,37 @@ compare_versions() {
     fi
   done
   return 0
+}
+
+
+# Build  #######################################################################
+
+
+# Builds a Simple 2D program
+# params:
+#   $1  String  The source file
+build() {
+  src=$1
+  
+  # If no input, print `cc` message and quit
+  if [[ $src == "" ]]; then
+    cc; exit
+  fi
+  
+  # Strip file extension
+  path=${src%.*}
+  
+  # Specify C compiler
+  if [[ $platform == 'mingw' ]]; then
+    CC=gcc
+  else
+    CC=cc
+  fi
+  
+  # Compile
+  $CC $src `simple2d --libs` -o $path
+  
+  echo "Simple 2D executable created at \`${path}\`"
 }
 
 
@@ -431,9 +456,14 @@ install_s2d() {
 #   $1  String  Flags used, e.g. `--sdl`
 install() {
   
-  # If OS X, print message and quit
-  if [[ $platform == 'osx' ]]; then
-    osx_homebrew_message $1
+  # If macOS, print message and quit
+  if [[ $platform == 'macos' ]]; then
+    macos_homebrew_message $1
+  fi
+  
+  # If MinGW, print message and quit
+  if [[ $platform == 'mingw' ]]; then
+    mingw_not_implemented_message
   fi
   
   # If SDL flag, install only SDL and quit
@@ -584,13 +614,18 @@ uninstall_sdl() {
 #   $1  String  Flags used, e.g. `--sdl`
 uninstall() {
   
-  if [[ $platform == 'osx' ]]; then
-    osx_homebrew_message $1
-  else
-    if [[ $1 == '--sdl' ]]; then
-      echo; uninstall_sdl
-      exit
-    fi
+  if [[ $platform == 'macos' ]]; then
+    macos_homebrew_message $1
+  fi
+  
+  # If MinGW, print message and quit
+  if [[ $platform == 'mingw' ]]; then
+    mingw_not_implemented_message
+  fi
+  
+  if [[ $1 == '--sdl' ]]; then
+    echo; uninstall_sdl
+    exit
   fi
   
   echo; echo -e "The following files will be removed:
@@ -626,8 +661,13 @@ uninstall() {
 #   $1  String  Flags used, e.g. `--HEAD`
 update() {
   
-  if [[ $platform == 'osx' ]]; then
-    osx_homebrew_message
+  if [[ $platform == 'macos' ]]; then
+    macos_homebrew_message
+  fi
+  
+  # If MinGW, print message and quit
+  if [[ $platform == 'mingw' ]]; then
+    mingw_not_implemented_message
   fi
   
   # Check if Simple 2D is installed
@@ -720,12 +760,12 @@ doctor() {
 # Prints homebrew message and quit
 # params:
 #   $1  String  The message to show, e.g. '--sdl'
-osx_homebrew_message() {
+macos_homebrew_message() {
   
   if [[ $1 == '--sdl' ]]; then
     echo -e "
 We recommend using ${BOLD}Homebrew${NORMAL} to install, update, and uninstall
-SDL on OS X. If you installed Simple 2D using Homebrew, the
+SDL on macOS. If you installed Simple 2D using Homebrew, the
 following SDL packages were installed:
 
   sdl2
@@ -738,9 +778,20 @@ their dependencies, which were also installed.
 
 Learn more at ${UNDERLINE}http://brew.sh${NORMAL}
 "
+  elif [[ $1 == '--HEAD' ]]; then
+    echo -e "
+Use ${BOLD}Homebrew${NORMAL} to install, update, and uninstall Simple 2D on macOS.
+
+  To install the latest changes from the \`master\` development branch, use:
+    brew install --HEAD simple2d
+
+Note \`brew update\` will not update formulas installed with \`--HEAD\`,
+but you can use \`brew reinstall --HEAD simple2d\` to manually grab
+the latest changes.
+"
   else
     echo -e "
-Use ${BOLD}Homebrew${NORMAL} to install, update, and uninstall Simple 2D on OS X.
+Use ${BOLD}Homebrew${NORMAL} to install, update, and uninstall Simple 2D on macOS.
 
   First, use \`brew tap\` to get Simple 2D formulas:
     brew tap simple2d/tap
@@ -758,15 +809,22 @@ Learn more at ${UNDERLINE}http://brew.sh${NORMAL}
 }
 
 
+# For stuff not yet implemented in MinGW
+mingw_not_implemented_message() {
+  echo -e "This isn't implemented in MinGW yet :("
+  exit
+}
+
+
 # Detect Platform ##############################################################
 
 
 unamestr=$(uname)
 
-# Mac OS X
+# macOS
 if [[ $unamestr == 'Darwin' ]]; then
-  platform_display='Mac OS X'
-  platform='osx'
+  platform_display='macOS'
+  platform='macos'
   
 # ARM
 elif [[ $(uname -m) =~ 'arm' && $unamestr == 'Linux' ]]; then
@@ -777,11 +835,16 @@ elif [[ $(uname -m) =~ 'arm' && $unamestr == 'Linux' ]]; then
 elif [[ $unamestr == 'Linux' ]]; then
   platform_display='Linux'
   platform='linux'
+  
+# Windows / MinGW
+elif [[ $unamestr =~ 'MINGW' ]]; then
+  platform_display='Windows / MinGW'
+  platform='mingw'
 fi
 
 # Unsupported platform
 if [[ $platform == 'unknown' ]]; then
-  echo; error_msg "Not a supported system (OS X, Linux, or ARM platform)"
+  echo; error_msg "Not a supported system (macOS, Linux, or ARM platform)"
   exit
 fi
 
@@ -796,6 +859,7 @@ Usage: simple2d [--libs] [-v|--version]
                 <command> <options>
 
 Summary of commands and options:
+  build         Compiles a Simple 2D app provided a C/C++ source file
   install       Installs the latest release
     --HEAD        Installs from the development branch
     --sdl         Installs SDL only
@@ -809,7 +873,10 @@ Summary of commands and options:
 "
 }
 
+
 case $1 in
+  build)
+    build $2;;
   install)
     case $2 in
       '')
@@ -842,15 +909,19 @@ case $1 in
   doctor)
     doctor;;
   --libs)
-    if [[ $platform == 'osx' ]]; then
-      LDFLAGS='-Wl,-framework,OpenGL'
+    if [[ $platform == 'macos' ]]; then
+      FLAGS='-Wl,-framework,OpenGL'
     elif [[ $platform == 'linux' ]]; then
-      LDFLAGS='-lGL -lm'
+      FLAGS='-lGL -lm'
     elif [[ $platform == 'arm' ]]; then
-      LDFLAGS='-lm -I/opt/vc/include/ -L/opt/vc/lib -lGLESv2'
+      FLAGS='-lm -I/opt/vc/include/ -L/opt/vc/lib -lGLESv2'
     fi
-    echo "-lsimple2d `sdl2-config --cflags --libs`"\
-         "${LDFLAGS} -lSDL2_image -lSDL2_mixer -lSDL2_ttf";;
+    if [[ $platform == 'mingw' ]]; then
+      echo "-I/usr/local/include/ -L/usr/local/lib -lmingw32 -lsimple2d -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf -lopengl32 -lglew32"
+    else
+      echo "-lsimple2d `sdl2-config --cflags --libs`"\
+           "${FLAGS} -lSDL2_image -lSDL2_mixer -lSDL2_ttf"
+    fi;;
   -v|--version)
     echo $VERSION;;
   *)
