@@ -8,7 +8,7 @@ int failures = 0;
 
 
 void start_test_suite() {
-  puts("\n\033[1;39mStarting test suite...\033[1;39m\n");
+  puts("\033[1;39mStarting test suite...\033[1;39m\n");
 }
 
 void start_test(char *test) {
@@ -38,7 +38,7 @@ int main() {
   // Set Up ////////////////////////////////////////////////////////////////////
   
   S2D_Diagnostics(true);
-  
+  S2D_Enable_Terminal_Colors_Windows();
   start_test_suite();
   
   // Images ////////////////////////////////////////////////////////////////////

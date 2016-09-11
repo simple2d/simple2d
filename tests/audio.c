@@ -11,30 +11,30 @@ S2D_Window *window;
 
 
 void print_help() {
-  // ┌ ┬ ┐ ┤ ┘ ┴ └ ├ ┼ ─ │
-  puts("┌───────────────────────────────┐");
-  puts("│ AUDIO TESTS KEYBOARD COMMANDS │");
-  puts("├───────────────────────────────┤");
-  puts("│ Q -> Switch between           │");
-  puts("│      `Sound` and `Music`      │");
-  puts("│                               │");
-  puts("│ Sound:                        │");
-  puts("│   P -> S2D_PlaySound          │");
-  puts("│                               │");
-  puts("│ Music:                        │");
-  puts("│   P -> S2D_PlayMusic          │");
-  puts("│   A -> S2D_PauseMusic         │");
-  puts("│   S -> S2D_StopMusic          │");
-  puts("│   R -> S2D_ResumeMusic        │");
-  puts("│   F -> S2D_FadeOutMusic       │");
-  puts("│                               │");
-  puts("│ Switching Samples:            │");
-  puts("│   1 -> note.wav               │");
-  puts("│   2 -> music.ogg              │");
-  puts("│                               │");
-  puts("│ H -> Print this help message  │");
-  puts("│ Esc -> Exit                   │");
-  puts("└───────────────────────────────┘");
+  puts("");
+  puts(" |-------------------------------|");
+  puts(" | AUDIO TESTS KEYBOARD COMMANDS |");
+  puts(" |-------------------------------|");
+  puts(" | Q -> Switch between           |");
+  puts(" |      `Sound` and `Music`      |");
+  puts(" |                               |");
+  puts(" | Sound:                        |");
+  puts(" |   P -> S2D_PlaySound          |");
+  puts(" |                               |");
+  puts(" | Music:                        |");
+  puts(" |   P -> S2D_PlayMusic          |");
+  puts(" |   A -> S2D_PauseMusic         |");
+  puts(" |   S -> S2D_StopMusic          |");
+  puts(" |   R -> S2D_ResumeMusic        |");
+  puts(" |   F -> S2D_FadeOutMusic       |");
+  puts(" |                               |");
+  puts(" | Switching Samples:            |");
+  puts(" |   1 -> note.wav               |");
+  puts(" |   2 -> music.ogg              |");
+  puts(" |                               |");
+  puts(" | H -> Print this help message  |");
+  puts(" | Esc -> Exit                   |");
+  puts(" |-------------------------------|");
   puts("");
 }
 

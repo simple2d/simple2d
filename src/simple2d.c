@@ -14,6 +14,8 @@ static bool initted = false;
  * Checks if a file exists and can be accessed
  */
 static bool file_exists(const char *path) {
+  if (!path) return false;
+  
   if (access(path, F_OK) != -1) {
     return true;
   } else {
@@ -62,10 +64,27 @@ void S2D_Diagnostics(bool status) {
 
 
 /*
+ * Enable terminal colors in Windows
+ */
+void S2D_Enable_Terminal_Colors_Windows() {
+  #if WINDOWS
+    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    DWORD dwMode = 0;
+    GetConsoleMode(hOut, &dwMode);
+    dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+    SetConsoleMode(hOut, dwMode);
+  #endif
+}
+
+
+/*
  * Initialize Simple 2D subsystems
  */
 static bool S2D_Init() {
   if (initted) return true;
+  
+  // Enable terminal colors in Windows
+  S2D_Enable_Terminal_Colors_Windows();
   
   S2D_Log("Initializing Simple 2D", S2D_INFO);
   

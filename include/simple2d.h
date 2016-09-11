@@ -1,11 +1,10 @@
 // simple2d.h
 
-// Includes ////////////////////////////////////////////////////////////////////
-
+#include <stdio.h>
 #include <stdbool.h>
 #include <math.h>
-#include <unistd.h>
-#include <SDL2/SDL.h>
+
+// Set Platform Constants //////////////////////////////////////////////////////
 
 // If ARM, assume GLES
 #ifdef __arm__
@@ -14,18 +13,58 @@
   #define GLES false
 #endif
 
+// If Windows
+#ifdef _WIN32
+  #define WINDOWS true
+#endif
+
+// If Windows and MinGW
+#ifdef __MINGW32__
+  #define MINGW true
+#endif
+
+// Includes ////////////////////////////////////////////////////////////////////
+
+#if WINDOWS && !MINGW
+  #include <io.h>
+  #define  F_OK 0  // For testing file existence
+#else
+  #include <unistd.h>
+#endif
+
+#if WINDOWS
+  #include <windows.h>
+  // For terminal colors
+  #ifndef  ENABLE_VIRTUAL_TERMINAL_PROCESSING
+  #define  ENABLE_VIRTUAL_TERMINAL_PROCESSING 0x0004
+  #endif
+#endif
+
+// SDL
+#include <SDL2/SDL.h>
+
+// If MinGW, undefine `main()` from SDL_main.c
+#if MINGW
+  #undef main
+#endif
+
+// OpenGL
 #if GLES
   #include <SDL2/SDL_opengles2.h>
 #else
   #define GL_GLEXT_PROTOTYPES 1
+  #if WINDOWS
+    #include <glew.h>
+  #endif
   #include <SDL2/SDL_opengl.h>
 #endif
 
+// SDL libraries
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_mixer.h>
 #include <SDL2/SDL_ttf.h>
 
-// Definitions /////////////////////////////////////////////////////////////////
+// S2D Definitions /////////////////////////////////////////////////////////////
 
 // Messages
 #define S2D_INFO  1
@@ -50,8 +89,8 @@ extern bool S2D_diagnostics;  // Flag whether to print diagnostics with S2D_Log
 
 // Type Definitions ////////////////////////////////////////////////////////////
 
-typedef void (*S2D_Update)(void);
-typedef void (*S2D_Render)(void);
+typedef void (*S2D_Update)();
+typedef void (*S2D_Render)();
 typedef void (*S2D_On_Key)(const char *key);
 typedef void (*S2D_On_Key_Up)(const char *key);
 typedef void (*S2D_On_Key_Down)(const char *key);
@@ -254,6 +293,11 @@ void S2D_Error(const char *caller, const char *msg);
 void S2D_Diagnostics(bool status);
 
 /*
+ * Enable terminal colors in Windows
+ */
+void S2D_Enable_Terminal_Colors_Windows();
+
+/*
  * Create a window structure and initiate subsystems
  */
 S2D_Window *S2D_CreateWindow(
@@ -278,7 +322,7 @@ int S2D_FreeWindow(S2D_Window *window);
 /*
  * Quits S2D subsystems
  */
-void S2D_Quit();
+void S2D_Quit(void);
 
 /*
  * Draw triangle
