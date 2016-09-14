@@ -85,6 +85,7 @@ installer: clean build
 	cp -R deps/mingw/include/*    $(INSTALLER_DIR)/include
 	cp -R deps/mingw/lib/*        $(INSTALLER_DIR)/lib
 	cp -R deps/mingw/bin/*        $(INSTALLER_DIR)/bin
+	cp    deps/LICENSES.md        $(INSTALLER_DIR)
 	cp include/simple2d.h         $(INSTALLER_DIR)/include
 	cp build/libsimple2d.a        $(INSTALLER_DIR)/lib
 	cp build/simple2d             $(INSTALLER_DIR)/bin

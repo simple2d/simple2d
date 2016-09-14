@@ -46,8 +46,9 @@ install:
 
 installer: uninstall clean build install
 	if not exist $(INSTALLER_DIR)\simple2d mkdir $(INSTALLER_DIR)\simple2d
-	xcopy /e /y $(INSTALL_DIR) $(INSTALLER_DIR)\simple2d
-	copy bin\win-installer-vc.cmd $(INSTALLER_DIR)\install.cmd
+	xcopy /e /y  $(INSTALL_DIR)                  $(INSTALLER_DIR)\simple2d
+	copy deps\LICENSES.md                        $(INSTALLER_DIR)
+	copy bin\win-installer-vc.cmd                $(INSTALLER_DIR)\install.cmd
 	PowerShell -Command "& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::CreateFromDirectory('$(INSTALLER_DIR)', 'build\$(INSTALLER_FNAME)'); }"
 
 clean:
