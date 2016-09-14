@@ -6,8 +6,11 @@
 
 echo.
 echo Simple 2D and its dependencies will be installed to:
+echo.
 echo   %%LOCALAPPDATA%%\simple2d
-echo   Resolving to %LOCALAPPDATA%\simple2d
+echo.
+echo   On this system, resolving to:
+echo     %LOCALAPPDATA%\simple2d
 echo.
 
 set INPUT=
@@ -26,6 +29,6 @@ xcopy /e /y simple2d\* %S2D_DIR%
 
 echo.
 echo Simple 2D installed successfully!
-echo Remember to add %%LOCALAPPDATA%%\simple2d to your %%PATH%%
+echo Remember to add `%%LOCALAPPDATA%%\simple2d` to your %%PATH%%
 echo.
 pause
