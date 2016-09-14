@@ -7,6 +7,10 @@ set S2D_VERSION=0.3.0
 
 :: Compile a C file
 if "%~1"=="build" (
+  if "%~2"=="" (
+    echo Error: no input files
+    exit /b 0
+  )
   cl %2 /Fo%~np2 /Fe%~np2 /I %LOCALAPPDATA%\simple2d /link /LIBPATH %LOCALAPPDATA%\simple2d\simple2d.lib /SUBSYSTEM:CONSOLE
   del %~np2.obj
   exit /b 0

@@ -207,7 +207,7 @@ build() {
   
   # If no input, print `cc` message and quit
   if [[ $src == "" ]]; then
-    cc; exit
+    echo "Error: no input files"; exit
   fi
   
   # Strip file extension
@@ -222,8 +222,6 @@ build() {
   
   # Compile
   $CC $src `simple2d --libs` -o $path
-  
-  echo "Simple 2D executable created at \`${path}\`"
 }
 
 
