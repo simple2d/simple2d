@@ -21,7 +21,7 @@
 VERSION='0.3.0'
 
 # URL to this script in the repo
-SCRIPT_URL="https://raw.githubusercontent.com/simple2d/simple2d/master/simple2d.sh"
+SCRIPT_URL="https://raw.githubusercontent.com/simple2d/simple2d/master/bin/simple2d.sh"
 
 # SDL download paths
 libsdl_url="http://www.libsdl.org"
