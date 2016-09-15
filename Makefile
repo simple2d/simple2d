@@ -62,9 +62,12 @@ endif
 
 install:
 	@$(call task,Installing Simple 2D)
-	cp include/simple2d.h      $(PREFIX)/include/
-	cp build/libsimple2d.a     $(PREFIX)/lib/
-	cp build/simple2d          $(PREFIX)/bin/
+	mkdir -p $(PREFIX)/include/
+	mkdir -p $(PREFIX)/lib/
+	mkdir -p $(PREFIX)/bin/
+	cp include/simple2d.h  $(PREFIX)/include/
+	cp build/libsimple2d.a $(PREFIX)/lib/
+	cp build/simple2d      $(PREFIX)/bin/
 
 install-deps:
 ifeq ($(PLATFORM),mingw)
