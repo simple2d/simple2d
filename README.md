@@ -8,7 +8,7 @@ If you encounter any issues, ping the [mailing list](https://groups.google.com/d
 
 ## Getting Started
 
-Simple 2D supports Unix-like systems and is tested on the latest versions of OS X, Ubuntu, and Raspbian on the Raspberry Pi.
+Simple 2D supports all major operating systems and hardware platforms, and is tested on the latest releases of macOS, Windows, Ubuntu, and Raspbian (on the Raspberry Pi).
 
 To install the [latest release](https://github.com/simple2d/simple2d/releases/latest)...
 
@@ -21,7 +21,9 @@ brew tap simple2d/tap
 brew install simple2d
 ```
 
+### ...on Windows
 
+[Download the Windows installer](https://github.com/simple2d/simple2d/releases/latest) for Visual C++ or MinGW.
 
 ### ...on Linux
 
@@ -559,14 +561,15 @@ Check out the [open issues](https://github.com/simple2d/simple2d/issues) and joi
 1. [Run tests](#tests) on all supported platforms
 2. Update documentation to reflect the current API
 3. Update the version number in [`simple2d.sh`](bin/simple2d.sh) and [`simple2d.cmd`](bin/simple2d.cmd), commit changes
-4. Create a [new release](https://github.com/simple2d/simple2d/releases) in GitHub, with tag in the form `v#.#.#`
-5. Update the [Homebrew tap](https://github.com/simple2d/homebrew-tap):
+4. Create Windows installers for Visual C++ and MinGW
+5. Create a [new release](https://github.com/simple2d/simple2d/releases) in GitHub, with tag in the form `v#.#.#`; attach Windows installers to release notes
+6. Update the [Homebrew tap](https://github.com/simple2d/homebrew-tap):
   - Update formula with new release archive `url`
   - Run `brew audit --strict ./simple2d.rb` to detect any issues
   - Calculate the new `sha256` using `brew install ./simple2d.rb` (note the "SHA256 mismatch" error, use the "Actual" value)
   - Test installation using the same `brew install` command above
   - Commit changes to the formula
-6. 🎉
+7. 🎉
 
 # About the Project
 
