@@ -83,7 +83,7 @@ Simple 2D has a few test programs to make sure all functionality is working as i
 
 ### Building and Running Tests
 
-Run `make tests`, or `nmake /f NMakefile tests` on Windows using Visual C++, to compile tests to the `tests/` directory, which will have the same name as their C source file. Since media paths are set relatively in these test programs, make sure to `cd` into `tests/` directory before running a test, for example:
+Run `make tests`, or `nmake /f NMakefile tests` on Windows using Visual C++, to compile tests to the `tests/` directory, which will have the same name as their C source file. Since media paths are set relatively in these test programs, make sure to `cd` into the `tests/` directory before running a test, for example:
 
 ```bash
 # on Unix-like systems
@@ -96,7 +96,7 @@ make tests & cd tests\ & testcard.exe
 nmake /f NMakefile tests & cd tests\ & testcard.exe
 ```
 
-Each test also has a makefile target, so you build and run tests using `make tests testcard` for example. Or, conveniently uninstall everything, rebuild Simple 2D and tests from source, and run tests using `make rebuild <name_of_test>`, for example:
+Each test also has a makefile target, so you can build and run tests using, for example, `make tests testcard`. Or, conveniently uninstall everything, rebuild Simple 2D and tests from source, and run tests using `make rebuild <name_of_test>`, for example:
 
 ```bash
 # rebuild and run `auto.c` then `testcard.c`
@@ -156,7 +156,7 @@ iex "cl triangle.c $(simple2d --libs)"
 
 ## 2D Basics
 
-Let's learn about how to structure an application for 2D drawing and more.
+Let's learn more about structuring applications for 2D drawing and more.
 
 ### The Window
 
