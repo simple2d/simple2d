@@ -268,7 +268,7 @@ have_sdl2_libs?() {
 # Installs SDL on Linux
 install_sdl_linux() {
   
-  echo -e "The following packages will be installed:"
+  echo "The following packages will be installed:"
   echo "  libsdl2-dev"
   echo "  libsdl2-image-dev"
   echo "  libsdl2-mixer-dev"
@@ -293,6 +293,10 @@ install_sdl_linux() {
 
 # Installs SDL from source on ARM platforms
 install_sdl_arm() {
+  
+  echo "SDL will be compiled and installed from source."; echo
+  
+  prompt_to_continue "Install SDL now?"
   
   # Install SDL dependencies
   print_task "Installing SDL2 dependencies" "\n\n"
@@ -378,9 +382,6 @@ install_sdl_arm() {
 
 # Installs SDL
 install_sdl() {
-  
-  print_task "Installing SDL" "\n\n"
-  
   if [[ $platform == 'linux' ]]; then
     install_sdl_linux
   elif [[ $platform == 'arm' ]]; then
@@ -596,8 +597,6 @@ uninstall_sdl() {
     echo; info_msg "SDL appears to be already uninstalled"
     prompt_to_continue "Try uninstalling SDL anyways?"
   fi
-  
-  print_task "Uninstalling SDL" "\n\n"
   
   if [[ $platform == 'linux' ]]; then
     uninstall_sdl_linux
