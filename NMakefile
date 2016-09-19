@@ -1,5 +1,6 @@
 # Sources
-SRCS=src\simple2d.c src\gl.c src\gl2.c src\gl3.c
+SRCS=src\simple2d.c src\image.c src\music.c src\shapes.c src\sound.c src\sprite.c src\text.c src\window.c src\gl.c src\gl2.c src\gl3.c
+OBJS=build\simple2d.obj build\image.obj build\music.obj build\shapes.obj build\sound.obj build\sprite.obj build\text.obj build\window.obj build\gl.obj build\gl2.obj build\gl3.obj
 
 # Includes
 INC_GLEW_DIR=deps\vc\glew\include
@@ -29,7 +30,7 @@ all: build
 build: .phony
 	if not exist build mkdir build
 	cl /c /EHsc /Fo.\build\ $(SRCS) $(INCLS)
-	lib build\simple2d.obj build\gl.obj build\gl2.obj build\gl3.obj $(LIBS)
+	lib $(OBJS) $(LIBS)
 	cl /LD /Fo.\build\ $(SRCS) $(INCLS) /link /LIBPATH $(LIBS) /SUBSYSTEM:CONSOLE /OUT:build\simple2d.dll
 	del build\*.obj
 

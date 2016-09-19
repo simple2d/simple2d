@@ -1,13 +1,22 @@
+BOLD=\033[1;39m
+TASK=\033[1;34m
+NORMAL=\033[0m
+
 PREFIX?=/usr/local
 CFLAGS=-std=c99
+
+SOURCES=simple2d image music shapes sound sprite text window
+ifeq ($(PLATFORM),arm)
+	SOURCES+=gl gles
+else
+	SOURCES+=gl gl2 gl3
+endif
+
+OBJECTS=$(foreach var,$(SOURCES),build/$(var).o)
 
 # Install directory and filename for the MinGW Windows installer
 INSTALLER_DIR=build/win-installer-mingw
 INSTALLER_FNAME=simple2d-windows-mingw.zip
-
-BOLD=\033[1;39m
-TASK=\033[1;34m
-NORMAL=\033[0m
 
 # For ARM platforms
 ifneq (,$(findstring arm,$(shell uname -m)))
@@ -39,26 +48,18 @@ define run_test
 endef
 
 
-all: build
-
-build: install-deps
-	@$(call task,Building)
-	mkdir -p build
+all: prereqs install-deps $(SOURCES)
+	ar -vq build/libsimple2d.a $(OBJECTS)
 	cp bin/simple2d.sh build/simple2d
 	chmod 0777 build/simple2d
-	$(CC) $(CFLAGS) $(INCLUDES) src/simple2d.c -c -o build/simple2d.o
-	$(CC) $(CFLAGS) $(INCLUDES) src/gl.c -c -o build/gl.o
-ifeq ($(PLATFORM),arm)
-	$(CC) $(CFLAGS) $(INCLUDES) src/gles.c -c -o build/gles.o
-	ar -vq build/libsimple2d.a build/simple2d.o build/gl.o build/gles.o
-	rm build/gl.o build/gles.o
-else
-	$(CC) $(CFLAGS) $(INCLUDES) src/gl2.c -c -o build/gl2.o
-	$(CC) $(CFLAGS) $(INCLUDES) src/gl3.c -c -o build/gl3.o
-	ar -vq build/libsimple2d.a build/simple2d.o build/gl.o build/gl2.o build/gl3.o
-	rm build/gl.o build/gl2.o build/gl3.o
-endif
-	rm build/simple2d.o
+	rm build/*.o
+
+prereqs:
+	@$(call task,Building)
+	mkdir -p build
+
+$(SOURCES):
+	$(CC) $(CFLAGS) $(INCLUDES) src/$@.c -c -o build/$@.o
 
 install:
 	@$(call task,Installing Simple 2D)
@@ -81,7 +82,7 @@ ifeq ($(PLATFORM),mingw)
 endif
 
 ifeq ($(PLATFORM),mingw)
-installer: clean build
+installer: clean all
 	mkdir -p $(INSTALLER_DIR)/include
 	mkdir -p $(INSTALLER_DIR)/lib
 	mkdir -p $(INSTALLER_DIR)/bin
@@ -127,7 +128,7 @@ tests:
 	$(CC) $(CFLAGS) tests/testcard.c `simple2d --libs` -o tests/testcard
 	$(CC) $(CFLAGS) tests/audio.c    `simple2d --libs` -o tests/audio
 
-rebuild: uninstall clean build install tests
+rebuild: uninstall clean all install tests
 
 auto:
 	@$(call run_test,auto)

@@ -278,6 +278,11 @@ void S2D_GL_Clear(S2D_Color clr);
 // S2D Functions ///////////////////////////////////////////////////////////////
 
 /*
+ * Checks if a file exists and can be accessed
+ */
+bool S2D_FileExists(const char *path);
+
+/*
  * Logs standard messages to the console
  */
 void S2D_Log(const char *msg, int type);
@@ -295,7 +300,17 @@ void S2D_Diagnostics(bool status);
 /*
  * Enable terminal colors in Windows
  */
-void S2D_Enable_Terminal_Colors_Windows();
+void S2D_Windows_EnableTerminalColors();
+
+/*
+ * Initialize Simple 2D subsystems
+ */
+bool S2D_Init();
+
+/*
+ * Quits S2D subsystems
+ */
+void S2D_Quit(void);
 
 /*
  * Create a window structure and initiate subsystems
@@ -318,11 +333,6 @@ int S2D_Close(S2D_Window *window);
  * Free all resources
  */
 int S2D_FreeWindow(S2D_Window *window);
-
-/*
- * Quits S2D subsystems
- */
-void S2D_Quit(void);
 
 /*
  * Draw triangle
