@@ -109,7 +109,7 @@ void on_key(const char *key) {
 }
 
 
-int main(int argc, const char *argv[]) {
+int main() {
   
   S2D_Diagnostics(true);
   

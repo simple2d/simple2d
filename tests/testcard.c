@@ -237,7 +237,7 @@ void render() {
 }
 
 
-int main(int argc, const char *argv[]) {
+int main() {
   
   S2D_Diagnostics(true);
   
