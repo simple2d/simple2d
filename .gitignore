@@ -4,3 +4,4 @@ tests/auto
 tests/triangle
 tests/testcard
 tests/audio
+tests/*.exe
