@@ -335,6 +335,11 @@ int S2D_Close(S2D_Window *window);
 int S2D_FreeWindow(S2D_Window *window);
 
 /*
+ * Detect controllers and joysticks
+ */
+void S2D_DetectControllers();
+
+/*
  * Draw triangle
  */
 void S2D_DrawTriangle(
