@@ -32,10 +32,10 @@ void S2D_GL_PrintError(char *error) {
 void S2D_GL_PrintContextInfo(S2D_Window *window) {
   sprintf(S2D_msg,
     "OpenGL Context\n"
-    "GL_VENDOR: %s\n"
-    "GL_RENDERER: %s\n"
-    "GL_VERSION: %s\n"
-    "GL_SHADING_LANGUAGE_VERSION: %s",
+    "      GL_VENDOR: %s\n"
+    "      GL_RENDERER: %s\n"
+    "      GL_VERSION: %s\n"
+    "      GL_SHADING_LANGUAGE_VERSION: %s",
     window->S2D_GL_VENDOR,
     window->S2D_GL_RENDERER,
     window->S2D_GL_VERSION,
