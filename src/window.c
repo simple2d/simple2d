@@ -90,6 +90,7 @@ S2D_Window *S2D_CreateWindow(const char *title, int width, int height,
     }
   }
   
+  // Return the window structure
   return window;
 }
 

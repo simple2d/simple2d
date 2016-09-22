@@ -195,7 +195,7 @@ static void S2D_GL3_DrawTexture(int x, int y, int w, int h,
                                 GLuint texture_id) {
   
   GLfloat vertices[] =
-  // |x, y coords | colors    | x, y texture coords
+  //  x, y coords | colors    | x, y texture coords
     { x    , y    , r, g, b, a, tx1, ty1,    // Top-left
       x + w, y    , r, g, b, a, tx2, ty2,    // Top-right
       x + w, y + h, r, g, b, a, tx3, ty3,    // Bottom-right
@@ -203,9 +203,10 @@ static void S2D_GL3_DrawTexture(int x, int y, int w, int h,
   
   glUseProgram(texShaderProgram);
   glBindTexture(GL_TEXTURE_2D, texture_id);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
   
+  glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+  
   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 

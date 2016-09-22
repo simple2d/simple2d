@@ -103,7 +103,7 @@ GLuint S2D_GL_LoadShader(GLenum type, const GLchar *shaderSrc, char *shaderName)
       char *infoLog = malloc(sizeof(char) * infoLen);
       
       glGetShaderInfoLog(shader, infoLen, NULL, infoLog);
-      printf("Error compiling shader %s:\n%s\n", shaderName, infoLog);
+      printf("Error compiling shader \"%s\":\n%s\n", shaderName, infoLog);
       
       free(infoLog);
     }
@@ -203,7 +203,7 @@ void S2D_GL_SetViewport(S2D_Window *window) {
 
 
 /*
- * Init OpenGL
+ * Initialize OpenGL
  */
 int S2D_GL_Init(S2D_Window *window) {
   

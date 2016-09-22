@@ -313,7 +313,7 @@ bool S2D_Init();
 void S2D_Quit(void);
 
 /*
- * Create a window structure and initiate subsystems
+ * Create a window
  */
 S2D_Window *S2D_CreateWindow(
   const char *title, int width, int height, S2D_Update, S2D_Render, int flags

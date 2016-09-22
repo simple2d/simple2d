@@ -17,6 +17,8 @@ OBJECTS=$(foreach var,$(SOURCES),build/$(var).o)
 # Install directory and filename for the MinGW Windows installer
 INSTALLER_DIR=build/win-installer-mingw
 INSTALLER_FNAME=simple2d-windows-mingw.zip
+# Makefile for Unix-like systems:
+#   macOS, Linux, Raspberry Pi, MinGW
 
 # For ARM platforms
 ifneq (,$(findstring arm,$(shell uname -m)))
@@ -39,7 +41,7 @@ ifneq (,$(findstring MINGW,$(shell uname -s)))
 endif
 
 define task
-	printf "\n${TASK}==>${BOLD} $(1) ${NORMAL}\n\n"
+	printf "\n\033[1;34m==>\033[1;39m $(1) \033[0m\n\n"
 endef
 
 define run_test

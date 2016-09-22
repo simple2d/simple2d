@@ -1,3 +1,5 @@
+# Makefile for Windows using Visual C++
+
 # Sources
 SRCS=src\simple2d.c src\image.c src\music.c src\shapes.c src\sound.c src\sprite.c src\text.c src\window.c src\gl.c src\gl2.c src\gl3.c
 OBJS=build\simple2d.obj build\image.obj build\music.obj build\shapes.obj build\sound.obj build\sprite.obj build\text.obj build\window.obj build\gl.obj build\gl2.obj build\gl3.obj

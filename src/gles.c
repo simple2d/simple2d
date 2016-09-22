@@ -205,6 +205,7 @@ static void S2D_GLES_DrawTexture(int x, int y, int w, int h,
                                  GLuint texture_id) {
   
   GLfloat vVertices[] =
+  //  x, y coords      | x, y texture coords
     { x,     y,     0.f, tx1, ty1,
       x + w, y,     0.f, tx2, ty2,
       x + w, y + h, 0.f, tx3, ty3,
