@@ -14,7 +14,7 @@ static GLuint texColorLocation;
 static GLuint texCoordLocation;
 static GLuint samplerLocation;
 
-static GLuint indices[] =
+static GLushort indices[] =
   { 0, 1, 2,
     2, 3, 0 };
 
@@ -240,7 +240,7 @@ static void S2D_GLES_DrawTexture(int x, int y, int w, int h,
   // Set the sampler texture unit to 0
   glUniform1i(samplerLocation, 0);
   
-  glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, indices);
+  glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, indices);
 }
 
 
