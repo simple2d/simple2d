@@ -1,22 +1,3 @@
-BOLD=\033[1;39m
-TASK=\033[1;34m
-NORMAL=\033[0m
-
-PREFIX?=/usr/local
-CFLAGS=-std=c99
-
-SOURCES=simple2d image music shapes sound sprite text window
-ifeq ($(PLATFORM),arm)
-	SOURCES+=gl gles
-else
-	SOURCES+=gl gl2 gl3
-endif
-
-OBJECTS=$(foreach var,$(SOURCES),build/$(var).o)
-
-# Install directory and filename for the MinGW Windows installer
-INSTALLER_DIR=build/win-installer-mingw
-INSTALLER_FNAME=simple2d-windows-mingw.zip
 # Makefile for Unix-like systems:
 #   macOS, Linux, Raspberry Pi, MinGW
 
@@ -39,6 +20,22 @@ ifneq (,$(findstring MINGW,$(shell uname -s)))
 	CC=gcc
 	INCLUDES=-I/usr/local/include/
 endif
+
+PREFIX?=/usr/local
+CFLAGS=-std=c99
+
+SOURCES=simple2d shapes image text sprite sound music controllers window
+ifeq ($(PLATFORM),arm)
+	SOURCES+=gl gles
+else
+	SOURCES+=gl gl2 gl3
+endif
+
+OBJECTS=$(foreach var,$(SOURCES),build/$(var).o)
+
+# Install directory and filename for the MinGW Windows installer
+INSTALLER_DIR=build/win-installer-mingw
+INSTALLER_FNAME=simple2d-windows-mingw.zip
 
 define task
 	printf "\n\033[1;34m==>\033[1;39m $(1) \033[0m\n\n"
