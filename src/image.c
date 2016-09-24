@@ -4,8 +4,7 @@
 
 
 /*
- * Create an image
- * Params: path = image file path
+ * Create an image, given a file path
  */
 S2D_Image *S2D_CreateImage(const char *path) {
   S2D_Init();

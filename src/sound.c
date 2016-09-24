@@ -4,7 +4,7 @@
 
 
 /*
- * Create a sound
+ * Create a sound, given an audio file path
  */
 S2D_Sound *S2D_CreateSound(const char *path) {
   S2D_Init();

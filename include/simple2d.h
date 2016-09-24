@@ -64,7 +64,7 @@
 #include <SDL2/SDL_mixer.h>
 #include <SDL2/SDL_ttf.h>
 
-// S2D Definitions /////////////////////////////////////////////////////////////
+// Simple 2D Definitions ///////////////////////////////////////////////////////
 
 // Messages
 #define S2D_INFO  1
@@ -95,7 +95,9 @@ typedef void (*S2D_On_Key)(const char *key);
 typedef void (*S2D_On_Key_Up)(const char *key);
 typedef void (*S2D_On_Key_Down)(const char *key);
 typedef void (*S2D_On_Mouse)(int x, int y);
-typedef void (*S2D_On_Controller)(int which, bool is_axis, int axis, int val, bool is_btn, int btn);
+typedef void (*S2D_On_Controller)(
+  int which, bool is_axis, int axis, int val, bool is_btn, int btn
+);
 
 // S2D_Color
 typedef struct {
@@ -207,6 +209,217 @@ typedef struct {
   Mix_Music *data;
 } S2D_Music;
 
+// Simple 2D Functions /////////////////////////////////////////////////////////
+
+/*
+ * Checks if a file exists and can be accessed
+ */
+bool S2D_FileExists(const char *path);
+
+/*
+ * Logs standard messages to the console
+ */
+void S2D_Log(const char *msg, int type);
+
+/*
+ * Logs Simple 2D errors to the console, with caller and message body
+ */
+void S2D_Error(const char *caller, const char *msg);
+
+/*
+ * Enable/disable logging of diagnostics
+ */
+void S2D_Diagnostics(bool status);
+
+/*
+ * Enable terminal colors in Windows
+ */
+void S2D_Windows_EnableTerminalColors();
+
+/*
+ * Initialize Simple 2D subsystems
+ */
+bool S2D_Init();
+
+/*
+ * Quits Simple 2D subsystems
+ */
+void S2D_Quit(void);
+
+// Shapes //////////////////////////////////////////////////////////////////////
+
+/*
+ * Draw a triangle
+ */
+void S2D_DrawTriangle(
+  GLfloat x1,  GLfloat y1,
+  GLfloat c1r, GLfloat c1g, GLfloat c1b, GLfloat c1a,
+  GLfloat x2,  GLfloat y2,
+  GLfloat c2r, GLfloat c2g, GLfloat c2b, GLfloat c2a,
+  GLfloat x3,  GLfloat y3,
+  GLfloat c3r, GLfloat c3g, GLfloat c3b, GLfloat c3a
+);
+
+/*
+ * Draw a quad, using two triangles
+ */
+void S2D_DrawQuad(
+  GLfloat x1,  GLfloat y1,
+  GLfloat c1r, GLfloat c1g, GLfloat c1b, GLfloat c1a,
+  GLfloat x2,  GLfloat y2,
+  GLfloat c2r, GLfloat c2g, GLfloat c2b, GLfloat c2a,
+  GLfloat x3,  GLfloat y3,
+  GLfloat c3r, GLfloat c3g, GLfloat c3b, GLfloat c3a,
+  GLfloat x4,  GLfloat y4,
+  GLfloat c4r, GLfloat c4g, GLfloat c4b, GLfloat c4a
+);
+
+// Image ///////////////////////////////////////////////////////////////////////
+
+/*
+ * Create an image, given a file path
+ */
+S2D_Image *S2D_CreateImage(const char *path);
+
+/*
+ * Draw an image
+ */
+void S2D_DrawImage(S2D_Image *img);
+
+/*
+ * Free an image
+ */
+void S2D_FreeImage(S2D_Image *img);
+
+// Sprite //////////////////////////////////////////////////////////////////////
+
+/*
+ * Create a sprite, given an image file path
+ */
+S2D_Sprite *S2D_CreateSprite(const char *path);
+
+/*
+ * Clip a sprite
+ */
+void S2D_ClipSprite(S2D_Sprite *spr, int x, int y, int w, int h);
+
+/*
+ * Draw a sprite
+ */
+void S2D_DrawSprite(S2D_Sprite *spr);
+
+/*
+ * Free a sprite
+ */
+void S2D_FreeSprite(S2D_Sprite *spr);
+
+// Text ////////////////////////////////////////////////////////////////////////
+
+/*
+ * Create text, given a font file path, the message, and size
+ */
+S2D_Text *S2D_CreateText(const char *font, const char *msg, int size);
+
+/*
+* Sets the text message
+*/
+void S2D_SetText(S2D_Text *txt, const char *msg);
+
+/*
+ * Draw text
+ */
+void S2D_DrawText(S2D_Text *txt);
+
+/*
+ * Free the text
+ */
+void S2D_FreeText(S2D_Text *txt);
+
+// Sound ///////////////////////////////////////////////////////////////////////
+
+/*
+ * Create a sound, given an audio file path
+ */
+S2D_Sound *S2D_CreateSound(const char *path);
+
+/*
+ * Play the sound
+ */
+void S2D_PlaySound(S2D_Sound *sound);
+
+/*
+ * Free the sound
+ */
+void S2D_FreeSound(S2D_Sound *sound);
+
+// Music ///////////////////////////////////////////////////////////////////////
+
+/*
+ * Create the music, given an audio file path
+ */
+S2D_Music *S2D_CreateMusic(const char *path);
+
+/*
+ * Play the music
+ */
+void S2D_PlayMusic(S2D_Music *music, int times);
+
+/*
+ * Pause the playing music
+ */
+void S2D_PauseMusic();
+
+/*
+ * Resume the current music
+ */
+void S2D_ResumeMusic();
+
+/*
+ * Stops the playing music; interrupts fader effects
+ */
+void S2D_StopMusic();
+
+/*
+ * Fade out the playing music
+ */
+void S2D_FadeOutMusic(int ms);
+
+/*
+ * Free the music
+ */
+void S2D_FreeMusic(S2D_Music *music);
+
+// Controllers /////////////////////////////////////////////////////////////////
+
+/*
+ * Detect controllers and joysticks
+ */
+void S2D_DetectControllers();
+
+// Window //////////////////////////////////////////////////////////////////////
+
+/*
+ * Create a window
+ */
+S2D_Window *S2D_CreateWindow(
+  const char *title, int width, int height, S2D_Update, S2D_Render, int flags
+);
+
+/*
+ * Show the window
+ */
+int S2D_Show(S2D_Window *window);
+
+/*
+ * Close the window
+ */
+int S2D_Close(S2D_Window *window);
+
+/*
+ * Free all resources
+ */
+int S2D_FreeWindow(S2D_Window *window);
+
 // Simple 2D OpenGL Functions //////////////////////////////////////////////////
 
 int S2D_GL_Init(S2D_Window *window);
@@ -274,198 +487,3 @@ void S2D_GL_Clear(S2D_Color clr);
   void S2D_GL2_DrawText(S2D_Text *txt);
   void S2D_GL3_DrawText(S2D_Text *txt);
 #endif
-
-// S2D Functions ///////////////////////////////////////////////////////////////
-
-/*
- * Checks if a file exists and can be accessed
- */
-bool S2D_FileExists(const char *path);
-
-/*
- * Logs standard messages to the console
- */
-void S2D_Log(const char *msg, int type);
-
-/*
- * Logs Simple 2D errors to the console, with caller and message body
- */
-void S2D_Error(const char *caller, const char *msg);
-
-/*
- * Enable/disable logging of diagnostics
- */
-void S2D_Diagnostics(bool status);
-
-/*
- * Enable terminal colors in Windows
- */
-void S2D_Windows_EnableTerminalColors();
-
-/*
- * Initialize Simple 2D subsystems
- */
-bool S2D_Init();
-
-/*
- * Quits S2D subsystems
- */
-void S2D_Quit(void);
-
-/*
- * Create a window
- */
-S2D_Window *S2D_CreateWindow(
-  const char *title, int width, int height, S2D_Update, S2D_Render, int flags
-);
-
-/*
- * Show the window
- */
-int S2D_Show(S2D_Window *window);
-
-/*
- * Close the window
- */
-int S2D_Close(S2D_Window *window);
-
-/*
- * Free all resources
- */
-int S2D_FreeWindow(S2D_Window *window);
-
-/*
- * Detect controllers and joysticks
- */
-void S2D_DetectControllers();
-
-/*
- * Draw triangle
- */
-void S2D_DrawTriangle(
-  GLfloat x1,  GLfloat y1,
-  GLfloat c1r, GLfloat c1g, GLfloat c1b, GLfloat c1a,
-  GLfloat x2,  GLfloat y2,
-  GLfloat c2r, GLfloat c2g, GLfloat c2b, GLfloat c2a,
-  GLfloat x3,  GLfloat y3,
-  GLfloat c3r, GLfloat c3g, GLfloat c3b, GLfloat c3a
-);
-
-/*
- * Draw quad
- */
-void S2D_DrawQuad(
-  GLfloat x1,  GLfloat y1,
-  GLfloat c1r, GLfloat c1g, GLfloat c1b, GLfloat c1a,
-  GLfloat x2,  GLfloat y2,
-  GLfloat c2r, GLfloat c2g, GLfloat c2b, GLfloat c2a,
-  GLfloat x3,  GLfloat y3,
-  GLfloat c3r, GLfloat c3g, GLfloat c3b, GLfloat c3a,
-  GLfloat x4,  GLfloat y4,
-  GLfloat c4r, GLfloat c4g, GLfloat c4b, GLfloat c4a
-);
-
-/*
- * Create an image
- */
-S2D_Image *S2D_CreateImage(const char *path);
-
-/*
- * Draw an image
- */
-void S2D_DrawImage(S2D_Image *img);
-
-/*
- * Free an image
- */
-void S2D_FreeImage(S2D_Image *img);
-
-/*
- * Create a sprite
- */
-S2D_Sprite *S2D_CreateSprite(const char *path);
-
-/*
- * Clip a sprite
- */
-void S2D_ClipSprite(S2D_Sprite *spr, int x, int y, int w, int h);
-
-/*
- * Draw a sprite
- */
-void S2D_DrawSprite(S2D_Sprite *spr);
-
-/*
- * Free a sprite
- */
-void S2D_FreeSprite(S2D_Sprite *spr);
-
-/*
- * Create text
- */
-S2D_Text *S2D_CreateText(const char *font, const char *msg, int size);
-
-/*
-* Sets the text message
-*/
-void S2D_SetText(S2D_Text *txt, const char *msg);
-
-/*
- * Draw text
- */
-void S2D_DrawText(S2D_Text *txt);
-
-/*
- * Free the text
- */
-void S2D_FreeText(S2D_Text *txt);
-
-/*
- * Create a sound
- */
-S2D_Sound *S2D_CreateSound(const char *path);
-
-/*
- * Play the sound
- */
-void S2D_PlaySound(S2D_Sound *sound);
-
-/*
- * Free the sound
- */
-void S2D_FreeSound(S2D_Sound *sound);
-
-/*
- * Create music
- */
-S2D_Music *S2D_CreateMusic(const char *path);
-
-/*
- * Play the music
- */
-void S2D_PlayMusic(S2D_Music *music, int times);
-
-/*
- * Pause the playing music
- */
-void S2D_PauseMusic();
-
-/*
- * Resume the current music
- */
-void S2D_ResumeMusic();
-
-/*
- * Stops the playing music
- */
-void S2D_StopMusic();
-
-/*
- * Fade out the playing music
- */
-void S2D_FadeOutMusic(int ms);
-
-/*
- * Free the music
- */
-void S2D_FreeMusic(S2D_Music *music);

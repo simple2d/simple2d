@@ -165,7 +165,7 @@ void S2D_GL_SetViewport(S2D_Window *window) {
       ortho_w = window->width;
       ortho_h = window->height;
       break;
-      
+    
     case S2D_SCALE:
       scale = fmin(
         window->width  / (double)window->viewport.width,
@@ -179,7 +179,7 @@ void S2D_GL_SetViewport(S2D_Window *window) {
       x = window->width  / 2 - w/2;
       y = window->height / 2 - h/2;
       break;
-      
+    
     case S2D_STRETCH:
       break;
   }

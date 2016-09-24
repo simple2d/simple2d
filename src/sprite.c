@@ -4,8 +4,7 @@
 
 
 /*
- * Create a sprite
- * Params: path = image file path
+ * Create a sprite, given an image file path
  */
 S2D_Sprite *S2D_CreateSprite(const char *path) {
   

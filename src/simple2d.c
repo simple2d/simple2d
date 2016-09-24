@@ -121,7 +121,7 @@ bool S2D_Init() {
 
 
 /*
- * Quits S2D subsystems
+ * Quits Simple 2D subsystems
  */
 void S2D_Quit() {
   IMG_Quit();

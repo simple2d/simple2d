@@ -4,9 +4,7 @@
 
 
 /*
- * Create text
- * Params: font = font file path; msg = text to display; size = font size
- * Returns NULL if text could not be created
+ * Create text, given a font file path, the message, and size
  */
 S2D_Text *S2D_CreateText(const char *font, const char *msg, int size) {
   S2D_Init();
