@@ -389,6 +389,13 @@ void S2D_FadeOutMusic(int ms);
  */
 void S2D_FreeMusic(S2D_Music *music);
 
+// Input ///////////////////////////////////////////////////////////////////////
+
+/*
+ * Get the mouse coordinates relative to the viewport
+ */
+void S2D_GetMouseOnViewport(S2D_Window *window, int wx, int wy, int *x, int *y);
+
 // Controllers /////////////////////////////////////////////////////////////////
 
 /*

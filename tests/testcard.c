@@ -55,6 +55,10 @@ void on_key_down(const char *key) {
 
 void on_mouse(int x, int y) {
   printf("Mouse down at: %i, %i\n", x, y);
+  S2D_DrawQuad(pointer.x - 9, pointer.y - 11, 0, 1, 0, 1,
+               pointer.x + 9, pointer.y - 11, 0, 1, 0, 1,
+               pointer.x + 9, pointer.y + 8,  0, 1, 0, 1,
+               pointer.x - 9, pointer.y + 8,  0, 1, 0, 1);
 }
 
 

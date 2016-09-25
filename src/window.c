@@ -134,6 +134,8 @@ int S2D_Show(S2D_Window *window) {
     
     // Handle Input ////////////////////////////////////////////////////////////
     
+    int mx, my;  // mouse x, y coordinates
+    
     SDL_Event e;
     while (SDL_PollEvent(&e)) {
       switch (e.type) {
@@ -150,7 +152,8 @@ int S2D_Show(S2D_Window *window) {
         
         case SDL_MOUSEBUTTONDOWN:
           if (window->on_mouse)
-            window->on_mouse(e.button.x, e.button.y);
+            S2D_GetMouseOnViewport(window, e.button.x, e.button.y, &mx, &my);
+            window->on_mouse(mx, my);
           break;
         
         case SDL_JOYAXISMOTION:
@@ -193,8 +196,10 @@ int S2D_Show(S2D_Window *window) {
       }
     }
     
-    // Store the mouse position
-    SDL_GetMouseState(&window->mouse.x, &window->mouse.y);
+    // Get and store mouse position relative to the viewport
+    int wx, wy;  // mouse x, y coordinates relative to the window
+    SDL_GetMouseState(&wx, &wy);
+    S2D_GetMouseOnViewport(window, wx, wy, &window->mouse.x, &window->mouse.y);
     
     // Update Window State /////////////////////////////////////////////////////
     
