@@ -148,14 +148,30 @@ int S2D_GL_CheckLinked(GLuint program, char *name) {
 
 
 /*
+ * Calculate the viewport's scaled width and height
+ */
+void S2D_GL_GetViewportScale(S2D_Window *window, int *w, int *h, double *scale) {
+  
+  double s = fmin(
+    window->width  / (double)window->viewport.width,
+    window->height / (double)window->viewport.height
+  );
+  
+  *w = window->viewport.width  * s;
+  *h = window->viewport.height * s;
+  
+  if (scale) *scale = s;
+}
+
+
+/*
  * Sets the viewport and matrix projection
  */
 void S2D_GL_SetViewport(S2D_Window *window) {
   
   int ortho_w = window->viewport.width;
   int ortho_h = window->viewport.height;
-  int x, y, w, h;  // Calculated GL viewport values
-  double scale;
+  int x, y, w, h;  // calculated GL viewport values
   
   x = 0; y = 0; w = window->width; h = window->height;
   
@@ -167,15 +183,8 @@ void S2D_GL_SetViewport(S2D_Window *window) {
       break;
     
     case S2D_SCALE:
-      scale = fmin(
-        window->width  / (double)window->viewport.width,
-        window->height / (double)window->viewport.height
-      );
-      
-      w = window->viewport.width  * scale;
-      h = window->viewport.height * scale;
-      
-      // center the viewport
+      S2D_GL_GetViewportScale(window, &w, &h, NULL);
+      // Center the viewport
       x = window->width  / 2 - w/2;
       y = window->height / 2 - h/2;
       break;
