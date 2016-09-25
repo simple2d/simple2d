@@ -65,16 +65,16 @@ int S2D_Show(S2D_Window *window) {
   
   if (!window->sdl) S2D_Error("SDL_CreateWindow", SDL_GetError());
   
-  // Window created by SDL might not actually be the requested size.
-  // If not, retrieve and set the actual window size.
+  // The window created by SDL might not actually be the requested size.
+  // If it's not the same, retrieve and store the actual window size.
   int actual_width, actual_height;
   SDL_GetWindowSize(window->sdl, &actual_width, &actual_height);
   
   if ((window->width != actual_width) || (window->height != actual_height)) {
-    sprintf(S2D_msg,
-      "Resolution %dx%d unsupported, scaling to %dx%d",
-      window->width, window->height, actual_width, actual_height);
-    S2D_Log(S2D_msg, S2D_WARN);
+    
+    sprintf(S2D_msg, "Scaling window to %ix%i (requested size was %ix%i)",
+      actual_width, actual_height, window->width, window->height);
+    S2D_Log(S2D_msg, S2D_INFO);
     
     window->width  = actual_width;
     window->height = actual_height;
@@ -158,21 +158,24 @@ int S2D_Show(S2D_Window *window) {
         
         case SDL_JOYAXISMOTION:
           if (window->on_controller)
-            window->on_controller(e.jaxis.which, true, e.jaxis.axis, e.jaxis.value, false, 0);
+            window->on_controller(
+              e.jaxis.which, true, e.jaxis.axis, e.jaxis.value, false, 0
+            );
           break;
         
         case SDL_JOYBUTTONDOWN:
           if (window->on_controller)
-            window->on_controller(e.jaxis.which, false, 0, 0, true, e.jbutton.button);
+            window->on_controller(
+              e.jaxis.which, false, 0, 0, true, e.jbutton.button
+            );
           break;
         
         case SDL_WINDOWEVENT:
           switch (e.window.event) {
             case SDL_WINDOWEVENT_RESIZED:
-              // Store new window size
+              // Store new window size, set viewport
               window->width  = e.window.data1;
               window->height = e.window.data2;
-              
               S2D_GL_SetViewport(window);
               break;
           }
