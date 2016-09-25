@@ -24,7 +24,7 @@ endif
 PREFIX?=/usr/local
 CFLAGS=-std=c99
 
-SOURCES=simple2d shapes image text sprite sound music controllers window
+SOURCES=simple2d shapes image sprite text sound music input controllers window
 ifeq ($(PLATFORM),arm)
 	SOURCES+=gl gles
 else
