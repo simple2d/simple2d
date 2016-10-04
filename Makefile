@@ -38,7 +38,7 @@ INSTALLER_DIR=build/win-installer-mingw
 INSTALLER_FNAME=simple2d-windows-mingw.zip
 
 define task
-	printf "\n\033[1;34m==>\033[1;39m $(1) \033[0m\n\n"
+	printf "\n\033[1;34m==>\033[1;39m $(1)\033[0m\n\n"
 endef
 
 define run_test

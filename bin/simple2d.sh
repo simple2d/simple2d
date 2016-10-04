@@ -48,14 +48,14 @@ sdl_arm_config_flags="\
 --disable-video-mir --disable-video-wayland"
 
 # Colors
-BOLD='\033[1;39m'     # default bold
+BOLD='\033[1;39m'     # default, bold
 UNDERLINE='\033[4m'   # underline
-TASK='\033[1;34m'     # blue    bold
+TASK='\033[1;34m'     # blue, bold
 BLUE=$TASK
-INFO='\033[4;36m'     # cyan    underline
-WARN='\033[4;33m'     # yellow  underline
-ERROR='\033[4;31m'    # red     underline
-SUCCESS='\033[1;32m'  # green   bold
+INFO='\033[4;36m'     # cyan, underline
+WARN='\033[4;33m'     # yellow, underline
+ERROR='\033[4;31m'    # red, underline
+SUCCESS='\033[1;32m'  # green, bold
 NORMAL='\033[0m'      # reset
 
 # Set Variables ################################################################
@@ -65,20 +65,6 @@ platform_display='unknown'
 ret=''  # for storing function return values
 
 # Helper Functions #############################################################
-
-
-# Starts the timer
-start_timer() {
-  START_TIME=$SECONDS
-}
-
-
-# Ends the timer and prints the time elapsed since `start_timer()`
-end_timer() {
-  ELAPSED_TIME=$(($SECONDS - $START_TIME))
-  echo -e "${BOLD}Finished in $(($ELAPSED_TIME/60/60)) hr,"\
-          "$(($ELAPSED_TIME/60%60)) min, and $(($ELAPSED_TIME%60)) sec${NORMAL}\n"
-}
 
 
 # Prints an information messages
@@ -117,7 +103,7 @@ prompt_to_continue() {
 #   $1  String  Name of task
 #   $2  String  Optional white space, e.g. "\n\n"
 print_task() {
-  printf "${TASK}==>${BOLD} $1...${NORMAL}$2"
+  printf "${TASK}==>${BOLD} $1${NORMAL}$2"
 }
 
 
@@ -133,13 +119,13 @@ print_and_run() {
 # params:
 #   $1  String  Name of the library, e.g. SDL2, without the "-l"
 have_lib?() {
-  print_task "Checking for $1"
+  print_task "Checking for $1... "
   
   if $(ld -o /dev/null -l$1 2>&1 | grep -qE '(library not found|ld: cannot find -l)'); then
-    echo " no"
+    echo "no"
     return 1
   else
-    echo " yes"
+    echo "yes"
     return 0
   fi
 }
@@ -502,8 +488,6 @@ install() {
   
   prompt_to_continue "Continue?"
   
-  start_timer
-  
   if have_sdl2_libs?; then
     echo
   else
@@ -515,8 +499,6 @@ install() {
   else
     install_s2d $VERSION
   fi
-  
-  end_timer
   
   success_msg "Simple 2D installed successfully!"
 }
