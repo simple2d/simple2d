@@ -151,9 +151,10 @@ int S2D_Show(S2D_Window *window) {
           break;
         
         case SDL_MOUSEBUTTONDOWN:
-          if (window->on_mouse)
+          if (window->on_mouse) {
             S2D_GetMouseOnViewport(window, e.button.x, e.button.y, &mx, &my);
             window->on_mouse(mx, my);
+          }
           break;
         
         case SDL_JOYAXISMOTION:
