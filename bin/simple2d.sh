@@ -42,7 +42,7 @@ ttf_fname="SDL2_ttf-2.0.14"
 ttf_url="${libsdl_url}/projects/SDL_ttf/release/${ttf_fname}.tar.gz"
 
 # SDL config
-sdl_config_flags="\
+sdl_arm_config_flags="\
 --disable-video-opengl --disable-video-x11 \
 --disable-pulseaudio --disable-esd \
 --disable-video-mir --disable-video-wayland"
@@ -62,7 +62,7 @@ NORMAL='\033[0m'      # reset
 
 platform='unknown'
 platform_display='unknown'
-ret=''  # a return value used by some functions
+ret=''  # for storing function return values
 
 # Helper Functions #############################################################
 
@@ -135,7 +135,7 @@ print_and_run() {
 have_lib?() {
   print_task "Checking for $1"
   
-  if $(ld -o /dev/null -l$1 2>&1 | grep -qE '(library not found|ld: cannot find)'); then
+  if $(ld -o /dev/null -l$1 2>&1 | grep -qE '(library not found|ld: cannot find -l)'); then
     echo " no"
     return 1
   else
@@ -291,8 +291,9 @@ install_sdl_linux() {
 }
 
 
-# Installs SDL from source on ARM platforms
-install_sdl_arm() {
+# Installs SDL from source
+#   Takes about 30 min on RPI 2
+install_sdl_source() {
   
   echo "SDL will be compiled and installed from source."; echo
   
@@ -339,7 +340,6 @@ install_sdl_arm() {
     print_and_run "./configure $3"
     echo; print_task "Compiling" "\n\n"
     make
-    echo -e " done"
     echo; print_task "Installing" "\n\n"
     sudo make install
     rm /tmp/$2.tar.gz
@@ -349,24 +349,28 @@ install_sdl_arm() {
   # Note that `$have_*_lib` variables are set by `have_sdl2_libs?()`
   
   if [[ $have_sdl2_lib == 'false' ]]; then
-    echo; print_task "Installing SDL2" "\n\n"
-    install_sdl_lib $sdl_url $sdl_fname "$sdl_config_flags"
+    echo; print_task "Downloading SDL2" "\n\n"
+    if [[ $platform == 'arm' ]]; then
+      install_sdl_lib $sdl_url $sdl_fname "$sdl_arm_config_flags"
+    else
+      install_sdl_lib $sdl_url $sdl_fname
+    fi
   fi
   
   if [[ $have_image_lib == 'false' ]]; then
-    echo; print_task "Installing SDL2_image" "\n\n"
+    echo; print_task "Downloading SDL2_image" "\n\n"
     install_sdl_lib $image_url $image_fname
   fi
   
   if [[ $have_mixer_lib == 'false' ]]; then
-    echo; print_task "Installing SMPEG2" "\n\n"
+    echo; print_task "Downloading SMPEG2" "\n\n"
     install_sdl_lib $smpeg_url $smpeg_fname
-    echo; print_task "Installing SDL2_mixer" "\n\n"
+    echo; print_task "Downloading SDL2_mixer" "\n\n"
     install_sdl_lib $mixer_url $mixer_fname
   fi
   
   if [[ $have_ttf_lib == 'false' ]]; then
-    echo; print_task "Installing SDL2_ttf" "\n\n"
+    echo; print_task "Downloading SDL2_ttf" "\n\n"
     install_sdl_lib $ttf_url $ttf_fname
   fi
   
@@ -385,7 +389,7 @@ install_sdl() {
   if [[ $platform == 'linux' ]]; then
     install_sdl_linux
   elif [[ $platform == 'arm' ]]; then
-    install_sdl_arm
+    install_sdl_source
   fi
 }
 
@@ -450,7 +454,7 @@ install_s2d() {
 }
 
 
-# Main entry point to install Simple 2D
+# Main entry point to install Simple 2D and SDL
 # params:
 #   $1  String  Flags used, e.g. `--sdl`
 install() {
@@ -493,7 +497,7 @@ install() {
   echo
   
   if [[ $1 == '--HEAD' ]]; then
-    echo -e "This will install Simple 2D from the `master` development branch.\n"
+    echo -e "This will install Simple 2D from the \`master\` development branch.\n"
   fi
   
   prompt_to_continue "Continue?"
@@ -544,8 +548,8 @@ uninstall_sdl_linux() {
 }
 
 
-# Uninstalls SDL on ARM platforms
-uninstall_sdl_arm() {
+# Uninstalls SDL from source
+uninstall_sdl_source() {
   
   prompt_to_continue "Uninstall SDL now?"
   
@@ -557,9 +561,7 @@ uninstall_sdl_arm() {
     wget -N $1
     tar -xzf $2.tar.gz
     cd $2
-    print_task "Configuring" "\n\n"
     ./configure $3
-    print_task "Uninstalling" "\n\n"
     sudo make uninstall
     rm /tmp/$2.tar.gz
     rm -rf /tmp/$2
@@ -575,8 +577,12 @@ uninstall_sdl_arm() {
   echo; print_task "Uninstalling SDL2_ttf" "\n\n"
   uninstall_sdl_lib $ttf_url $ttf_fname
   
-  print_task "Uninstalling SDL2" "\n\n"
-  uninstall_sdl_lib $sdl_url $sdl_fname "$sdl_config_flags"
+  echo; print_task "Uninstalling SDL2" "\n\n"
+  if [[ $platform == 'arm' ]]; then
+    uninstall_sdl_lib $sdl_url $sdl_fname "$sdl_arm_config_flags"
+  else
+    uninstall_sdl_lib $sdl_url $sdl_fname
+  fi
   
   echo
   if have_sdl2_libs?; then
@@ -601,7 +607,7 @@ uninstall_sdl() {
   if [[ $platform == 'linux' ]]; then
     uninstall_sdl_linux
   elif [[ $platform == 'arm' ]]; then
-    uninstall_sdl_arm
+    uninstall_sdl_source
   fi
 }
 
