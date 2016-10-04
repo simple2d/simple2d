@@ -411,7 +411,7 @@ install_s2d() {
     exit
   fi
   
-  echo; print_task "Unpacking" "\n"; echo
+  echo; print_task "Unpacking" "\n\n"
   print_and_run "unzip -q $tmp_dir/$f_name -d $tmp_dir"
   
   # Check if archive was unpacked properly
@@ -422,11 +422,8 @@ install_s2d() {
   
   print_and_run "cd $tmp_dir/simple2d-$1"
   
-  echo; print_task "Compiling" "\n\n"
-  print_and_run "make"
-  
-  echo; print_task "Installing" "\n\n"
-  print_and_run "sudo make install"
+  echo; print_and_run "make"
+  echo; print_and_run "sudo make install"
   
   echo; print_task "Cleaning up" "\n"; echo
   print_and_run "rm -rf $tmp_dir"; echo
