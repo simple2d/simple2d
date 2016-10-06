@@ -24,10 +24,10 @@ void S2D_DetectControllers() {
     if (SDL_IsGameController(i)) {
       controller = SDL_GameControllerOpen(i);
       if (controller) {
-        sprintf(S2D_msg, "Controller #%i: %s\n", i, SDL_GameControllerName(controller));
+        sprintf(S2D_msg, "Controller #%i: %s", i, SDL_GameControllerName(controller));
         S2D_Log(S2D_msg, S2D_INFO);
       } else {
-        sprintf(S2D_msg, "Could not open controller #%i: %s\n", i, SDL_GetError());
+        sprintf(S2D_msg, "Could not open controller #%i: %s", i, SDL_GetError());
         S2D_Log(S2D_msg, S2D_ERROR);
       }
       
