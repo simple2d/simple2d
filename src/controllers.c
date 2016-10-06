@@ -33,20 +33,13 @@ void S2D_DetectControllers() {
       
     // Controller interface not supported, try to open as joystick
     } else {
-      sprintf(S2D_msg, "Generic controller #%i", i);
-      S2D_Log(S2D_msg, S2D_INFO);
-      
       joy = SDL_JoystickOpen(i);
-      
-      // Joystick is valid
       if (joy) {
-        printf("      Name: %s\n      Axes: %d\n"
-               "      Buttons: %d\n      Balls: %d\n",
-          SDL_JoystickName(joy), SDL_JoystickNumAxes(joy),
-          SDL_JoystickNumButtons(joy), SDL_JoystickNumBalls(joy)
+        sprintf(S2D_msg, "Controller #%i (generic): %s", i, SDL_JoystickName(joy));
+        S2D_Log(S2D_msg, S2D_INFO);
+        printf("      Axes: %d\n      Buttons: %d\n      Balls: %d\n",
+          SDL_JoystickNumAxes(joy), SDL_JoystickNumButtons(joy), SDL_JoystickNumBalls(joy)
         );
-        
-      // Joystick not valid
       } else {
         sprintf(S2D_msg, "Could not open generic controller #%i", i);
         S2D_Log(S2D_msg, S2D_ERROR);
