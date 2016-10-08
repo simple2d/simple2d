@@ -182,7 +182,7 @@ S2D_FULLSCREEN
 S2D_HIGHDPI
 ```
 
-Flags can also be combined using the bitwise OR operator, for example: `S2D_RESIZABLE | S2D_BORDERLESS`.
+Flags can also be combined using the bitwise OR operator, for example: `S2D_RESIZABLE | S2D_BORDERLESS`
 
 The viewport can also be set independently of the window size, for example:
 
@@ -209,7 +209,7 @@ Once your window is ready to go, it can be shown using:
 S2D_Show(window);
 ```
 
-Anytime before or during the window is being shown, these attributes can be set:
+Any time before or during the window is being shown, these attributes can be set:
 
 ```c
 // Cap the frame rate, 60 frames per second by default
@@ -222,7 +222,7 @@ window->background.b = 0.8;
 window->background.a = 1.0;
 ```
 
-Callback functions can also be changed anytime – more on that below. Many values can also be read from the `Window` structure, see the [`simple2d.h`](include/simple2d.h) header file for details.
+Callback functions can also be changed any time – more on that below. Many values can also be read from the `Window` structure, see the [`simple2d.h`](include/simple2d.h) header file for details.
 
 When you're done with the window, free it using:
 
@@ -243,7 +243,7 @@ void render() { /* draw stuff */ }
 
 Remember to add these function names when calling `S2D_CreateWindow` (see ["The Window"](#the-window) section above for an example).
 
-To exit the window loop at anytime, call the following function:
+To exit the window loop at any time, call the following function:
 
 ```c
 S2D_Close(window);
@@ -251,7 +251,7 @@ S2D_Close(window);
 
 ## Drawing Basics
 
-Where a vertex is present, like with shapes, there will be six values which need to be set for each: the `x` and `y` coordinates, and four color values. All values are floats, although `x` and `y` coordinates are typically expressed as whole numbers (from 0 to whatever). When vertices have different color values, the space between them are blended as a gradient.
+Where a vertex is present, like with shapes, there will be six values which need to be set for each: the `x` and `y` coordinates, and four color values. Most values are floats, although `x` and `y` coordinates are typically integers expressed as whole numbers (from 0 to whatever). When vertices have different color values, the space between them are blended as a gradient.
 
 The shorthand for the examples below are:
 
@@ -424,6 +424,61 @@ Since the text was allocated dynamically, you'll eventually need to free it usin
 S2D_FreeText(txt);
 ```
 
+## Audio
+
+Simple 2D supports a number of audio formats, including WAV, MP3, Ogg Vorbis, and FLAC. There are two kinds of audio concepts: sounds and music. Sounds are intended to be short samples, played without interruption. Music is for longer pieces which can be played, paused, stopped, resumed, and faded out.
+
+### Sounds
+
+Create a sound by first declaring a pointer to a `S2D_Sound` structure and initialize it using `S2D_CreateSound` and providing the path to the audio file:
+
+```c
+S2D_Sound *snd = S2D_CreateSound("sound.wav");
+```
+
+Then play the sound like this:
+
+```c
+S2D_PlaySound(snd);
+```
+
+Since sounds are allocated dynamically, free them using:
+
+```c
+S2D_FreeSound(snd);
+```
+
+### Music
+
+Similarly, to create some music, declare a pointer to a `S2D_Music` structure and initialize it using `S2D_CreateMusic` providing the path to the audio file:
+
+```c
+S2D_Music *mus = S2D_CreateMusic("music.ogg");
+```
+
+Play the music using `S2D_PlayMusic` providing the pointer and the number of times to be repeated. For example, to play the music once, set the second parameter to `0`, and to repeat forever, set it to `-1`.
+
+```c
+S2D_PlayMusic(mus, -1);
+```
+
+Only one piece of music can be played at a time. The following functions for pausing, resuming, stopping, and fading out apply to whatever music is currently playing:
+
+```c
+S2D_PauseMusic();
+S2D_ResumeMusic();
+S2D_StopMusic();
+
+// Fade out duration in milliseconds
+S2D_FadeOutMusic(2000);
+```
+
+Since music is allocated dynamically, free it using:
+
+```c
+S2D_FreeMusic(mus);
+```
+
 ## Input
 
 Simple 2D can capture input from just about anything. Let's learn how to grab input events from the mouse, keyboard, and game controllers.
@@ -491,62 +546,9 @@ Then attach the callback to the window:
 window->on_controller = on_controller;
 ```
 
+Controllers are detected when the window is created, but you can look for new controllers at any time by calling `S2D_DetectControllers()`.
+
 A [community-sourced database](https://github.com/gabomdq/SDL_GameControllerDB) of game controller mappings can be used to map numeric button and axis identifiers to named buttons and axes.
-
-## Audio
-
-Simple 2D supports a number of audio formats, including WAV, MP3, Ogg Vorbis, and FLAC. There are two kinds of audio concepts: sounds and music. Sounds are intended to be short samples, played without interruption. Music is for longer pieces which can be played, paused, stopped, resumed, and faded out.
-
-### Sounds
-
-Create a sound by first declaring a pointer to a `S2D_Sound` structure and initialize it using `S2D_CreateSound` and providing the path to the audio file:
-
-```c
-S2D_Sound *snd = S2D_CreateSound("sound.wav");
-```
-
-Then play the sound like this:
-
-```c
-S2D_PlaySound(snd);
-```
-
-Since sounds are allocated dynamically, free them using:
-
-```c
-S2D_FreeSound(snd);
-```
-
-### Music
-
-Similarly, to create some music, declare a pointer to a `S2D_Music` structure and initialize it using `S2D_CreateMusic` providing the path to the audio file:
-
-```c
-S2D_Music *mus = S2D_CreateMusic("music.ogg");
-```
-
-Play the music using `S2D_PlayMusic` providing the pointer and the number of times to be repeated. For example, to play the music once, set the second parameter to `0`, and to repeat forever, set it to `-1`.
-
-```c
-S2D_PlayMusic(mus, -1);
-```
-
-Only one piece of music can be played at a time. The following functions for pausing, resuming, stopping, and fading out apply to whatever music is currently playing:
-
-```c
-S2D_PauseMusic();
-S2D_ResumeMusic();
-S2D_StopMusic();
-
-// Fade out duration in milliseconds
-S2D_FadeOutMusic(2000);
-```
-
-Since music is allocated dynamically, free it using:
-
-```c
-S2D_FreeMusic(mus);
-```
 
 # Contributing
 
