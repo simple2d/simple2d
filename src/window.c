@@ -160,14 +160,21 @@ int S2D_Show(S2D_Window *window) {
         case SDL_JOYAXISMOTION:
           if (window->on_controller)
             window->on_controller(
-              e.jaxis.which, true, e.jaxis.axis, e.jaxis.value, false, 0
+              e.jaxis.which, true, e.jaxis.axis, e.jaxis.value, false, 0, false
             );
           break;
         
         case SDL_JOYBUTTONDOWN:
           if (window->on_controller)
             window->on_controller(
-              e.jaxis.which, false, 0, 0, true, e.jbutton.button
+              e.jaxis.which, false, 0, 0, true, e.jbutton.button, true
+            );
+          break;
+        
+        case SDL_JOYBUTTONUP:
+          if (window->on_controller)
+            window->on_controller(
+              e.jaxis.which, false, 0, 0, true, e.jbutton.button, false
             );
           break;
         

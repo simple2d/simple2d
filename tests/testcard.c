@@ -62,7 +62,7 @@ void on_mouse(int x, int y) {
 }
 
 
-void on_controller(int which, bool is_axis, int axis, int val, bool is_btn, int btn) {
+void on_controller(int which, bool is_axis, int axis, int val, bool is_btn, int btn, bool pressed) {
   puts("=== Controller Pressed ===");
   printf(
     "which: %i\nis_axis: %i\naxis: %i\nval: %i\nis_btn: %i\nbtn: %i\n",

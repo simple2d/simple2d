@@ -534,7 +534,7 @@ To start capturing game controller or joystick input, first define the `on_contr
 // Do something with `btn` if `is_btn` is true
 //
 // Multiple controllers or joysticks may be distinguished by the ID number in `which`
-void on_controller(int which, bool is_axis, int axis, int val, bool is_btn, int btn) { ... }
+void on_controller(int which, bool is_axis, int axis, int val, bool is_btn, int btn, bool pressed) { ... }
 ```
 
 Then attach the callback to the window:
