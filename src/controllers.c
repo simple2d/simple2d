@@ -35,11 +35,11 @@ void S2D_DetectControllers() {
     } else {
       joy = SDL_JoystickOpen(i);
       if (joy) {
-        sprintf(S2D_msg, "Controller #%i (generic): %s", i, SDL_JoystickName(joy));
+        sprintf(S2D_msg,
+          "Controller #%i (generic): %s\n      Axes: %d\n      Buttons: %d\n      Balls: %d",
+          i, SDL_JoystickName(joy), SDL_JoystickNumAxes(joy),
+          SDL_JoystickNumButtons(joy), SDL_JoystickNumBalls(joy));
         S2D_Log(S2D_msg, S2D_INFO);
-        printf("      Axes: %d\n      Buttons: %d\n      Balls: %d\n",
-          SDL_JoystickNumAxes(joy), SDL_JoystickNumButtons(joy), SDL_JoystickNumBalls(joy)
-        );
       } else {
         sprintf(S2D_msg, "Could not open generic controller #%i", i);
         S2D_Log(S2D_msg, S2D_ERROR);
