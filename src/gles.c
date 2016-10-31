@@ -27,14 +27,18 @@ void S2D_GLES_ApplyProjection(GLfloat orthoMatrix[16]) {
   // Use the program object
   glUseProgram(shaderProgram);
   
-  GLuint mMvpLocation = glGetUniformLocation(shaderProgram, "u_mvpMatrix");
-  glUniformMatrix4fv(mMvpLocation, 1, GL_FALSE, orthoMatrix);
+  glUniformMatrix4fv(
+    glGetUniformLocation(shaderProgram, "u_mvpMatrix"),
+    1, GL_FALSE, orthoMatrix
+  );
   
   // Use the texture program object
   glUseProgram(texShaderProgram);
   
-  GLuint texmMvpLocation = glGetUniformLocation(texShaderProgram, "u_mvpMatrix");
-  glUniformMatrix4fv(texmMvpLocation, 1, GL_FALSE, orthoMatrix);
+  glUniformMatrix4fv(
+    glGetUniformLocation(texShaderProgram, "u_mvpMatrix"),
+    1, GL_FALSE, orthoMatrix
+  );
 }
 
 
@@ -170,12 +174,12 @@ void S2D_GLES_DrawTriangle(GLfloat x1,  GLfloat y1,
                            GLfloat x3,  GLfloat y3,
                            GLfloat c3r, GLfloat c3g, GLfloat c3b, GLfloat c3a) {
   
-  GLfloat vVertices[] =
+  GLfloat vertices[] =
     { x1, y1, 0.f,
       x2, y2, 0.f,
       x3, y3, 0.f };
   
-  GLfloat vColors[] =
+  GLfloat colors[] =
     { c1r, c1g, c1b, c1a,
       c2r, c2g, c2b, c2a,
       c3r, c3g, c3b, c3a };
@@ -183,11 +187,11 @@ void S2D_GLES_DrawTriangle(GLfloat x1,  GLfloat y1,
   glUseProgram(shaderProgram);
   
   // Load the vertex position
-  glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, 0, vVertices);
+  glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, 0, vertices);
   glEnableVertexAttribArray(positionLocation);
   
   // Load the colors
-  glVertexAttribPointer(colorLocation, 4, GL_FLOAT, GL_FALSE, 0, vColors);
+  glVertexAttribPointer(colorLocation, 4, GL_FLOAT, GL_FALSE, 0, colors);
   glEnableVertexAttribArray(colorLocation);
   
   // draw
@@ -204,14 +208,14 @@ static void S2D_GLES_DrawTexture(int x, int y, int w, int h,
                                  GLfloat tx3, GLfloat ty3, GLfloat tx4, GLfloat ty4,
                                  GLuint texture_id) {
   
-  GLfloat vVertices[] =
+  GLfloat vertices[] =
   //  x, y coords      | x, y texture coords
     { x,     y,     0.f, tx1, ty1,
       x + w, y,     0.f, tx2, ty2,
       x + w, y + h, 0.f, tx3, ty3,
       x,     y + h, 0.f, tx4, ty4 };
   
-  GLfloat vColors[] =
+  GLfloat colors[] =
     { r, g, b, a,
       r, g, b, a,
       r, g, b, a,
@@ -221,16 +225,16 @@ static void S2D_GLES_DrawTexture(int x, int y, int w, int h,
   
   // Load the vertex position
   glVertexAttribPointer(texPositionLocation, 3, GL_FLOAT, GL_FALSE,
-                        5 * sizeof(GLfloat), vVertices);
+                        5 * sizeof(GLfloat), vertices);
   glEnableVertexAttribArray(texPositionLocation);
   
   // Load the colors
-  glVertexAttribPointer(texColorLocation, 4, GL_FLOAT, GL_FALSE, 0, vColors);
+  glVertexAttribPointer(texColorLocation, 4, GL_FLOAT, GL_FALSE, 0, colors);
   glEnableVertexAttribArray(texColorLocation);
   
   // Load the texture coordinate
   glVertexAttribPointer(texCoordLocation, 2, GL_FLOAT, GL_FALSE,
-                        5 * sizeof(GLfloat), &vVertices[3]);
+                        5 * sizeof(GLfloat), &vertices[3]);
   glEnableVertexAttribArray(texCoordLocation);
   
   // Bind the texture

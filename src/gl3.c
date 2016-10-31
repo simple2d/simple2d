@@ -17,14 +17,18 @@ void S2D_GL3_ApplyProjection(GLfloat orthoMatrix[16]) {
   // Use the program object
   glUseProgram(shaderProgram);
   
-  GLuint mMvpLocation = glGetUniformLocation(shaderProgram, "u_mvpMatrix");
-  glUniformMatrix4fv(mMvpLocation, 1, GL_FALSE, orthoMatrix);
+  glUniformMatrix4fv(
+    glGetUniformLocation(shaderProgram, "u_mvpMatrix"),
+    1, GL_FALSE, orthoMatrix
+  );
   
   // Use the texture program object
   glUseProgram(texShaderProgram);
   
-  GLuint texmMvpLocation = glGetUniformLocation(texShaderProgram, "u_mvpMatrix");
-  glUniformMatrix4fv(texmMvpLocation, 1, GL_FALSE, orthoMatrix);
+  glUniformMatrix4fv(
+    glGetUniformLocation(texShaderProgram, "u_mvpMatrix"),
+    1, GL_FALSE, orthoMatrix
+  );
 }
 
 
