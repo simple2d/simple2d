@@ -671,37 +671,25 @@ update() {
     fi
   }
   
-  if [[ $1 == '--HEAD' ]]; then
-    echo -e "This will update Simple 2D to the latest commit from the `master` development branch.\n"
-    echo; prompt_to_continue "Continue?"
+  # Read this script from repo, get the version number
+  get_remote_str $SCRIPT_URL
+  LATEST_VERSION=$(bash -c "$ret" -- -v)
+  
+  compare_versions $LATEST_VERSION $VERSION
+  
+  # $LATEST_VERSION is newer $VERSION (the version installed)
+  if [[ $? == 1 ]]; then
+    echo -e "A new version of Simple 2D is available.\n"
+    prompt_to_continue "Install now?"
     update_check_sdl
-    install_s2d 'master'
-    success_msg "Simple 2D updated to latest commit!"
-    echo -e "View the revision history:
-${UNDERLINE}https://github.com/simple2d/simple2d/commits/master${NORMAL}"; echo
-    
-  else
-    # Read this script from repo, get the version number
-    get_remote_str $SCRIPT_URL
-    LATEST_VERSION=$(bash -c "$ret" -- -v)
-    
-    compare_versions $LATEST_VERSION $VERSION
-    
-    # $LATEST_VERSION is newer $VERSION (the version installed)
-    if [[ $? == 1 ]]; then
-      echo -e "A new version of Simple 2D is available.\n"
-      prompt_to_continue "Install now?"
-      update_check_sdl
-      install_s2d $LATEST_VERSION
-      success_msg "Simple 2D has been updated to $LATEST_VERSION!"
-      echo -e "View the release notes:
+    install_s2d $LATEST_VERSION
+    success_msg "Simple 2D has been updated to $LATEST_VERSION!"
+    echo -e "View the release notes:
 ${UNDERLINE}https://github.com/simple2d/simple2d/releases/latest${NORMAL}"; echo
-      
-    # $LATEST_VERSION is the same as installed version
-    else
-      info_msg "Installed version ($VERSION) matches latest available"
-      success_msg "Simple 2D is up to date!"
-    fi
+    
+  # $LATEST_VERSION is the same as installed version
+  else
+    echo "Simple 2D is already up to date!"
   fi
 }
 
@@ -848,7 +836,6 @@ Summary of commands and options:
   uninstall     Removes Simple 2D files
     --sdl         Removes SDL only
   update        Updates to latest release
-    --HEAD        Updates to latest commit from the development branch
   doctor        Runs diagnostics, checks installation, reports issues
   --libs        Outputs libraries needed to compile Simple 2D apps
   -v|--version  Prints the installed version
