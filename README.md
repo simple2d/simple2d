@@ -82,6 +82,7 @@ Simple 2D has a few test programs to make sure all functionality is working as i
 - [`triangle.c`](tests/triangle.c) – The "Hello Triangle" example in this README.
 - [`testcard.c`](tests/testcard.c) – A graphical card, similar to [TV test cards](https://en.wikipedia.org/wiki/Test_card), with the goal of ensuring all visuals and inputs are working properly.
 - [`audio.c`](tests/audio.c) – Tests audio functions with various file formats interpreted as sound samples and music.
+- [`controller.c`](tests/controller.c) – Provides visual and numeric feedback of controller input.
 
 ### Building and Running Tests
 

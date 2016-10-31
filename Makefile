@@ -122,10 +122,11 @@ uninstall:
 
 tests:
 	@$(call task,Building tests)
-	$(CC) $(CFLAGS) tests/auto.c     `simple2d --libs` -o tests/auto
-	$(CC) $(CFLAGS) tests/triangle.c `simple2d --libs` -o tests/triangle
-	$(CC) $(CFLAGS) tests/testcard.c `simple2d --libs` -o tests/testcard
-	$(CC) $(CFLAGS) tests/audio.c    `simple2d --libs` -o tests/audio
+	$(CC) $(CFLAGS) tests/auto.c       `simple2d --libs` -o tests/auto
+	$(CC) $(CFLAGS) tests/triangle.c   `simple2d --libs` -o tests/triangle
+	$(CC) $(CFLAGS) tests/testcard.c   `simple2d --libs` -o tests/testcard
+	$(CC) $(CFLAGS) tests/audio.c      `simple2d --libs` -o tests/audio
+	$(CC) $(CFLAGS) tests/controller.c `simple2d --libs` -o tests/controller
 
 rebuild: uninstall clean all install tests
 
@@ -140,5 +141,8 @@ testcard:
 
 audio:
 	@$(call run_test,audio)
+
+controller:
+	@$(call run_test,controller)
 
 .PHONY: build tests
