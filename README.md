@@ -506,21 +506,32 @@ window->on_mouse = on_mouse;
 
 ### Keyboard
 
-There are two types of keyboard events captured by the window: a single key press and a key held down continuously. When a key is pressed, the window calls its `on_key` function once, and if the key is being held down, the `on_key_down` function will be repeatedly called with each cycle of the window loop.
+There are three types of keyboard events captured by the window: a single key press, when a key is held down, and when a key is released. When a keyboard event takes place, the window calls its `on_key` function once.
 
-To start capturing keyboard input, first define the `on_key` and `on_key_down` functions:
+To start capturing keyboard input, first define the `on_key` function and do something interesting with `S2D_Event` and `key`, for example:
 
 ```c
-// Do something with `key` in each of these functions
-void on_key(const char *key) { ... }
-void on_key_down(const char *key) { ... }
+void on_key(S2D_Event e, const char *key) {
+  switch (e) {
+    case S2D_KEYDOWN:
+	    printf("Key %s pressed\n", key);
+      break;
+    
+    case S2D_KEY:
+      printf("Key %s held down\n", key);
+      break;
+    
+    case S2D_KEYUP:
+      printf("Key %s released\n", key);
+      break;
+  }
+}
 ```
 
-Then attach the callbacks to the window:
+Then attach the callback to the window:
 
 ```c
 window->on_key = on_key;
-window->on_key_down = on_key_down;
 ```
 
 ### Game Controllers and Joysticks

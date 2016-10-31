@@ -38,7 +38,8 @@ void print_help() {
   puts("");
 }
 
-void on_key(const char *key) {
+void on_key(S2D_Event e, const char *key) {
+  if (e != S2D_KEYDOWN) return;
   
   if (strcmp(key, "Escape") == 0) {
     S2D_Close(window);

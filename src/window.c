@@ -25,8 +25,6 @@ S2D_Window *S2D_CreateWindow(const char *title, int width, int height,
   window->render          = render;
   window->flags           = flags;
   window->on_key          = NULL;
-  window->on_key_up       = NULL;
-  window->on_key_down     = NULL;
   window->on_mouse        = NULL;
   window->on_controller   = NULL;
   window->vsync           = true;
@@ -142,12 +140,12 @@ int S2D_Show(S2D_Window *window) {
         
         case SDL_KEYDOWN:
           if (window->on_key)
-            window->on_key(SDL_GetScancodeName(e.key.keysym.scancode));
+            window->on_key(S2D_KEYDOWN, SDL_GetScancodeName(e.key.keysym.scancode));
           break;
         
         case SDL_KEYUP:
-          if (window->on_key_up)
-            window->on_key_up(SDL_GetScancodeName(e.key.keysym.scancode));
+          if (window->on_key)
+            window->on_key(S2D_KEYUP, SDL_GetScancodeName(e.key.keysym.scancode));
           break;
         
         case SDL_MOUSEBUTTONDOWN:
@@ -200,9 +198,9 @@ int S2D_Show(S2D_Window *window) {
     key_state = SDL_GetKeyboardState(&num_keys);
     
     for (int i = 0; i < num_keys; i++) {
-      if (window->on_key_down) {
+      if (window->on_key) {
         if (key_state[i] == 1) {
-          window->on_key_down(SDL_GetScancodeName(i));
+          window->on_key(S2D_KEY, SDL_GetScancodeName(i));
         }
       }
     }

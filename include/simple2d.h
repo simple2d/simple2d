@@ -82,18 +82,22 @@
 #define S2D_SCALE   2
 #define S2D_STRETCH 3
 
-// Shared Data /////////////////////////////////////////////////////////////////
+// Events
+#define S2D_KEYDOWN 1  // key is pressed
+#define S2D_KEY     2  // key is held down
+#define S2D_KEYUP   3  // key is released
+
+// Internal Shared Data ////////////////////////////////////////////////////////
 
 extern char S2D_msg[1024];    // for S2D_Log messages
-extern bool S2D_diagnostics;  // Flag whether to print diagnostics with S2D_Log
+extern bool S2D_diagnostics;  // flag for whether to print diagnostics with S2D_Log
 
 // Type Definitions ////////////////////////////////////////////////////////////
 
+typedef int S2D_Event;
 typedef void (*S2D_Update)();
 typedef void (*S2D_Render)();
-typedef void (*S2D_On_Key)(const char *key);
-typedef void (*S2D_On_Key_Up)(const char *key);
-typedef void (*S2D_On_Key_Down)(const char *key);
+typedef void (*S2D_On_Key)(S2D_Event e, const char *key);
 typedef void (*S2D_On_Mouse)(int x, int y);
 typedef void (*S2D_On_Controller)(
   int which, bool is_axis, int axis, int val, bool is_btn, int btn, bool pressed
@@ -140,8 +144,6 @@ typedef struct {
   int flags;
   S2D_Mouse mouse;
   S2D_On_Key on_key;
-  S2D_On_Key_Up on_key_up;
-  S2D_On_Key_Down on_key_down;
   S2D_On_Mouse on_mouse;
   S2D_On_Controller on_controller;
   bool vsync;
