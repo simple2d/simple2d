@@ -259,9 +259,6 @@ The shorthand for the examples below are:
 x = x coordinate
 y = y coordinate
 
-w = width
-h = height
-
 // Color range is from 0.0 to 1.0
 r = red
 g = green
@@ -310,8 +307,8 @@ img->y = 350;
 Change the size of the image by adjusting its width and height:
 
 ```c
-img->w = 256;
-img->h = 512;
+img->width  = 256;
+img->height = 512;
 ```
 
 You can also adjust the color of the image like this:

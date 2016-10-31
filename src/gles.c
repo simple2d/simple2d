@@ -249,7 +249,7 @@ static void S2D_GLES_DrawTexture(int x, int y, int w, int h,
  */
 void S2D_GLES_DrawImage(S2D_Image *img) {
   S2D_GLES_DrawTexture(
-    img->x, img->y, img->w, img->h,
+    img->x, img->y, img->width, img->height,
     img->color.r, img->color.g, img->color.b, img->color.a,
     0.f, 0.f, 1.f, 0.f, 1.f, 1.f, 0.f, 1.f,
     img->texture_id
@@ -262,7 +262,7 @@ void S2D_GLES_DrawImage(S2D_Image *img) {
  */
 void S2D_GLES_DrawSprite(S2D_Sprite *spr) {
   S2D_GLES_DrawTexture(
-    spr->x, spr->y, spr->w, spr->h,
+    spr->x, spr->y, spr->width, spr->height,
     spr->img->color.r, spr->img->color.g, spr->img->color.b, spr->img->color.a,
     spr->tx1, spr->ty1, spr->tx2, spr->ty2, spr->tx3, spr->ty3, spr->tx4, spr->ty4,
     spr->img->texture_id
@@ -275,7 +275,7 @@ void S2D_GLES_DrawSprite(S2D_Sprite *spr) {
  */
 void S2D_GLES_DrawText(S2D_Text *txt) {
   S2D_GLES_DrawTexture(
-    txt->x, txt->y, txt->w, txt->h, 
+    txt->x, txt->y, txt->width, txt->height,
     txt->color.r, txt->color.g, txt->color.b, txt->color.a,
     0.f, 0.f, 1.f, 0.f, 1.f, 1.f, 0.f, 1.f,
     txt->texture_id

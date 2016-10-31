@@ -275,8 +275,8 @@ int main() {
   img_clr_r = S2D_CreateImage("media/colors.png");
   img_clr_r->x = 350;
   img_clr_r->y = 200;
-  img_clr_r->w = 50;
-  img_clr_r->h = 50;
+  img_clr_r->width  = 50;
+  img_clr_r->height = 50;
   img_clr_r->color.r = 1.0;
   img_clr_r->color.g = 0.3;
   img_clr_r->color.b = 0.3;
@@ -285,8 +285,8 @@ int main() {
   img_clr_g = S2D_CreateImage("media/colors.png");
   img_clr_g->x = 400;
   img_clr_g->y = 200;
-  img_clr_g->w = 50;
-  img_clr_g->h = 50;
+  img_clr_g->width  = 50;
+  img_clr_g->height = 50;
   img_clr_g->color.r = 0.3;
   img_clr_g->color.g = 1.0;
   img_clr_g->color.b = 0.3;
@@ -295,8 +295,8 @@ int main() {
   img_clr_b = S2D_CreateImage("media/colors.png");
   img_clr_b->x = 450;
   img_clr_b->y = 200;
-  img_clr_b->w = 50;
-  img_clr_b->h = 50;
+  img_clr_b->width  = 50;
+  img_clr_b->height = 50;
   img_clr_b->color.r = 0.3;
   img_clr_b->color.g = 0.3;
   img_clr_b->color.b = 1.0;

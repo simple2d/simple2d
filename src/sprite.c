@@ -19,8 +19,8 @@ S2D_Sprite *S2D_CreateSprite(const char *path) {
   
   spr->x = 0;
   spr->y = 0;
-  spr->w = spr->img->w;
-  spr->h = spr->img->h;
+  spr->width  = spr->img->width;
+  spr->height = spr->img->height;
   
   spr->tx1 = 0.f;
   spr->ty1 = 0.f;
@@ -43,8 +43,8 @@ void S2D_ClipSprite(S2D_Sprite *spr, int x, int y, int w, int h) {
   
   // Calculate ratios
   // rw = ratio width; rh = ratio height
-  double rw = w / (double)spr->img->w;
-  double rh = h / (double)spr->img->h;
+  double rw = w / (double)spr->img->width;
+  double rh = h / (double)spr->img->height;
   
   // Apply ratios to x, y coordinates
   // cx = crop x coord; cy = crop y coord
@@ -76,8 +76,8 @@ void S2D_ClipSprite(S2D_Sprite *spr, int x, int y, int w, int h) {
   spr->ty4 = (cy + th) / ch;
   
   // Store the sprite width and height
-  spr->w = w;
-  spr->h = h;
+  spr->width  = w;
+  spr->height = h;
 }
 
 
@@ -89,7 +89,7 @@ void S2D_DrawSprite(S2D_Sprite *spr) {
   
   if (spr->img->texture_id == 0) {
     S2D_GL_SetUpTexture(&spr->img->texture_id, spr->img->format,
-                        spr->img->w, spr->img->h,
+                        spr->img->width, spr->img->height,
                         spr->img->surface->pixels, GL_NEAREST);
     SDL_FreeSurface(spr->img->surface);
   }

@@ -163,10 +163,10 @@ typedef struct {
   S2D_Color color;
   int x;
   int y;
-  int w;
-  int h;
-  int orig_w;
-  int orig_h;
+  int width;
+  int height;
+  int orig_width;
+  int orig_height;
 } S2D_Image;
 
 // S2D_Sprite
@@ -174,8 +174,8 @@ typedef struct {
   S2D_Image *img;
   int x;
   int y;
-  int w;
-  int h;
+  int width;
+  int height;
   GLfloat tx1;
   GLfloat ty1;
   GLfloat tx2;
@@ -195,8 +195,8 @@ typedef struct {
   const char *msg;
   int x;
   int y;
-  int w;
-  int h;
+  int width;
+  int height;
 } S2D_Text;
 
 // S2D_Sound
