@@ -26,7 +26,7 @@ SCRIPT_URL="https://raw.githubusercontent.com/simple2d/simple2d/master/bin/simpl
 # SDL download paths
 libsdl_url="http://www.libsdl.org"
 
-sdl_fname="SDL2-2.0.4"
+sdl_fname="SDL2-2.0.5"
 sdl_url="${libsdl_url}/release/${sdl_fname}.tar.gz"
 
 image_fname="SDL2_image-2.0.1"
