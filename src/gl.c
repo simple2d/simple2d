@@ -297,11 +297,11 @@ int S2D_GL_Init(S2D_Window *window) {
 
 
 /*
- * Prepares a texture for rendering
+ * Creates a texture for rendering
  */
-void S2D_GL_SetUpTexture(GLuint *id, GLint format,
-                         int w, int h,
-                         const GLvoid *data, GLint filter) {
+void S2D_GL_CreateTexture(GLuint *id, GLint format,
+                          int w, int h,
+                          const GLvoid *data, GLint filter) {
   
   // If 0, then a new texture; generate name
   if (*id == 0) glGenTextures(1, id);
@@ -318,6 +318,17 @@ void S2D_GL_SetUpTexture(GLuint *id, GLint format,
   // Set the filtering mode
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
+}
+
+
+/*
+ * Free a texture
+ */
+void S2D_GL_FreeTexture(GLuint *id) {
+  if (*id != 0) {
+    glDeleteTextures(1, id);
+    *id = 0;
+  }
 }
 
 
@@ -394,17 +405,6 @@ void S2D_GL_DrawText(S2D_Text *txt) {
       S2D_GL3_DrawText(txt);
     }
   #endif
-}
-
-
-/*
- * Free a texture
- */
-void S2D_GL_FreeTexture(GLuint *id) {
-  if (*id != 0) {
-    glDeleteTextures(1, id);
-    *id = 0;
-  }
 }
 
 

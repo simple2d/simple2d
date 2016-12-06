@@ -439,7 +439,7 @@ GLuint S2D_GL_LoadShader(GLenum type, const GLchar *shaderSrc, char *shaderName)
 int S2D_GL_CheckLinked(GLuint program, char *name);
 void S2D_GL_GetViewportScale(S2D_Window *window, int *w, int *h, double *scale);
 void S2D_GL_SetViewport(S2D_Window *window);
-void S2D_GL_SetUpTexture(
+void S2D_GL_CreateTexture(
   GLuint *id, GLint format,
   int w, int h,
   const GLvoid *data, GLint filter);

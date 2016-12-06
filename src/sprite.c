@@ -88,9 +88,9 @@ void S2D_DrawSprite(S2D_Sprite *spr) {
   if (!spr) return;
   
   if (spr->img->texture_id == 0) {
-    S2D_GL_SetUpTexture(&spr->img->texture_id, spr->img->format,
-                        spr->img->width, spr->img->height,
-                        spr->img->surface->pixels, GL_NEAREST);
+    S2D_GL_CreateTexture(&spr->img->texture_id, spr->img->format,
+                         spr->img->width, spr->img->height,
+                         spr->img->surface->pixels, GL_NEAREST);
     SDL_FreeSurface(spr->img->surface);
   }
   

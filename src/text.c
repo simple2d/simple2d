@@ -82,9 +82,9 @@ void S2D_DrawText(S2D_Text *txt) {
   if (!txt) return;
   
   if (txt->texture_id == 0) {
-    S2D_GL_SetUpTexture(&txt->texture_id, GL_RGBA,
-                        txt->width, txt->height,
-                        txt->surface->pixels, GL_NEAREST);
+    S2D_GL_CreateTexture(&txt->texture_id, GL_RGBA,
+                         txt->width, txt->height,
+                         txt->surface->pixels, GL_NEAREST);
     SDL_FreeSurface(txt->surface);
   }
   

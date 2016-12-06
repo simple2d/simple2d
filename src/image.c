@@ -90,9 +90,9 @@ void S2D_DrawImage(S2D_Image *img) {
   if (!img) return;
   
   if (img->texture_id == 0) {
-    S2D_GL_SetUpTexture(&img->texture_id, img->format,
-                        img->orig_width, img->orig_height,
-                        img->surface->pixels, GL_NEAREST);
+    S2D_GL_CreateTexture(&img->texture_id, img->format,
+                         img->orig_width, img->orig_height,
+                         img->surface->pixels, GL_NEAREST);
     SDL_FreeSurface(img->surface);
   }
   
