@@ -68,9 +68,9 @@ void on_key(S2D_Event e, const char *key) {
       } else {
         puts("S2D_PlayMusic...");
         if (music == 1) {
-          S2D_PlayMusic(mus1, -1);
+          S2D_PlayMusic(mus1, true);
         } else {
-          S2D_PlayMusic(mus2, -1);
+          S2D_PlayMusic(mus2, true);
         }
       }
       break;

@@ -37,8 +37,11 @@ S2D_Music *S2D_CreateMusic(const char *path) {
 /*
  * Play the music
  */
-void S2D_PlayMusic(S2D_Music *music, int times) {
+void S2D_PlayMusic(S2D_Music *music, bool loop) {
   if (!music) return;
+  
+  // If looping, set to -1 times; else 0
+  int times = loop ? -1 : 0;
   
   // times: 0 == once, -1 == forever
   if (Mix_PlayMusic(music->data, times) == -1) {

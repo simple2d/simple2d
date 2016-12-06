@@ -454,10 +454,10 @@ Similarly, to create some music, declare a pointer to a `S2D_Music` structure an
 S2D_Music *mus = S2D_CreateMusic("music.ogg");
 ```
 
-Play the music using `S2D_PlayMusic` providing the pointer and the number of times to be repeated. For example, to play the music once, set the second parameter to `0`, and to repeat forever, set it to `-1`.
+Play the music using `S2D_PlayMusic` providing the pointer and a boolean denoting whether the music should be repeated.
 
 ```c
-S2D_PlayMusic(mus, -1);
+S2D_PlayMusic(mus, true);  // play music looped
 ```
 
 Only one piece of music can be played at a time. The following functions for pausing, resuming, stopping, and fading out apply to whatever music is currently playing:

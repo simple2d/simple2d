@@ -364,7 +364,7 @@ S2D_Music *S2D_CreateMusic(const char *path);
 /*
  * Play the music
  */
-void S2D_PlayMusic(S2D_Music *music, int times);
+void S2D_PlayMusic(S2D_Music *music, bool loop);
 
 /*
  * Pause the playing music
