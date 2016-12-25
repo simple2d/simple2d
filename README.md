@@ -78,28 +78,28 @@ On Windows using Visual C++, Simple 2D will be installed to `%LOCALAPPDATA%\simp
 
 Simple 2D has a few test programs to make sure all functionality is working as it should.
 
-- [`auto.c`](tests/auto.c) – A set of automated unit tests for the public interface.
-- [`triangle.c`](tests/triangle.c) – The "Hello Triangle" example in this README.
-- [`testcard.c`](tests/testcard.c) – A graphical card, similar to [TV test cards](https://en.wikipedia.org/wiki/Test_card), with the goal of ensuring all visuals and inputs are working properly.
-- [`audio.c`](tests/audio.c) – Tests audio functions with various file formats interpreted as sound samples and music.
-- [`controller.c`](tests/controller.c) – Provides visual and numeric feedback of controller input.
+- [`auto.c`](test/auto.c) – A set of automated unit tests for the public interface.
+- [`triangle.c`](test/triangle.c) – The "Hello Triangle" example in this README.
+- [`testcard.c`](test/testcard.c) – A graphical card, similar to [TV test cards](https://en.wikipedia.org/wiki/Test_card), with the goal of ensuring all visuals and inputs are working properly.
+- [`audio.c`](test/audio.c) – Tests audio functions with various file formats interpreted as sound samples and music.
+- [`controller.c`](test/controller.c) – Provides visual and numeric feedback of controller input.
 
 ### Building and Running Tests
 
-Run `make tests`, or `nmake /f NMakefile tests` on Windows using Visual C++, to compile tests to the `tests/` directory, which will have the same name as their C source file. Since media paths are set relatively in these test programs, make sure to `cd` into the `tests/` directory before running a test, for example:
+Run `make test`, or `nmake /f NMakefile test` on Windows using Visual C++, to compile tests to the `test/` directory, which will have the same name as their C source file. Since media paths are set relatively in these test programs, make sure to `cd` into the `test/` directory before running a test, for example:
 
 ```bash
 # on Unix-like systems
-make tests && cd tests/ && ./testcard
+make test && cd test/ && ./testcard
 
 # on Windows using MinGW
-make tests & cd tests\ & testcard.exe
+make test & cd test\ & testcard.exe
 
 # on Windows using Visual C++
-nmake /f NMakefile tests & cd tests\ & testcard.exe
+nmake /f NMakefile test & cd test\ & testcard.exe
 ```
 
-Each test also has a makefile target, so you can build and run tests using, for example, `make tests testcard`. Or, conveniently uninstall everything, rebuild Simple 2D and tests from source, and run tests using `make rebuild <name_of_test>`, for example:
+Each test also has a makefile target, so you can build and run tests using, for example, `make test testcard`. Or, conveniently uninstall everything, rebuild Simple 2D and tests from source, and run tests using `make rebuild <name_of_test>`, for example:
 
 ```bash
 # rebuild and run `auto.c` then `testcard.c`

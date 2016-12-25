@@ -1,8 +1,8 @@
 build/
 
-tests/auto
-tests/triangle
-tests/testcard
-tests/audio
-tests/controller
-tests/*.exe
+test/auto
+test/triangle
+test/testcard
+test/audio
+test/controller
+test/*.exe

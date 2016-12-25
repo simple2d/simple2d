@@ -43,7 +43,7 @@ endef
 
 define run_test
 	$(call task,Running $(1).c)
-	$(if $(MINGW), cd tests/; $(1).exe, cd tests/ ; ./$(1))
+	$(if $(MINGW), cd test/; $(1).exe, cd test/ ; ./$(1))
 endef
 
 
@@ -103,15 +103,15 @@ clean:
 ifeq ($(PLATFORM),mingw)
 	rm -rf $(INSTALLER_DIR)
 	rm -f build/$(INSTALLER_FNAME)
-	rm -f tests/auto.exe
-	rm -f tests/triangle.exe
-	rm -f tests/testcard.exe
-	rm -f tests/audio.exe
+	rm -f test/auto.exe
+	rm -f test/triangle.exe
+	rm -f test/testcard.exe
+	rm -f test/audio.exe
 else
-	rm -f tests/auto
-	rm -f tests/triangle
-	rm -f tests/testcard
-	rm -f tests/audio
+	rm -f test/auto
+	rm -f test/triangle
+	rm -f test/testcard
+	rm -f test/audio
 endif
 
 uninstall:
@@ -120,15 +120,15 @@ uninstall:
 	rm -f /usr/local/lib/libsimple2d.a
 	rm -f /usr/local/bin/simple2d
 
-tests:
+test:
 	@$(call task,Building tests)
-	$(CC) $(CFLAGS) tests/auto.c       `simple2d --libs` -o tests/auto
-	$(CC) $(CFLAGS) tests/triangle.c   `simple2d --libs` -o tests/triangle
-	$(CC) $(CFLAGS) tests/testcard.c   `simple2d --libs` -o tests/testcard
-	$(CC) $(CFLAGS) tests/audio.c      `simple2d --libs` -o tests/audio
-	$(CC) $(CFLAGS) tests/controller.c `simple2d --libs` -o tests/controller
+	$(CC) $(CFLAGS) test/auto.c       `simple2d --libs` -o test/auto
+	$(CC) $(CFLAGS) test/triangle.c   `simple2d --libs` -o test/triangle
+	$(CC) $(CFLAGS) test/testcard.c   `simple2d --libs` -o test/testcard
+	$(CC) $(CFLAGS) test/audio.c      `simple2d --libs` -o test/audio
+	$(CC) $(CFLAGS) test/controller.c `simple2d --libs` -o test/controller
 
-rebuild: uninstall clean all install tests
+rebuild: uninstall clean all install test
 
 auto:
 	@$(call run_test,auto)
@@ -145,4 +145,4 @@ audio:
 controller:
 	@$(call run_test,controller)
 
-.PHONY: build tests
+.PHONY: build test
