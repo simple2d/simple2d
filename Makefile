@@ -38,12 +38,12 @@ INSTALLER_DIR=build/win-installer-mingw
 INSTALLER_FNAME=simple2d-windows-mingw.zip
 
 define task
-	printf "\n\033[1;34m==>\033[1;39m $(1)\033[0m\n\n"
+	@printf "\n\033[1;34m==>\033[1;39m $(1)\033[0m\n\n"
 endef
 
 define run_test
 	$(call task,Running $(1).c)
-	$(if $(MINGW), cd test/; $(1).exe, cd test/ ; ./$(1))
+	@$(if $(MINGW), cd test/; $(1).exe, cd test/ ; ./$(1))
 endef
 
 
@@ -54,14 +54,14 @@ all: prereqs install-deps $(SOURCES)
 	rm build/*.o
 
 prereqs:
-	@$(call task,Building)
+	$(call task,Building)
 	mkdir -p build
 
 $(SOURCES):
 	$(CC) $(CFLAGS) $(INCLUDES) src/$@.c -c -o build/$@.o
 
 install:
-	@$(call task,Installing Simple 2D)
+	$(call task,Installing Simple 2D)
 	mkdir -p $(PREFIX)/include/
 	mkdir -p $(PREFIX)/lib/
 	mkdir -p $(PREFIX)/bin/
@@ -71,7 +71,7 @@ install:
 
 install-deps:
 ifeq ($(PLATFORM),mingw)
-	@$(call task,Installing dependencies for MinGW)
+	$(call task,Installing dependencies for MinGW)
 	mkdir -p $(PREFIX)/include/
 	mkdir -p $(PREFIX)/lib/
 	mkdir -p $(PREFIX)/bin/
@@ -97,7 +97,7 @@ installer: clean all
 endif
 
 clean:
-	@$(call task,Cleaning)
+	$(call task,Cleaning)
 	rm -f build/libsimple2d.a
 	rm -f build/simple2d
 ifeq ($(PLATFORM),mingw)
@@ -115,13 +115,13 @@ else
 endif
 
 uninstall:
-	@$(call task,Uninstalling)
+	$(call task,Uninstalling)
 	rm -f /usr/local/include/simple2d.h
 	rm -f /usr/local/lib/libsimple2d.a
 	rm -f /usr/local/bin/simple2d
 
 test:
-	@$(call task,Building tests)
+	$(call task,Building tests)
 	$(CC) $(CFLAGS) test/auto.c       `simple2d --libs` -o test/auto
 	$(CC) $(CFLAGS) test/triangle.c   `simple2d --libs` -o test/triangle
 	$(CC) $(CFLAGS) test/testcard.c   `simple2d --libs` -o test/testcard
@@ -131,18 +131,18 @@ test:
 rebuild: uninstall clean all install test
 
 auto:
-	@$(call run_test,auto)
+	$(call run_test,auto)
 
 triangle:
-	@$(call run_test,triangle)
+	$(call run_test,triangle)
 
 testcard:
-	@$(call run_test,testcard)
+	$(call run_test,testcard)
 
 audio:
-	@$(call run_test,audio)
+	$(call run_test,audio)
 
 controller:
-	@$(call run_test,controller)
+	$(call run_test,controller)
 
 .PHONY: build test
