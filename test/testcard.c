@@ -234,7 +234,7 @@ void render() {
   
   S2D_DrawText(fps);
   snprintf(fps_str, 7, "%f", window->fps);
-  S2D_SetText(fps_val, fps_str);
+  if (window->frames % 20 == 0) S2D_SetText(fps_val, fps_str);
   S2D_DrawText(fps_val);
   
   // Mouse positions
