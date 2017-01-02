@@ -27,7 +27,7 @@ bool btn14 = false;
 bool btn15 = false;
 
 
-double to_d(val) {
+double to_d(int val) {
   if (val > 0) {
     return val / 32767.0;
   } else {
