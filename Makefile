@@ -107,11 +107,13 @@ ifeq ($(PLATFORM),mingw)
 	rm -f test/triangle.exe
 	rm -f test/testcard.exe
 	rm -f test/audio.exe
+	rm -f test/controller.exe
 else
 	rm -f test/auto
 	rm -f test/triangle
 	rm -f test/testcard
 	rm -f test/audio
+	rm -f test/controller
 endif
 
 uninstall:

@@ -70,6 +70,7 @@ test: .phony
 	simple2d build triangle.c
 	simple2d build testcard.c
 	simple2d build audio.c
+	simple2d build controller.c
 
 rebuild: uninstall clean build install test
 
@@ -84,5 +85,8 @@ testcard:
 
 audio:
 	cd test & audio.exe
+
+controller:
+	cd test & controller.exe
 
 .phony:

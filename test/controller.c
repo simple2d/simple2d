@@ -420,6 +420,8 @@ int main() {
   window->on_key        = on_key;
   window->on_controller = on_controller;
   
+  puts("Press `D` to detect controllers.");
+  
   S2D_Show(window);
   S2D_FreeWindow(window);
   return 0;
