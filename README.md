@@ -1,12 +1,12 @@
 # Welcome to Simple 2D!
 
-Simple 2D is a small, open-source graphics engine providing essential 2D drawing, media, and input capabilities. It's written in C and works across many platforms, creating native windows and interacting with hardware using [SDL](http://www.libsdl.org) while rendering content with [OpenGL](https://www.opengl.org).
+Simple 2D is a small, open-source graphics engine providing essential 2D drawing, media, and input capabilities. It's written in C and works across many platforms, creating native windows and interacting with hardware using [SDL](https://www.libsdl.org) while rendering content with [OpenGL](https://www.opengl.org).
 
 Note that this README will be continuously updated as new features are added, bugs are fixed, and other changes are made. [View the release notes](https://github.com/simple2d/simple2d/releases) for a link to that version's documentation.
 
 If you encounter any issues, ping the [mailing list](https://groups.google.com/d/forum/simple2d). Learn about [contributing](#contributing) below.
 
-## Getting Started
+## Getting started
 
 Simple 2D supports all major operating systems and hardware platforms, and is tested on the latest releases of macOS, Windows, Ubuntu, and Raspbian (on the Raspberry Pi).
 
@@ -27,7 +27,7 @@ brew install simple2d
 
 ### ...on Linux
 
-Run the [`simple2d.sh`](bin/simple2d.sh) Bash script. Everything will be explained along the way and you'll be prompted before any action is taken. To run this script from the web, copy and paste this snippet in your terminal:
+Run the [`simple2d.sh`](bin/simple2d.sh) Bash script. Everything will be explained along the way and you'll be prompted before any action is taken. To run the script from the web, paste this snippet in your terminal:
 
 ```bash
 url='https://raw.githubusercontent.com/simple2d/simple2d/master/bin/simple2d.sh'; which curl > /dev/null && cmd='curl -fsSL' || cmd='wget -qO -'; bash <($cmd $url) install
@@ -35,13 +35,13 @@ url='https://raw.githubusercontent.com/simple2d/simple2d/master/bin/simple2d.sh'
 
 #### A note on Linux/ARM platforms
 
-Simple 2D supports ARM platforms running Linux, like the [Raspberry Pi](https://www.raspberrypi.org) and [CHIP](https://nextthing.co). Since most Linux distributions have SDL packages configured for traditional desktop platforms, the install script will compile SDL from source when ARM is detected, disabling windowing systems (like X11) and OpenGL (forcing OpenGL ES).
+Simple 2D supports ARM platforms running Linux, like the [Raspberry Pi](https://www.raspberrypi.org) and [CHIP](https://getchip.com). Since most Linux distributions have SDL packages configured for traditional desktop platforms, the install script will compile SDL from source when ARM is detected, disabling windowing systems (like X11) and OpenGL (forcing OpenGL ES).
 
-### The Command-line Utility
+### The command-line utility
 
 Once installed, use the `simple2d` command-line utility to update Simple 2D, check for issues, output the libraries needed to compile applications, and more. Run `simple2d --help` to see all available commands and options.
 
-## Building from Source
+## Building from source
 
 Alternatively, you can compile and install Simple 2D from source. First clone the repo using:
 
@@ -58,13 +58,13 @@ git submodule update --remote
 
 Update these submodules at any time using `git submodule update --remote`
 
-On Unix-like systems, including Windows using MinGW, run:
+Next, build and install on Unix-like systems, including Windows using MinGW, by running:
 
 ```bash
 make && make install
 ```
 
-On Windows using Visual C++, run:
+Or on Windows using Visual C++, open a 64-bit Visual Studio command prompt and run:
 
 ```cmd
 nmake /f NMakefile all install
@@ -84,9 +84,9 @@ Simple 2D has a few test programs to make sure all functionality is working as i
 - [`audio.c`](test/audio.c) – Tests audio functions with various file formats interpreted as sound samples and music.
 - [`controller.c`](test/controller.c) – Provides visual and numeric feedback of controller input.
 
-### Building and Running Tests
+### Building and running tests
 
-Run `make test`, or `nmake /f NMakefile test` on Windows using Visual C++, to compile tests to the `test/` directory, which will have the same name as their C source file. Since media paths are set relatively in these test programs, make sure to `cd` into the `test/` directory before running a test, for example:
+Run `make test`, or `nmake /f NMakefile test` on Windows using Visual C++, to compile tests to the `test/` directory. The resulting executables will have the same name as their C source file. Since media paths are set relatively in these test programs, make sure to `cd` into the `test/` directory before running a test, for example:
 
 ```bash
 # on Unix-like systems
@@ -113,7 +113,7 @@ nmake /f NMakefile rebuild auto testcard
 
 ---
 
-# Creating Apps with Simple 2D
+# Creating apps with Simple 2D
 
 Making 2D apps is simple! Let's create a window and draw a triangle...
 
@@ -140,9 +140,9 @@ int main() {
 }
 ```
 
-Save the code above to a file called `triangle.c`, and compile by running `simple2d build triangle.c` on the command line (in MinGW, run this in a Bash prompt). Then run the app using `./triangle` on macOS and Linux, or `triangle.exe` on Windows. Finally, enjoy your stunning triangle in a 640x480 window at 60 frames per second!
+Save the code above to a file called `triangle.c` and compile it by running `simple2d build triangle.c` on the command line (in MinGW, run this in a Bash prompt). Now run the app using `./triangle` on macOS and Linux, or `triangle.exe` on Windows, and enjoy your stunning triangle in a 640x480 window at 60 frames per second!
 
-The `simple2d build` command is a helpful shortcut for compiling a single source file. Of course, you can use a compiler directly, for example on Unix-like systems:
+The `simple2d build` command is a helpful shortcut for compiling a single source file. Of course, you can also use a compiler directly, for example on Unix-like systems:
 
 ```bash
 cc triangle.c `simple2d --libs` -o triangle
@@ -157,11 +157,11 @@ cl triangle.c /I %LOCALAPPDATA%\simple2d /link /LIBPATH %LOCALAPPDATA%\simple2d\
 iex "cl triangle.c $(simple2d --libs)"
 ```
 
-## 2D Basics
+## 2D basics
 
 Let's learn more about structuring applications for 2D drawing and more.
 
-### The Window
+### The window
 
 All rendered content, input, and sound is controlled by the window, and so creating a window is the first thing you'll do. Start by declaring a pointer to a `Window` structure and initializing it using `S2D_CreateWindow`.
 
@@ -223,7 +223,7 @@ window->background.b = 0.8;
 window->background.a = 1.0;
 ```
 
-Callback functions can also be changed any time – more on that below. Many values can also be read from the `Window` structure, see the [`simple2d.h`](include/simple2d.h) header file for details.
+Callback functions can also be changed any time — more on that below. Many values can also be read from the `Window` structure, see the [`simple2d.h`](include/simple2d.h) header file for details.
 
 When you're done with the window, free it using:
 
@@ -231,7 +231,7 @@ When you're done with the window, free it using:
 S2D_FreeWindow(window);
 ```
 
-### Update and Render
+### Update and render
 
 The window loop is where all the action takes place: the frame rate is set, input is handled, the app state is updated, and visuals are rendered. You'll want to declare two essential functions which will be called by the window loop: `update` and `render`. Like a traditional game loop, `update` is used for updating the application state, and `render` is used for drawing the scene. Simple 2D optimizes both functions for performance and accuracy, so it's good practice to keep those updating and rendering tasks separate.
 
@@ -250,9 +250,9 @@ To exit the window loop at any time, call the following function:
 S2D_Close(window);
 ```
 
-## Drawing Basics
+## Drawing basics
 
-Where a vertex is present, like with shapes, there will be six values which need to be set for each: the `x` and `y` coordinates, and four color values. Most values are floats, although `x` and `y` coordinates are typically integers expressed as whole numbers (from 0 to whatever). When vertices have different color values, the space between them are blended as a gradient.
+Where a vertex is present, like with shapes, there will be six values which need to be set for each: the `x` and `y` coordinates, and four color values. Most values are floats, although `x` and `y` coordinates are typically integers expressed as whole numbers (from 0 to whatever). When vertices have different color values, the space between them are blended in a gradient.
 
 The shorthand for the examples below are:
 
@@ -315,7 +315,7 @@ img->height = 512;
 You can also adjust the color of the image like this:
 
 ```c
-// default is 1.0 for each, a white color filter
+// Default is 1.0 for each, a white color filter
 img->color.r = 1.0;
 img->color.g = 0.8;
 img->color.b = 0.2;
@@ -344,7 +344,7 @@ S2D_Sprite spr = S2D_CreateSprite("sprite_sheet.png");
 
 If the sprite image can't be found, `S2D_CreateSprite` will return `NULL`.
 
-Clip the sprite sheet to a single image using `S2D_ClipSprite` and provide a clipping rectangle:
+Clip the sprite sheet to a single image using `S2D_ClipSprite` with a clipping rectangle:
 
 ```c
 S2D_ClipSprite(spr, x, y, width, height);
@@ -360,7 +360,7 @@ spr->y = 275;
 You can also adjust the color of the sprite image like this:
 
 ```c
-// default is 1.0 for each, a white color filter
+// Default is 1.0 for each, a white color filter
 spr->img->color.r = 1.0;
 spr->img->color.g = 0.8;
 spr->img->color.b = 0.2;
@@ -381,7 +381,7 @@ S2D_FreeSprite(spr);
 
 ### Text
 
-Text is drawn much like images. Start by finding your favorite OpenType font (with a `.ttf` or `.otf` file extension), then declare a pointer to a `S2D_Text` structure, and initialize it using `S2D_CreateText`, giving it the file path to the font, the message to display, and the size:
+Text is drawn much like images. Start by finding your favorite OpenType font (with a `.ttf` or `.otf` file extension), then declare a pointer to a `S2D_Text` structure, and initialize it using `S2D_CreateText` giving it the file path to the font, the message to display, and the size:
 
 ```c
 S2D_Text *txt = S2D_CreateText("vera.ttf", "Hello world!", 20);
@@ -397,7 +397,7 @@ txt->y = 740;
 Change the color of the text like this:
 
 ```c
-// default is 1.0 for each
+// Default is 1.0 for each, a white color filter
 txt->color.r = 0.5;
 txt->color.g = 1.0;
 txt->color.b = 0.0;
@@ -424,11 +424,11 @@ S2D_FreeText(txt);
 
 ## Audio
 
-Simple 2D supports a number of audio formats, including WAV, MP3, Ogg Vorbis, and FLAC. There are two kinds of audio concepts: sounds and music. Sounds are intended to be short samples, played without interruption. Music is for longer pieces which can be played, paused, stopped, resumed, and faded out.
+Simple 2D supports a number of popular audio formats, including WAV, MP3, Ogg Vorbis, and FLAC. There are two kinds of audio concepts: sounds and music. Sounds are intended to be short samples, played without interruption, like an effect. Music is for longer pieces which can be played, paused, stopped, resumed, and faded out, like a background soundtrack.
 
 ### Sounds
 
-Create a sound by first declaring a pointer to a `S2D_Sound` structure and initialize it using `S2D_CreateSound` and providing the path to the audio file:
+Create a sound by first declaring a pointer to a `S2D_Sound` structure and initialize it using `S2D_CreateSound` providing the path to the audio file:
 
 ```c
 S2D_Sound *snd = S2D_CreateSound("sound.wav");
@@ -467,7 +467,7 @@ S2D_PauseMusic();
 S2D_ResumeMusic();
 S2D_StopMusic();
 
-// Fade out duration in milliseconds
+// Fade out over 2000 milliseconds, or 2 seconds
 S2D_FadeOutMusic(2000);
 ```
 
@@ -490,7 +490,7 @@ window->mouse.x;
 window->mouse.y;
 ```
 
-To capture mouse button presses, first define the `on_mouse` function:
+To capture mouse button presses, first define a function to be called when a mouse button is clicked:
 
 ```c
 void on_mouse(int x, int y) {
@@ -534,7 +534,7 @@ Then attach the callback to the window:
 window->on_key = on_key;
 ```
 
-### Game Controllers and Joysticks
+### Game controllers and joysticks
 
 There are two types of controller or joystick events captured by the window: axis motion and button presses. When a button is pressed or a joystick moved, the window calls its `on_controller` function once.
 
@@ -555,19 +555,19 @@ Then attach the callback to the window:
 window->on_controller = on_controller;
 ```
 
-Controllers are detected when the window is created, but you can look for new controllers at any time by calling `S2D_DetectControllers()`.
+Controllers are detected when the window is created, but you can also look for new controllers at any time by calling `S2D_DetectControllers()`.
 
 A [community-sourced database](https://github.com/gabomdq/SDL_GameControllerDB) of game controller mappings can be used to map numeric button and axis identifiers to named buttons and axes.
 
 # Contributing
 
-> "Simple can be harder than complex: You have to work hard to get your thinking clean to make it simple. But it's worth it in the end because once you get there, you can move mountains." ― [Steve Jobs](http://blogs.wsj.com/digits/2011/08/24/steve-jobss-best-quotes)
+> "Simple can be harder than complex: You have to work hard to get your thinking clean to make it simple. But it's worth it in the end because once you get there, you can move mountains." — [Steve Jobs](https://en.wikiquote.org/wiki/Steve_Jobs)
 
 Despite the continuing advancement of graphics hardware and software, getting started with simple graphics programming isn't that easy or accessible. We're working to change that.
 
-Check out the [open issues](https://github.com/simple2d/simple2d/issues) and join the [mailing list](https://groups.google.com/d/forum/simple2d). If you're a hardcore C and OS hacker, you should seriously consider contributing to [SDL](https://www.libsdl.org) so we can continue writing games without worrying about the platforms underneath. Take a look at the talks from [Steam Dev Days](http://www.steamdevdays.com), especially [Ryan C. Gordon's](https://twitter.com/icculus) talk on [Game Development with SDL 2.0](https://www.youtube.com/watch?v=MeMPCSqQ-34&list=UUStZs-X5W6V3TFJLnwkzN5w).
+Check out the [open issues](https://github.com/simple2d/simple2d/issues) and join the [mailing list](https://groups.google.com/d/forum/simple2d). If you're a hardcore C and OS hacker, you should seriously consider contributing to [SDL](https://www.libsdl.org) so we can continue writing games without worrying about the platforms underneath. Take a look at the talks from [Steam Dev Days](http://steamcommunity.com/devdays), especially [Ryan C. Gordon's](https://twitter.com/icculus) talk on [Game Development with SDL 2.0](https://www.youtube.com/watch?v=MeMPCSqQ-34&list=UUStZs-X5W6V3TFJLnwkzN5w).
 
-## Preparing a Release
+## Preparing a release
 
 1. [Run tests](#tests) on all supported platforms
 2. Update documentation to reflect the current API
@@ -582,7 +582,7 @@ Check out the [open issues](https://github.com/simple2d/simple2d/issues) and joi
   - Commit changes to the formula
 7. 🎉
 
-# About the Project
+# About the project
 
 Simple 2D was created by [Tom Black](https://twitter.com/blacktm), who thought simple graphics programming was way too difficult and decided to do something about it.
 
