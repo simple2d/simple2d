@@ -44,7 +44,7 @@ echo Usage: simple2d [--libs] [-v^|--version]
 echo                 ^<command^> ^<options^>
 echo.
 echo Summary of commands and options:
-echo   build         Compiles a `.c` file
+echo   build         Compiles a Simple 2D app provided a C/C++ source file
 echo   --libs        Outputs libraries needed to compile Simple 2D apps
 echo   -v^|--version  Prints the installed version
 echo.

@@ -3,16 +3,10 @@
 # ------------------------------------------------------------------------------
 # The Simple 2D Command-Line Utility for Unix-like Systems
 # 
-# This script can:
-#  - Install Simple 2D on macOS, Linux, and ARM platforms
-#  - Update Simple 2D in place
-#  - Provide all includes and libraries needed for compiling Simple 2D apps
-#  - Check for issues with Simple 2D and SDL
-# 
 # Run from the web using:
-#   bash <(curl -fsSL http://script_url_here)
-# or
-#   bash <(wget -qO - http://script_url_here)
+#   bash <(curl -fsSL https://script_url_here)
+# or...
+#   bash <(wget -qO - https://script_url_here)
 # ------------------------------------------------------------------------------
 
 # Set Constants ################################################################
@@ -24,7 +18,7 @@ VERSION='0.4.1'
 SCRIPT_URL="https://raw.githubusercontent.com/simple2d/simple2d/master/bin/simple2d.sh"
 
 # SDL download paths
-libsdl_url="http://www.libsdl.org"
+libsdl_url="https://www.libsdl.org"
 
 sdl_fname="SDL2-2.0.5"
 sdl_url="${libsdl_url}/release/${sdl_fname}.tar.gz"
@@ -653,7 +647,6 @@ update() {
   fi
   
   # Check if Simple 2D is installed
-  echo
   if ! have_lib? 'simple2d' > /dev/null; then
     error_msg "Simple 2D isn't currently installed"
     echo -e "Use the \`install\` command to install Simple 2D.\n"
