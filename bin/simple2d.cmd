@@ -3,7 +3,7 @@
 @echo off
 
 :: The installed version
-set S2D_VERSION=0.4.1
+set S2D_VERSION=0.5.0
 
 :: Compile a C file
 if "%~1"=="build" (
