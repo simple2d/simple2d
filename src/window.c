@@ -18,6 +18,8 @@ S2D_Window *S2D_CreateWindow(const char *title, int width, int height,
   window->title           = title;
   window->width           = width;
   window->height          = height;
+  window->orig_width      = width;
+  window->orig_height     = height;
   window->viewport.width  = width;
   window->viewport.height = height;
   window->viewport.mode   = S2D_SCALE;

@@ -178,8 +178,9 @@ void S2D_GL_SetViewport(S2D_Window *window) {
   switch (window->viewport.mode) {
     
     case S2D_FIXED:
-      ortho_w = window->width;
-      ortho_h = window->height;
+      w = window->orig_width;
+      h = window->orig_height;
+      y = window->height - h;
       break;
     
     case S2D_SCALE:

@@ -138,6 +138,8 @@ typedef struct {
   const char *title;
   int width;
   int height;
+  int orig_width;
+  int orig_height;
   S2D_Viewport viewport;
   S2D_Update update;
   S2D_Render render;
