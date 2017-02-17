@@ -192,7 +192,7 @@ void S2D_GL3_DrawTriangle(GLfloat x1,  GLfloat y1,
 /*
  * Draw a texture
  */
-static void S2D_GL3_DrawTexture(int x, int y, int w, int h, 
+static void S2D_GL3_DrawTexture(int x, int y, int w, int h,
                                 GLfloat r, GLfloat g, GLfloat b, GLfloat a,
                                 GLfloat tx1, GLfloat ty1, GLfloat tx2, GLfloat ty2,
                                 GLfloat tx3, GLfloat ty3, GLfloat tx4, GLfloat ty4,

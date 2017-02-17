@@ -2,7 +2,7 @@
 
 # ------------------------------------------------------------------------------
 # The Simple 2D Command-Line Utility for Unix-like Systems
-# 
+#
 # Run from the web using:
 #   bash <(curl -fsSL https://script_url_here)
 # or...
