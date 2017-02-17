@@ -30,6 +30,7 @@ typedef struct {
 } Point;
 
 Point pointer;
+Point click_pointer;
 
 bool mouse_click = false;
 
@@ -57,6 +58,8 @@ void on_key(S2D_Event e, const char *key) {
 void on_mouse(int x, int y) {
   printf("Mouse down at: %i, %i\n", x, y);
   mouse_click = true;
+  click_pointer.x = x;
+  click_pointer.y = y;
 }
 
 
@@ -244,10 +247,10 @@ void render() {
                pointer.x - 5, pointer.y + 4,  1, 1, 1, 1);
   
   if (mouse_click) {
-    S2D_DrawQuad(pointer.x - 9, pointer.y - 11, 0, 1, 0, 1,
-                 pointer.x + 9, pointer.y - 11, 0, 1, 0, 1,
-                 pointer.x + 9, pointer.y + 8,  0, 1, 0, 1,
-                 pointer.x - 9, pointer.y + 8,  0, 1, 0, 1);
+    S2D_DrawQuad(click_pointer.x - 9, click_pointer.y - 11, 0, 1, 0, 1,
+                 click_pointer.x + 9, click_pointer.y - 11, 0, 1, 0, 1,
+                 click_pointer.x + 9, click_pointer.y + 8,  0, 1, 0, 1,
+                 click_pointer.x - 9, click_pointer.y + 8,  0, 1, 0, 1);
     mouse_click = false;
   }
 }
