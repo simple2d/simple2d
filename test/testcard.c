@@ -31,6 +31,8 @@ typedef struct {
 
 Point pointer;
 
+bool mouse_click = false;
+
 
 void on_key(S2D_Event e, const char *key) {
   switch (e) {
@@ -54,10 +56,7 @@ void on_key(S2D_Event e, const char *key) {
 
 void on_mouse(int x, int y) {
   printf("Mouse down at: %i, %i\n", x, y);
-  S2D_DrawQuad(pointer.x - 9, pointer.y - 11, 0, 1, 0, 1,
-               pointer.x + 9, pointer.y - 11, 0, 1, 0, 1,
-               pointer.x + 9, pointer.y + 8,  0, 1, 0, 1,
-               pointer.x - 9, pointer.y + 8,  0, 1, 0, 1);
+  mouse_click = true;
 }
 
 
@@ -243,6 +242,14 @@ void render() {
                pointer.x + 5, pointer.y - 7,  1, 1, 1, 1,
                pointer.x + 5, pointer.y + 4,  1, 1, 1, 1,
                pointer.x - 5, pointer.y + 4,  1, 1, 1, 1);
+  
+  if (mouse_click) {
+    S2D_DrawQuad(pointer.x - 9, pointer.y - 11, 0, 1, 0, 1,
+                 pointer.x + 9, pointer.y - 11, 0, 1, 0, 1,
+                 pointer.x + 9, pointer.y + 8,  0, 1, 0, 1,
+                 pointer.x - 9, pointer.y + 8,  0, 1, 0, 1);
+    mouse_click = false;
+  }
 }
 
 
@@ -250,7 +257,7 @@ int main() {
   
   S2D_Diagnostics(true);
   
-  window = S2D_CreateWindow("Simple 2D – Test Card", 600, 500, update, render, S2D_RESIZABLE);
+  window = S2D_CreateWindow("Simple 2D — Test Card", 600, 500, update, render, S2D_RESIZABLE);
   
   window->on_key        = on_key;
   window->on_mouse      = on_mouse;
