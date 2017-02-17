@@ -14,7 +14,8 @@ void S2D_GetMouseOnViewport(S2D_Window *window, int wx, int wy, int *x, int *y) 
   switch (window->viewport.mode) {
     
     case S2D_FIXED:
-      *x = wx; *y = wy;
+      *x = wx / (window->orig_width  / (double)window->viewport.width);
+      *y = wy / (window->orig_height / (double)window->viewport.height);
       break;
     
     case S2D_SCALE:
