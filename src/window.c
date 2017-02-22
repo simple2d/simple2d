@@ -141,7 +141,7 @@ int S2D_Show(S2D_Window *window) {
       switch (e.type) {
         
         case SDL_KEYDOWN:
-          if (window->on_key)
+          if (window->on_key && e.key.repeat == 0)
             window->on_key(S2D_KEYDOWN, SDL_GetScancodeName(e.key.keysym.scancode));
           break;
         
