@@ -504,6 +504,16 @@ Then attach the callback to the window:
 window->on_mouse = on_mouse;
 ```
 
+To show or hide the cursor over the window, use `S2D_ShowCursor`:
+
+```c
+// Show the cursor (true by default)...
+S2D_ShowCursor(true);
+
+// ...or hide it
+S2D_ShowCursor(false);
+```
+
 ### Keyboard
 
 There are three types of keyboard events captured by the window: a single key press, when a key is held down, and when a key is released. When a keyboard event takes place, the window calls its `on_key` function once.

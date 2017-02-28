@@ -30,3 +30,15 @@ void S2D_GetMouseOnViewport(S2D_Window *window, int wx, int wy, int *x, int *y) 
       break;
   }
 }
+
+
+/*
+ * Show or hide the cursor over the window
+ */
+void S2D_ShowCursor(bool toggle) {
+  if (toggle) {
+    SDL_ShowCursor(SDL_ENABLE);
+  } else {
+    SDL_ShowCursor(SDL_DISABLE);
+  }
+}
