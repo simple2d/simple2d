@@ -8,13 +8,13 @@ static bool FORCE_GL2 = false;
 // Flag set if using OpenGL 2.1
 static bool S2D_GL2 = false;
 
-// The orthographic projection matrix for 2D rendering,
-// given in column-first order.
+// The orthographic projection matrix for 2D rendering.
+// Elements 0 and 5 are set in S2D_GL_SetViewport.
 static GLfloat orthoMatrix[16] =
-  { 2.0f,     0,             0,    0,
-       0, -2.0f,             0,    0,
-       0,     0, -2.0f / 128.0,    0,  // 128.0 == far_z
-   -1.0f,  1.0f,         -1.0f, 1.0f };
+  {    0,    0,     0,    0,
+       0,    0,     0,    0,
+       0,    0,     0,    0,
+   -1.0f, 1.0f, -1.0f, 1.0f };
 
 
 /*

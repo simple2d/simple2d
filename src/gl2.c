@@ -4,7 +4,7 @@
 
 
 /*
- * Applies the matrix projection
+ * Applies the projection matrix
  */
 void S2D_GL2_ApplyProjection(int w, int h) {
   
@@ -15,7 +15,7 @@ void S2D_GL2_ApplyProjection(int w, int h) {
   // Multiply the current matrix with the orthographic matrix
   glOrtho(0.f, w, h, 0.f, -1.f, 1.f);
   
-  // Initialize the modelview matrix
+  // Initialize the model-view matrix
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
 }

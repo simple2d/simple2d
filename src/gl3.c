@@ -10,7 +10,7 @@ static GLuint indices[] =
 
 
 /*
- * Applies the matrix projection
+ * Applies the projection matrix
  */
 void S2D_GL3_ApplyProjection(GLfloat orthoMatrix[16]) {
   

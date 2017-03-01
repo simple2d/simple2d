@@ -20,7 +20,7 @@ static GLushort indices[] =
 
 
 /*
- * Applies the matrix projection
+ * Applies the projection matrix
  */
 void S2D_GLES_ApplyProjection(GLfloat orthoMatrix[16]) {
   
@@ -54,7 +54,7 @@ int S2D_GLES_Init() {
   // Vertex shader source string
   GLchar vertexSource[] =
     // uniforms used by the vertex shader
-    "uniform mat4 u_mvpMatrix;"   // model view and projection matrix
+    "uniform mat4 u_mvpMatrix;"   // projection matrix
     
     // attributes input to the vertex shader
     "attribute vec4 a_position;"  // position value
