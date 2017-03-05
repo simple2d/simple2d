@@ -1,6 +1,9 @@
 # Makefile for Unix-like systems:
 #   macOS, Linux, Raspberry Pi, MinGW
 
+PREFIX?=/usr/local
+CFLAGS=-std=c11
+
 # For ARM platforms
 ifneq (,$(findstring arm,$(shell uname -m)))
 	PLATFORM=arm
@@ -20,9 +23,6 @@ ifneq (,$(findstring MINGW,$(shell uname -s)))
 	CC=gcc
 	INCLUDES=-I/usr/local/include/
 endif
-
-PREFIX?=/usr/local
-CFLAGS=-std=c99
 
 SOURCES=simple2d shapes image sprite text sound music input controllers window
 ifeq ($(PLATFORM),arm)
