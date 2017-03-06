@@ -43,13 +43,13 @@ Once installed, use the `simple2d` command-line utility to update Simple 2D, che
 
 ## Building from source
 
-Alternatively, you can compile and install Simple 2D from source. First clone the repo using:
+Alternatively, you can compile and install Simple 2D from source. First clone this repo using:
 
 ```bash
 git clone --recursive https://github.com/simple2d/simple2d.git
 ```
 
-To keep the size of this repository small, [git submodules](https://git-scm.com/book/en/Git-Tools-Submodules) are used to reference test media and Windows dependencies. The `--recursive` flag ensures submodules are initialize and updated when this repo is cloned. If you happened to clone this repo without the `--recursive` flag, you can still initialize and update submodules with:
+To keep the size of this repository small, [Git submodules](https://git-scm.com/book/en/Git-Tools-Submodules) are used to reference [test media](https://github.com/simple2d/test_media) and [Windows dependencies](https://github.com/simple2d/windows-deps). The `--recursive` flag ensures submodules are initialize and updated when this repo is cloned. If you happened to clone this repo without the `--recursive` flag, you can still initialize and update submodules with:
 
 ```bash
 git submodule init
