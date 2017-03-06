@@ -673,7 +673,7 @@ update() {
   # $LATEST_VERSION is newer $VERSION (the version installed)
   if [[ $? == 1 ]]; then
     echo -e "A new version of Simple 2D is available.\n"
-    prompt_to_continue "Install now?"
+    prompt_to_continue "Upgrade from v$VERSION to v$LATEST_VERSION?"
     update_check_sdl
     install_s2d $LATEST_VERSION
     success_msg "Simple 2D has been updated to $LATEST_VERSION!"
