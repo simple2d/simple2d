@@ -321,8 +321,8 @@ void on_controller(int which, bool is_axis, int axis, int val, bool is_btn, int 
   
   puts("=== Controller Pressed ===");
   printf(
-    "which: %i\nis_axis: %i\naxis: %i\nval: %i\nis_btn: %i\nbtn: %i\n",
-    which, is_axis, axis, val, is_btn, btn
+    "which: %i\nis_axis: %i\naxis: %i\nval: %i\nis_btn: %i\nbtn: %i\npressed: %i\n",
+    which, is_axis, axis, val, is_btn, btn, pressed
   );
   
   double scale = window->viewport.width / 2.0;
@@ -414,7 +414,7 @@ int main() {
   S2D_Diagnostics(true);
   
   window = S2D_CreateWindow(
-    "Controller Test", 600, 400, NULL, render, 0
+    "Simple 2D — Controller", 600, 400, NULL, render, 0
   );
   
   window->on_key        = on_key;

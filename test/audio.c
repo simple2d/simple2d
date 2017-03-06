@@ -115,7 +115,7 @@ int main() {
   S2D_Diagnostics(true);
   
   window = S2D_CreateWindow(
-    "Audio", 200, 150, NULL, NULL, 0
+    "Simple 2D — Audio", 200, 150, NULL, NULL, 0
   );
   
   if (!window) return 1;
