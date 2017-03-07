@@ -876,7 +876,7 @@ case $1 in
     elif [[ $platform == 'linux' ]]; then
       FLAGS='-lGL -lm'
     elif [[ $platform == 'arm' ]]; then
-      FLAGS='-lm -I/opt/vc/include/ -L/opt/vc/lib -lGLESv2'
+      FLAGS='-lm -I/opt/vc/include/ -L/opt/vc/lib -lGLESv2 -lsmpeg2'
     fi
     if [[ $platform == 'mingw' ]]; then
       echo "-I/usr/local/include/ -L/usr/local/lib -lmingw32 -lsimple2d -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf -lopengl32 -lglew32"
