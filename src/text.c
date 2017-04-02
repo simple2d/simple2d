@@ -46,10 +46,6 @@ S2D_Text *S2D_CreateText(const char *font, const char *msg, int size) {
   // Save the width and height of the text
   TTF_SizeText(txt->font, txt->msg, &txt->width, &txt->height);
   
-  // Assign color and set up for rendering
-  SDL_Color color = { 255, 255, 255 };
-  txt->surface = TTF_RenderText_Blended(txt->font, txt->msg, color);
-  
   return txt;
 }
 
@@ -67,9 +63,6 @@ void S2D_SetText(S2D_Text *txt, const char *msg) {
   
   TTF_SizeText(txt->font, txt->msg, &txt->width, &txt->height);
   
-  SDL_Color color = { 255, 255, 255 };
-  txt->surface = TTF_RenderText_Blended(txt->font, txt->msg, color);
-  
   // Delete the current texture so a new one can be generated
   S2D_GL_FreeTexture(&txt->texture_id);
 }
@@ -82,6 +75,8 @@ void S2D_DrawText(S2D_Text *txt) {
   if (!txt) return;
   
   if (txt->texture_id == 0) {
+    SDL_Color color = { 255, 255, 255 };
+    txt->surface = TTF_RenderText_Blended(txt->font, txt->msg, color);
     S2D_GL_CreateTexture(&txt->texture_id, GL_RGBA,
                          txt->width, txt->height,
                          txt->surface->pixels, GL_NEAREST);
