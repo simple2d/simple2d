@@ -35,40 +35,104 @@ Point click_pointer;
 bool mouse_click = false;
 
 
-void on_key(S2D_Event e, const char *key) {
-  switch (e) {
-    case S2D_KEYDOWN:
-      printf("Key down: %s\n", key);
-      if (strcmp(key, "Escape") == 0) S2D_Close(window);
-      S2D_SetText(key_down_char, key);
+void on_key(S2D_Event e) {
+  switch (e.type) {
+    case S2D_KEY_DOWN:
+      printf("Key down: %s\n", e.key);
+      if (strcmp(e.key, "Escape") == 0) S2D_Close(window);
+      S2D_SetText(key_down_char, e.key);
       break;
     
     case S2D_KEY:
-      printf("Key held: %s\n", key);
-      S2D_SetText(key_char, key);
+      printf("Key held: %s\n", e.key);
+      S2D_SetText(key_char, e.key);
       break;
     
-    case S2D_KEYUP:
-      printf("Key up: %s\n", key);
+    case S2D_KEY_UP:
+      printf("Key up: %s\n", e.key);
       break;
   }
 }
 
 
-void on_mouse(int x, int y) {
-  printf("Mouse down at: %i, %i\n", x, y);
-  mouse_click = true;
-  click_pointer.x = x;
-  click_pointer.y = y;
+void print_mouse_button(int e) {
+  switch (e) {
+    case S2D_MOUSE_LEFT:
+      puts("Button left");
+      break;
+    case S2D_MOUSE_MIDDLE:
+      puts("Button middle");
+      break;
+    case S2D_MOUSE_RIGHT:
+      puts("Button right");
+      break;
+    case S2D_MOUSE_X1:
+      puts("Button X1");
+      break;
+    case S2D_MOUSE_X2:
+      puts("Button X2");
+      break;
+  }
 }
 
 
-void on_controller(int which, bool is_axis, int axis, int val, bool is_btn, int btn, bool pressed) {
-  puts("=== Controller Pressed ===");
-  printf(
-    "which: %i\nis_axis: %i\naxis: %i\nval: %i\nis_btn: %i\nbtn: %i\n",
-    which, is_axis, axis, val, is_btn, btn
-  );
+void on_mouse(S2D_Event e) {
+  puts("=== Mouse Event ===");
+  
+  switch (e.type) {
+    case S2D_MOUSE_DOWN:
+      puts("Mouse down");
+      print_mouse_button(e.button);
+      if (e.dblclick) puts("Double click");
+      mouse_click = true;
+      click_pointer.x = e.x;
+      click_pointer.y = e.y;
+      break;
+    
+    case S2D_MOUSE_UP:
+      puts("Mouse up");
+      print_mouse_button(e.button);
+      if (e.dblclick) puts("Double click");
+      break;
+    
+    case S2D_MOUSE_SCROLL:
+      puts("Mouse scroll");
+      if (e.direction == S2D_MOUSE_SCROLL_NORMAL) {
+        puts("Direction normal");
+      } else if (e.direction == S2D_MOUSE_SCROLL_INVERTED) {
+        puts("Direction inverted");
+      }
+      printf("delta x: %i\ndelta y: %i\n", e.delta_x, e.delta_y);
+      break;
+    
+    case S2D_MOUSE_MOVE:
+      puts("Mouse movement");
+      printf("delta x: %i\ndelta y: %i\n", e.delta_x, e.delta_y);
+      break;
+  }
+  
+  if (e.type != S2D_MOUSE_SCROLL) printf("x: %i, y: %i\n", e.x, e.y);
+}
+
+
+void on_controller(S2D_Event e) {
+  puts("=== Controller Event ===");
+  printf("Controller #%i\n", e.which);
+  
+  switch (e.type) {
+    case S2D_AXIS:
+      printf("Axis: %i\n", e.axis);
+      printf("Value: %i\n", e.value);
+      break;
+    
+    case S2D_BUTTON_DOWN:
+      printf("Button #%i down\n", e.button);
+      break;
+    
+    case S2D_BUTTON_UP:
+      printf("Button #%i up\n", e.button);
+      break;
+  }
 }
 
 

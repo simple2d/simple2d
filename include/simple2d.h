@@ -82,10 +82,28 @@
 #define S2D_SCALE   2
 #define S2D_STRETCH 3
 
-// Events
-#define S2D_KEYDOWN 1  // key is pressed
-#define S2D_KEY     2  // key is held down
-#define S2D_KEYUP   3  // key is released
+// Keyboard events
+#define S2D_KEY_DOWN 1  // key is pressed
+#define S2D_KEY      2  // key is held down
+#define S2D_KEY_UP   3  // key is released
+
+// Mouse events
+#define S2D_MOUSE_DOWN   1  // mouse button pressed
+#define S2D_MOUSE_UP     2  // mouse button released
+#define S2D_MOUSE_SCROLL 3  // mouse scrolling or wheel movement
+#define S2D_MOUSE_MOVE   4  // mouse movement
+#define S2D_MOUSE_LEFT   SDL_BUTTON_LEFT
+#define S2D_MOUSE_MIDDLE SDL_BUTTON_MIDDLE
+#define S2D_MOUSE_RIGHT  SDL_BUTTON_RIGHT
+#define S2D_MOUSE_X1     SDL_BUTTON_X1
+#define S2D_MOUSE_X2     SDL_BUTTON_X2
+#define S2D_MOUSE_SCROLL_NORMAL   SDL_MOUSEWHEEL_NORMAL
+#define S2D_MOUSE_SCROLL_INVERTED SDL_MOUSEWHEEL_FLIPPED
+
+// Controller events
+#define S2D_AXIS        1
+#define S2D_BUTTON_DOWN 2
+#define S2D_BUTTON_UP   3
 
 // Internal Shared Data ////////////////////////////////////////////////////////
 
@@ -94,14 +112,27 @@ extern bool S2D_diagnostics;  // flag for whether to print diagnostics with S2D_
 
 // Type Definitions ////////////////////////////////////////////////////////////
 
-typedef int S2D_Event;
+// S2D_Event
+typedef struct {
+  int which;
+  int type;
+  int button;
+  bool dblclick;
+  const char *key;
+  int x;
+  int y;
+  int delta_x;
+  int delta_y;
+  int direction;
+  int axis;
+  int value;
+} S2D_Event;
+
 typedef void (*S2D_Update)();
 typedef void (*S2D_Render)();
-typedef void (*S2D_On_Key)(S2D_Event e, const char *key);
-typedef void (*S2D_On_Mouse)(int x, int y);
-typedef void (*S2D_On_Controller)(
-  int which, bool is_axis, int axis, int val, bool is_btn, int btn, bool pressed
-);
+typedef void (*S2D_On_Key)(S2D_Event e);
+typedef void (*S2D_On_Mouse)(S2D_Event e);
+typedef void (*S2D_On_Controller)(S2D_Event e);
 
 // S2D_Color
 typedef struct {
