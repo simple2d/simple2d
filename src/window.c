@@ -141,41 +141,82 @@ int S2D_Show(S2D_Window *window) {
       switch (e.type) {
         
         case SDL_KEYDOWN:
-          if (window->on_key && e.key.repeat == 0)
-            window->on_key(S2D_KEYDOWN, SDL_GetScancodeName(e.key.keysym.scancode));
+          if (window->on_key && e.key.repeat == 0) {
+            S2D_Event event = {
+              .type = S2D_KEY_DOWN, .key = SDL_GetScancodeName(e.key.keysym.scancode)
+            };
+            window->on_key(event);
+          }
           break;
         
         case SDL_KEYUP:
-          if (window->on_key)
-            window->on_key(S2D_KEYUP, SDL_GetScancodeName(e.key.keysym.scancode));
+          if (window->on_key) {
+            S2D_Event event = {
+              .type = S2D_KEY_UP, .key = SDL_GetScancodeName(e.key.keysym.scancode)
+            };
+            window->on_key(event);
+          }
           break;
         
-        case SDL_MOUSEBUTTONDOWN:
+        case SDL_MOUSEBUTTONDOWN: case SDL_MOUSEBUTTONUP:
           if (window->on_mouse) {
             S2D_GetMouseOnViewport(window, e.button.x, e.button.y, &mx, &my);
-            window->on_mouse(mx, my);
+            S2D_Event event = {
+              .button = e.button.button, .x = mx, .y = my
+            };
+            event.type = e.type == SDL_MOUSEBUTTONDOWN ? S2D_MOUSE_DOWN : S2D_MOUSE_UP;
+            event.dblclick = e.button.clicks == 2 ? true : false;
+            window->on_mouse(event);
+          }
+          break;
+        
+        case SDL_MOUSEWHEEL:
+          if (window->on_mouse) {
+            S2D_Event event = {
+              .type = S2D_MOUSE_SCROLL, .direction = e.wheel.direction,
+              .delta_x = e.wheel.x, .delta_y = -e.wheel.y
+            };
+            window->on_mouse(event);
+          }
+          break;
+        
+        case SDL_MOUSEMOTION:
+          if (window->on_mouse) {
+            S2D_GetMouseOnViewport(window, e.motion.x, e.motion.y, &mx, &my);
+            S2D_Event event = {
+              .type = S2D_MOUSE_MOVE,
+              .x = mx, .y = my, .delta_x = e.motion.xrel, .delta_y = e.motion.yrel
+            };
+            window->on_mouse(event);
           }
           break;
         
         case SDL_JOYAXISMOTION:
-          if (window->on_controller)
-            window->on_controller(
-              e.jaxis.which, true, e.jaxis.axis, e.jaxis.value, false, 0, false
-            );
+          if (window->on_controller) {
+            S2D_Event event = {
+              .which = e.jaxis.which, .type = S2D_AXIS,
+              .axis = e.jaxis.axis, .value = e.jaxis.value
+            };
+            window->on_controller(event);
+          }
           break;
         
         case SDL_JOYBUTTONDOWN:
-          if (window->on_controller)
-            window->on_controller(
-              e.jaxis.which, false, 0, 0, true, e.jbutton.button, true
-            );
+          if (window->on_controller) {
+            S2D_Event event = {
+              .which = e.jaxis.which, .type = S2D_BUTTON_DOWN, .button = e.jbutton.button
+            };
+            window->on_controller(event);
+          }
           break;
         
         case SDL_JOYBUTTONUP:
-          if (window->on_controller)
-            window->on_controller(
-              e.jaxis.which, false, 0, 0, true, e.jbutton.button, false
-            );
+          if (window->on_controller) {
+            S2D_Event event = {
+              .which = e.jaxis.which, .type = S2D_BUTTON_UP, .button = e.jbutton.button
+            };
+            window->on_controller(event);
+          }
           break;
         
         case SDL_WINDOWEVENT:
@@ -202,7 +243,10 @@ int S2D_Show(S2D_Window *window) {
     for (int i = 0; i < num_keys; i++) {
       if (window->on_key) {
         if (key_state[i] == 1) {
-          window->on_key(S2D_KEY, SDL_GetScancodeName(i));
+          S2D_Event event = {
+            .type = S2D_KEY, .key = SDL_GetScancodeName(i)
+          };
+          window->on_key(event);
         }
       }
     }

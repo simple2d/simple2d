@@ -38,14 +38,14 @@ void print_help() {
   puts("");
 }
 
-void on_key(S2D_Event e, const char *key) {
-  if (e != S2D_KEYDOWN) return;
+void on_key(S2D_Event e) {
+  if (e.type != S2D_KEY_DOWN) return;
   
-  if (strcmp(key, "Escape") == 0) {
+  if (strcmp(e.key, "Escape") == 0) {
     S2D_Close(window);
   }
   
-  switch (*key) {
+  switch (*e.key) {
     case 'H':
       print_help();
       break;

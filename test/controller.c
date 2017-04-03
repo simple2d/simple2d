@@ -304,56 +304,64 @@ void render() {
 }
 
 
-void on_key(S2D_Event e, const char *key) {
-  if (e != S2D_KEYDOWN) return;
+void on_key(S2D_Event e) {
+  if (e.type != S2D_KEY_DOWN) return;
   
-  if (strcmp(key, "Escape") == 0) {
+  if (strcmp(e.key, "Escape") == 0) {
     S2D_Close(window);
   }
   
-  if (strcmp(key, "D") == 0) {
+  if (strcmp(e.key, "D") == 0) {
     S2D_DetectControllers();
   }
 }
 
 
-void on_controller(int which, bool is_axis, int axis, int val, bool is_btn, int btn, bool pressed) {
+void on_controller(S2D_Event e) {
+  puts("=== Controller Event ===");
+  printf("Controller #%i\n", e.which);
   
-  puts("=== Controller Pressed ===");
-  printf(
-    "which: %i\nis_axis: %i\naxis: %i\nval: %i\nis_btn: %i\nbtn: %i\npressed: %i\n",
-    which, is_axis, axis, val, is_btn, btn, pressed
-  );
+  switch (e.type) {
+    case S2D_AXIS:
+      printf("Axis: %i\n", e.axis);
+      printf("Value: %i\n", e.value);
+      break;
+    case S2D_BUTTON_DOWN:
+      printf("Button #%i down\n", e.button);
+      break;
+    case S2D_BUTTON_UP:
+      printf("Button #%i up\n", e.button);
+      break;
+  }
   
   double scale = window->viewport.width / 2.0;
   
-  if (is_axis) {
-    switch (axis) {
+  if (e.type == S2D_AXIS) {
+    switch (e.axis) {
       case 0:
-        axis0 = to_d(val) * scale;
+        axis0 = to_d(e.value) * scale;
         break;
       case 1:
-        axis1 = to_d(val) * scale;
+        axis1 = to_d(e.value) * scale;
         break;
       case 2:
-        axis2 = to_d(val) * scale;
+        axis2 = to_d(e.value) * scale;
         break;
       case 3:
-        axis3 = to_d(val) * scale;
+        axis3 = to_d(e.value) * scale;
         break;
       case 4:
-        axis4 = to_d(val) * scale;
+        axis4 = to_d(e.value) * scale;
         break;
       case 5:
-        axis5 = to_d(val) * scale;
+        axis5 = to_d(e.value) * scale;
         break;
       default:
         puts("No axis match");
     }
-  }
-  
-  if (is_btn) {
-    switch (btn) {
+  } else {
+    bool pressed = e.type == S2D_BUTTON_DOWN ? true : false;
+    switch (e.button) {
       case 0:
         btn0 = pressed;
         break;
