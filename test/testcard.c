@@ -10,10 +10,6 @@ S2D_Image  *img_clr_g;
 S2D_Image  *img_clr_b;
 S2D_Sprite *spr;
 int sprite_step = 0;
-S2D_Text   *key_down_text;
-S2D_Text   *key_down_char;
-S2D_Text   *key_text;
-S2D_Text   *key_char;
 S2D_Text   *txt_clr_r;
 S2D_Text   *txt_clr_g;
 S2D_Text   *txt_clr_b;
@@ -40,12 +36,10 @@ void on_key(S2D_Event e) {
     case S2D_KEY_DOWN:
       printf("Key down: %s\n", e.key);
       if (strcmp(e.key, "Escape") == 0) S2D_Close(window);
-      S2D_SetText(key_down_char, e.key);
       break;
     
     case S2D_KEY_HELD:
       printf("Key held: %s\n", e.key);
-      S2D_SetText(key_char, e.key);
       break;
     
     case S2D_KEY_UP:
@@ -288,10 +282,6 @@ void render() {
   
   // Text
   
-  S2D_DrawText(key_down_text);
-  S2D_DrawText(key_down_char);
-  S2D_DrawText(key_text);
-  S2D_DrawText(key_char);
   S2D_DrawText(txt_clr_r);
   S2D_DrawText(txt_clr_g);
   S2D_DrawText(txt_clr_b);
@@ -380,20 +370,6 @@ int main() {
   //   spr->img->color.g = 1.0;
   //   spr->img->color.b = 1.0;
   //   spr->img->color.a = 1.0;
-  
-  key_down_text = S2D_CreateText(font, "On Key Down:", font_size);
-  key_down_text->x = 5;
-  key_down_text->y = 300;
-  key_down_char = S2D_CreateText(font, "", font_size);
-  key_down_char->x = 154;
-  key_down_char->y = 300;
-  
-  key_text = S2D_CreateText(font, "On Key:", font_size);
-  key_text->x = 5;
-  key_text->y = 270;
-  key_char = S2D_CreateText(font, "", font_size);
-  key_char->x = 90;
-  key_char->y = 270;
   
   txt_clr_r = S2D_CreateText(font, "R", font_size);
   txt_clr_r->x = 44;
