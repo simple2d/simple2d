@@ -84,7 +84,7 @@
 
 // Keyboard events
 #define S2D_KEY_DOWN 1  // key is pressed
-#define S2D_KEY      2  // key is held down
+#define S2D_KEY_HELD 2  // key is held down
 #define S2D_KEY_UP   3  // key is released
 
 // Mouse events

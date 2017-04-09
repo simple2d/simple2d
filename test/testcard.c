@@ -43,7 +43,7 @@ void on_key(S2D_Event e) {
       S2D_SetText(key_down_char, e.key);
       break;
     
-    case S2D_KEY:
+    case S2D_KEY_HELD:
       printf("Key held: %s\n", e.key);
       S2D_SetText(key_char, e.key);
       break;
