@@ -244,7 +244,7 @@ int S2D_Show(S2D_Window *window) {
       if (window->on_key) {
         if (key_state[i] == 1) {
           S2D_Event event = {
-            .type = S2D_KEY, .key = SDL_GetScancodeName(i)
+            .type = S2D_KEY_HELD, .key = SDL_GetScancodeName(i)
           };
           window->on_key(event);
         }
