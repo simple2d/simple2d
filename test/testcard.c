@@ -251,6 +251,26 @@ void render() {
                350, 250, 1, 1, 1, 1,
                300, 250, 1, 1, 1, 0);
   
+  // Lines
+  
+  S2D_DrawLine(
+    354, 204, 397, 247,
+    11,
+    1, 1, 1, 1,
+    1, 1, 1, 1,
+    1, 1, 1, 1,
+    1, 1, 1, 1
+  );
+  
+  S2D_DrawLine(
+    395, 205, 355, 245,
+    15,
+    1, 0, 0, 0.5,
+    0, 1, 0, 0.5,
+    0, 0, 1, 0.5,
+    1, 0, 1, 0.5
+  );
+  
   // Images
   
   S2D_DrawImage(img_png);
@@ -333,10 +353,10 @@ int main() {
   img_bmp->y = 0;
   
   img_clr_r = S2D_CreateImage("media/colors.png");
-  img_clr_r->x = 350;
+  img_clr_r->x = 400;
   img_clr_r->y = 200;
   img_clr_r->width  = 50;
-  img_clr_r->height = 50;
+  img_clr_r->height = 25;
   img_clr_r->color.r = 1.0;
   img_clr_r->color.g = 0.3;
   img_clr_r->color.b = 0.3;
@@ -344,26 +364,26 @@ int main() {
   
   img_clr_g = S2D_CreateImage("media/colors.png");
   img_clr_g->x = 400;
-  img_clr_g->y = 200;
-  img_clr_g->width  = 50;
-  img_clr_g->height = 50;
+  img_clr_g->y = 225;
+  img_clr_g->width  = 25;
+  img_clr_g->height = 25;
   img_clr_g->color.r = 0.3;
   img_clr_g->color.g = 1.0;
   img_clr_g->color.b = 0.3;
   img_clr_g->color.a = 1.0;
   
   img_clr_b = S2D_CreateImage("media/colors.png");
-  img_clr_b->x = 450;
-  img_clr_b->y = 200;
-  img_clr_b->width  = 50;
-  img_clr_b->height = 50;
+  img_clr_b->x = 425;
+  img_clr_b->y = 225;
+  img_clr_b->width  = 25;
+  img_clr_b->height = 25;
   img_clr_b->color.r = 0.3;
   img_clr_b->color.g = 0.3;
   img_clr_b->color.b = 1.0;
   img_clr_b->color.a = 1.0;
   
   spr = S2D_CreateSprite("media/sprite_sheet.png");
-  spr->x = 500;
+  spr->x = 450;
   spr->y = 200;
   // Change color of sprite image:
   //   spr->img->color.r = 1.0;
