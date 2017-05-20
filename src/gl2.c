@@ -7,14 +7,14 @@
  * Applies the projection matrix
  */
 void S2D_GL2_ApplyProjection(int w, int h) {
-  
+
   // Initialize the projection matrix
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  
+
   // Multiply the current matrix with the orthographic matrix
   glOrtho(0.f, w, h, 0.f, -1.f, 1.f);
-  
+
   // Initialize the model-view matrix
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
@@ -25,13 +25,13 @@ void S2D_GL2_ApplyProjection(int w, int h) {
  * Initalize OpenGL
  */
 int S2D_GL2_Init() {
-  
+
   GLenum error = GL_NO_ERROR;
-  
+
   // Enable transparency
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  
+
   // Check for errors
   error = glGetError();
   if (error != GL_NO_ERROR) {
@@ -52,7 +52,7 @@ void S2D_GL2_DrawTriangle(GLfloat x1,  GLfloat y1,
                           GLfloat c2r, GLfloat c2g, GLfloat c2b, GLfloat c2a,
                           GLfloat x3,  GLfloat y3,
                           GLfloat c3r, GLfloat c3g, GLfloat c3b, GLfloat c3a) {
-  
+
   glBegin(GL_TRIANGLES);
     glColor4f(c1r, c1g, c1b, c1a); glVertex2f(x1, y1);
     glColor4f(c2r, c2g, c2b, c2a); glVertex2f(x2, y2);
@@ -69,11 +69,11 @@ static void S2D_GL2_DrawTexture(int x, int y, int w, int h,
                                 GLfloat tx1, GLfloat ty1, GLfloat tx2, GLfloat ty2,
                                 GLfloat tx3, GLfloat ty3, GLfloat tx4, GLfloat ty4,
                                 GLuint texture_id) {
-  
+
   glEnable(GL_TEXTURE_2D);
-  
+
   glBindTexture(GL_TEXTURE_2D, texture_id);
-  
+
   glBegin(GL_QUADS);
     glColor4f(r, g, b, a);
     glTexCoord2f(tx1, ty1); glVertex2f(x,     y    );
@@ -81,7 +81,7 @@ static void S2D_GL2_DrawTexture(int x, int y, int w, int h,
     glTexCoord2f(tx3, ty3); glVertex2f(x + w, y + h);
     glTexCoord2f(tx4, ty4); glVertex2f(x,     y + h);
   glEnd();
-  
+
   glDisable(GL_TEXTURE_2D);
 }
 

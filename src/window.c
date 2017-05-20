@@ -8,9 +8,9 @@
  */
 S2D_Window *S2D_CreateWindow(const char *title, int width, int height,
                              S2D_Update update, S2D_Render render, int flags) {
-  
+
   S2D_Init();
-  
+
   // Allocate window and set default values
   S2D_Window *window      = (S2D_Window *) malloc(sizeof(S2D_Window));
   window->sdl             = NULL;
@@ -36,10 +36,10 @@ S2D_Window *S2D_CreateWindow(const char *title, int width, int height,
   window->background.b    = 0.0;
   window->background.a    = 1.0;
   window->close           = true;
-  
+
   // Detect controllers and joysticks
   S2D_DetectControllers();
-  
+
   // Return the window structure
   return window;
 }
@@ -49,12 +49,12 @@ S2D_Window *S2D_CreateWindow(const char *title, int width, int height,
  * Show the window
  */
 int S2D_Show(S2D_Window *window) {
-  
+
   if (!window) {
     S2D_Error("S2D_Show", "Window cannot be shown (because it's NULL)");
     return 1;
   }
-  
+
   // Create SDL window
   window->sdl = SDL_CreateWindow(
     window->title,                                   // title
@@ -62,32 +62,32 @@ int S2D_Show(S2D_Window *window) {
     window->width, window->height,                   // window size
     SDL_WINDOW_OPENGL | window->flags                // flags
   );
-  
+
   if (!window->sdl) S2D_Error("SDL_CreateWindow", SDL_GetError());
-  
+
   // The window created by SDL might not actually be the requested size.
   // If it's not the same, retrieve and store the actual window size.
   int actual_width, actual_height;
   SDL_GetWindowSize(window->sdl, &actual_width, &actual_height);
-  
+
   if ((window->width != actual_width) || (window->height != actual_height)) {
-    
+
     sprintf(S2D_msg, "Scaling window to %ix%i (requested size was %ix%i)",
       actual_width, actual_height, window->width, window->height);
     S2D_Log(S2D_msg, S2D_INFO);
-    
+
     window->width  = actual_width;
     window->height = actual_height;
   }
-  
+
   // Set Up OpenGL /////////////////////////////////////////////////////////////
-  
+
   S2D_GL_Init(window);
-  
+
   // Set Main Loop Data ////////////////////////////////////////////////////////
-  
+
   const Uint8 *key_state;
-  
+
   Uint32 frames = 0;           // Total frames since start
   Uint32 start_ms = SDL_GetTicks();  // Elapsed time since start
   Uint32 begin_ms = start_ms;  // Time at beginning of loop
@@ -96,50 +96,50 @@ int S2D_Show(S2D_Window *window) {
   Uint32 loop_ms;              // Elapsed time of loop
   int delay_ms;                // Amount of delay to achieve desired frame rate
   double fps;                  // The actual frame rate
-  
+
   // Enable VSync
   if (window->vsync) {
     if (!SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1")) {
       S2D_Log("VSync cannot be enabled", S2D_WARN);
     }
   }
-  
+
   window->close = false;
-  
+
   // Main Loop /////////////////////////////////////////////////////////////////
-  
+
   while (!window->close) {
-    
+
     // Clear Frame /////////////////////////////////////////////////////////////
-    
+
     S2D_GL_Clear(window->background);
-    
+
     // Set FPS /////////////////////////////////////////////////////////////////
-    
+
     frames++;
     end_ms = SDL_GetTicks();
-    
+
     elapsed_ms = end_ms - start_ms;
     fps = frames / (elapsed_ms / 1000.0);
-    
+
     loop_ms = end_ms - begin_ms;
     delay_ms = (1000 / window->fps_cap) - loop_ms;
-    
+
     if (delay_ms < 0) delay_ms = 0;
-    
+
     // Note: `loop_ms + delay_ms` should equal `1000 / fps_cap`
-    
+
     SDL_Delay(delay_ms);
     begin_ms = SDL_GetTicks();
-    
+
     // Handle Input ////////////////////////////////////////////////////////////
-    
+
     int mx, my;  // mouse x, y coordinates
-    
+
     SDL_Event e;
     while (SDL_PollEvent(&e)) {
       switch (e.type) {
-        
+
         case SDL_KEYDOWN:
           if (window->on_key && e.key.repeat == 0) {
             S2D_Event event = {
@@ -148,7 +148,7 @@ int S2D_Show(S2D_Window *window) {
             window->on_key(event);
           }
           break;
-        
+
         case SDL_KEYUP:
           if (window->on_key) {
             S2D_Event event = {
@@ -157,7 +157,7 @@ int S2D_Show(S2D_Window *window) {
             window->on_key(event);
           }
           break;
-        
+
         case SDL_MOUSEBUTTONDOWN: case SDL_MOUSEBUTTONUP:
           if (window->on_mouse) {
             S2D_GetMouseOnViewport(window, e.button.x, e.button.y, &mx, &my);
@@ -169,7 +169,7 @@ int S2D_Show(S2D_Window *window) {
             window->on_mouse(event);
           }
           break;
-        
+
         case SDL_MOUSEWHEEL:
           if (window->on_mouse) {
             S2D_Event event = {
@@ -179,7 +179,7 @@ int S2D_Show(S2D_Window *window) {
             window->on_mouse(event);
           }
           break;
-        
+
         case SDL_MOUSEMOTION:
           if (window->on_mouse) {
             S2D_GetMouseOnViewport(window, e.motion.x, e.motion.y, &mx, &my);
@@ -190,7 +190,7 @@ int S2D_Show(S2D_Window *window) {
             window->on_mouse(event);
           }
           break;
-        
+
         case SDL_JOYAXISMOTION:
           if (window->on_controller) {
             S2D_Event event = {
@@ -200,7 +200,7 @@ int S2D_Show(S2D_Window *window) {
             window->on_controller(event);
           }
           break;
-        
+
         case SDL_JOYBUTTONDOWN:
           if (window->on_controller) {
             S2D_Event event = {
@@ -209,7 +209,7 @@ int S2D_Show(S2D_Window *window) {
             window->on_controller(event);
           }
           break;
-        
+
         case SDL_JOYBUTTONUP:
           if (window->on_controller) {
             S2D_Event event = {
@@ -218,7 +218,7 @@ int S2D_Show(S2D_Window *window) {
             window->on_controller(event);
           }
           break;
-        
+
         case SDL_WINDOWEVENT:
           switch (e.window.event) {
             case SDL_WINDOWEVENT_RESIZED:
@@ -229,17 +229,17 @@ int S2D_Show(S2D_Window *window) {
               break;
           }
           break;
-        
+
         case SDL_QUIT:
           S2D_Close(window);
           break;
       }
     }
-    
+
     // Detect keys held down
     int num_keys;
     key_state = SDL_GetKeyboardState(&num_keys);
-    
+
     for (int i = 0; i < num_keys; i++) {
       if (window->on_key) {
         if (key_state[i] == 1) {
@@ -250,29 +250,29 @@ int S2D_Show(S2D_Window *window) {
         }
       }
     }
-    
+
     // Get and store mouse position relative to the viewport
     int wx, wy;  // mouse x, y coordinates relative to the window
     SDL_GetMouseState(&wx, &wy);
     S2D_GetMouseOnViewport(window, wx, wy, &window->mouse.x, &window->mouse.y);
-    
+
     // Update Window State /////////////////////////////////////////////////////
-    
+
     // Store new values in the window
     window->frames     = frames;
     window->elapsed_ms = elapsed_ms;
     window->loop_ms    = loop_ms;
     window->delay_ms   = delay_ms;
     window->fps        = fps;
-    
+
     // Call update and render callbacks
     if (window->update) window->update();
     if (window->render) window->render();
-    
+
     // Draw Frame //////////////////////////////////////////////////////////////
     SDL_GL_SwapWindow(window->sdl);
   }
-  
+
   return 0;
 }
 

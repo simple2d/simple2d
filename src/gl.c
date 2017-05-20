@@ -52,7 +52,7 @@ void S2D_GL_StoreContextInfo(S2D_Window *window) {
   window->S2D_GL_VENDOR   = glGetString(GL_VENDOR);
   window->S2D_GL_RENDERER = glGetString(GL_RENDERER);
   window->S2D_GL_VERSION  = glGetString(GL_VERSION);
-  
+
   // These are not defined in GLES
   #if GLES
     window->S2D_GL_MAJOR_VERSION = 0;
@@ -61,7 +61,7 @@ void S2D_GL_StoreContextInfo(S2D_Window *window) {
     glGetIntegerv(GL_MAJOR_VERSION, &window->S2D_GL_MAJOR_VERSION);
     glGetIntegerv(GL_MINOR_VERSION, &window->S2D_GL_MINOR_VERSION);
   #endif
-  
+
   window->S2D_GL_SHADING_LANGUAGE_VERSION = glGetString(GL_SHADING_LANGUAGE_VERSION);
 };
 
@@ -71,47 +71,47 @@ void S2D_GL_StoreContextInfo(S2D_Window *window) {
  * Returns 0 if shader could not be compiled.
  */
 GLuint S2D_GL_LoadShader(GLenum type, const GLchar *shaderSrc, char *shaderName) {
-  
+
   GLuint shader;
   GLint compiled;
-  
+
   // Create the shader object
   shader = glCreateShader(type);
-  
+
   if (shader == 0) {
     S2D_GL_PrintError("Failed to create shader program");
     return 0;
   }
-  
+
   // Load the shader source
   glShaderSource(shader, 1, &shaderSrc, NULL);
-  
+
   // Compile the shader
   glCompileShader(shader);
-  
+
   // Check the compile status
   glGetShaderiv(shader, GL_COMPILE_STATUS, &compiled);
-  
+
   if (!compiled) {
-    
+
     GLint infoLen = 0;
-    
+
     glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLen);
-    
+
     if (infoLen > 1) {
-      
+
       char *infoLog = malloc(sizeof(char) * infoLen);
-      
+
       glGetShaderInfoLog(shader, infoLen, NULL, infoLog);
       printf("Error compiling shader \"%s\":\n%s\n", shaderName, infoLog);
-      
+
       free(infoLog);
     }
-    
+
     glDeleteShader(shader);
     return 0;
   }
-  
+
   return shader;
 }
 
@@ -120,29 +120,29 @@ GLuint S2D_GL_LoadShader(GLenum type, const GLchar *shaderSrc, char *shaderName)
  * Check if shader program was linked
  */
 int S2D_GL_CheckLinked(GLuint program, char *name) {
-  
+
   GLint linked;
   glGetProgramiv(program, GL_LINK_STATUS, &linked);
-  
+
   if (!linked) {
-    
+
     GLint infoLen = 0;
     glGetProgramiv(program, GL_INFO_LOG_LENGTH, &infoLen);
-    
+
     if (infoLen > 1) {
-      
+
       char *infoLog = malloc(sizeof(char) * infoLen);
-      
+
       glGetProgramInfoLog(program, infoLen, NULL, infoLog);
       printf("Error linking program `%s`: %s\n", name, infoLog);
-      
+
       free(infoLog);
     }
-    
+
     glDeleteProgram(program);
     return GL_FALSE;
   }
-  
+
   return GL_TRUE;
 }
 
@@ -151,15 +151,15 @@ int S2D_GL_CheckLinked(GLuint program, char *name) {
  * Calculate the viewport's scaled width and height
  */
 void S2D_GL_GetViewportScale(S2D_Window *window, int *w, int *h, double *scale) {
-  
+
   double s = fmin(
     window->width  / (double)window->viewport.width,
     window->height / (double)window->viewport.height
   );
-  
+
   *w = window->viewport.width  * s;
   *h = window->viewport.height * s;
-  
+
   if (scale) *scale = s;
 }
 
@@ -168,38 +168,38 @@ void S2D_GL_GetViewportScale(S2D_Window *window, int *w, int *h, double *scale) 
  * Sets the viewport and matrix projection
  */
 void S2D_GL_SetViewport(S2D_Window *window) {
-  
+
   int ortho_w = window->viewport.width;
   int ortho_h = window->viewport.height;
   int x, y, w, h;  // calculated GL viewport values
-  
+
   x = 0; y = 0; w = window->width; h = window->height;
-  
+
   switch (window->viewport.mode) {
-    
+
     case S2D_FIXED:
       w = window->orig_width;
       h = window->orig_height;
       y = window->height - h;
       break;
-    
+
     case S2D_SCALE:
       S2D_GL_GetViewportScale(window, &w, &h, NULL);
       // Center the viewport
       x = window->width  / 2.0 - w/2.0;
       y = window->height / 2.0 - h/2.0;
       break;
-    
+
     case S2D_STRETCH:
       break;
   }
-  
+
   glViewport(x, y, w, h);
-  
+
   // Set orthographic projection matrix
   orthoMatrix[0] =  2.0f / (GLfloat)ortho_w;
   orthoMatrix[5] = -2.0f / (GLfloat)ortho_h;
-  
+
   #if GLES
     S2D_GLES_ApplyProjection(orthoMatrix);
   #else
@@ -216,7 +216,7 @@ void S2D_GL_SetViewport(S2D_Window *window) {
  * Initialize OpenGL
  */
 int S2D_GL_Init(S2D_Window *window) {
-  
+
   // Specify the OpenGL Context
   #if !GLES
     // Use legacy OpenGL 2.1
@@ -230,7 +230,7 @@ int S2D_GL_Init(S2D_Window *window) {
       SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
     }
   #endif
-  
+
   // Create and store the OpenGL context
   if (FORCE_GL2) {
     window->glcontext = NULL;
@@ -238,16 +238,16 @@ int S2D_GL_Init(S2D_Window *window) {
     // Ask SDL to create an OpenGL context
     window->glcontext = SDL_GL_CreateContext(window->sdl);
   }
-  
+
   // Check if a valid OpenGL context was created
   if (window->glcontext) {
     // Valid context found
-    
+
     // Initialize OpenGL ES 2.0
     #if GLES
       S2D_GLES_Init();
       S2D_GL_SetViewport(window);
-      
+
     // Initialize OpenGL 3.3+
     #else
       // Initialize GLEW on Windows
@@ -258,28 +258,28 @@ int S2D_GL_Init(S2D_Window *window) {
       S2D_GL3_Init();
       S2D_GL_SetViewport(window);
     #endif
-    
+
   // Context could not be created
   } else {
-    
+
     #if GLES
       S2D_Error("GLES / SDL_GL_CreateContext", SDL_GetError());
-      
+
     #else
       // Try to fallback using an OpenGL 2.1 context
       SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
       SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
-      
+
       // Try creating the context again
       window->glcontext = SDL_GL_CreateContext(window->sdl);
-      
+
       // Check if this context was created
       if (window->glcontext) {
         // Valid context found
         S2D_GL2 = true;
         S2D_GL2_Init();
         S2D_GL_SetViewport(window);
-        
+
       // Could not create any OpenGL contexts, hard failure
       } else {
         S2D_Error("GL2 / SDL_GL_CreateContext", SDL_GetError());
@@ -288,11 +288,11 @@ int S2D_GL_Init(S2D_Window *window) {
       }
     #endif
   }
-  
+
   // Store the context and print it if diagnostics is enabled
   S2D_GL_StoreContextInfo(window);
   if (S2D_diagnostics) S2D_GL_PrintContextInfo(window);
-  
+
   return 0;
 }
 
@@ -303,19 +303,19 @@ int S2D_GL_Init(S2D_Window *window) {
 void S2D_GL_CreateTexture(GLuint *id, GLint format,
                           int w, int h,
                           const GLvoid *data, GLint filter) {
-  
+
   // If 0, then a new texture; generate name
   if (*id == 0) glGenTextures(1, id);
-  
+
   // Bind the named texture to a texturing target
   glBindTexture(GL_TEXTURE_2D, *id);
-  
+
   // Specifies the 2D texture image
   glTexImage2D(
     GL_TEXTURE_2D, 0, format, w, h,
     0, format, GL_UNSIGNED_BYTE, data
   );
-  
+
   // Set the filtering mode
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
@@ -342,7 +342,7 @@ void S2D_GL_DrawTriangle(GLfloat x1,  GLfloat y1,
                          GLfloat c2r, GLfloat c2g, GLfloat c2b, GLfloat c2a,
                          GLfloat x3,  GLfloat y3,
                          GLfloat c3r, GLfloat c3g, GLfloat c3b, GLfloat c3a) {
-  
+
   #if GLES
     S2D_GLES_DrawTriangle(x1, y1, c1r, c1g, c1b, c1a,
                           x2, y2, c2r, c2g, c2b, c2a,

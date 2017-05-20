@@ -9,11 +9,11 @@ void render() {
 }
 
 int main() {
-  
+
   S2D_Window *window = S2D_CreateWindow(
     "Hello Triangle", 640, 480, NULL, render, 0
   );
-  
+
   S2D_Show(window);
   S2D_FreeWindow(window);
   return 0;

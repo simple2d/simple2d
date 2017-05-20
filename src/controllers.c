@@ -7,19 +7,19 @@
  * Detect controllers and joysticks
  */
 void S2D_DetectControllers() {
-  
+
   if (SDL_NumJoysticks() > 0) {
     sprintf(S2D_msg, "Controllers detected: %i", SDL_NumJoysticks());
     S2D_Log(S2D_msg, S2D_INFO);
   }
-  
+
   // Variables for controllers and joysticks
   SDL_GameController *controller = NULL;
   SDL_Joystick *joy = NULL;
-  
+
   // Enumerate joysticks
   for (int i = 0; i < SDL_NumJoysticks(); ++i) {
-    
+
     // Check to see if joystick supports SDL's game controller interface
     if (SDL_IsGameController(i)) {
       controller = SDL_GameControllerOpen(i);
@@ -30,7 +30,7 @@ void S2D_DetectControllers() {
         sprintf(S2D_msg, "Could not open controller #%i: %s", i, SDL_GetError());
         S2D_Log(S2D_msg, S2D_ERROR);
       }
-      
+
     // Controller interface not supported, try to open as joystick
     } else {
       joy = SDL_JoystickOpen(i);

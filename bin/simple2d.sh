@@ -114,7 +114,7 @@ print_and_run() {
 #   $1  String  Name of the library, e.g. SDL2, without the "-l"
 have_lib?() {
   print_task "Checking for $1... "
-  
+
   if $(ld -o /dev/null -l$1 2>&1 | grep -qE '(library not found|ld: cannot find -l)'); then
     echo "no"
     return 1
@@ -184,22 +184,22 @@ compare_versions() {
 #   $1  String  The source file
 build() {
   src=$1
-  
+
   # If no input, print `cc` message and quit
   if [[ $src == "" ]]; then
     echo "Error: no input files"; exit
   fi
-  
+
   # Strip file extension
   path=${src%.*}
-  
+
   # Specify C compiler
   if [[ $platform == 'mingw' ]]; then
     CC=gcc
   else
     CC=cc
   fi
-  
+
   # Compile
   $CC $src `simple2d --libs` -o $path
 }
@@ -210,33 +210,33 @@ build() {
 
 # Checks if SDL2 libraries are installed
 have_sdl2_libs?() {
-  
+
   have_all_libs=true
   have_sdl2_lib=true
   have_image_lib=true
   have_mixer_lib=true
   have_ttf_lib=true
-  
+
   if ! have_lib? 'SDL2'; then
     have_sdl2_lib=false
     have_all_libs=false
   fi
-  
+
   if ! have_lib? 'SDL2_image'; then
     have_image_lib=false
     have_all_libs=false
   fi
-  
+
   if ! have_lib? 'SDL2_mixer'; then
     have_mixer_lib=false
     have_all_libs=false
   fi
-  
+
   if ! have_lib? 'SDL2_ttf'; then
     have_ttf_lib=false
     have_all_libs=false
   fi
-  
+
   if $have_all_libs; then
     return 0
   else
@@ -247,21 +247,21 @@ have_sdl2_libs?() {
 
 # Installs SDL on Linux
 install_sdl_linux() {
-  
+
   echo "The following packages will be installed:"
   echo "  libsdl2-dev"
   echo "  libsdl2-image-dev"
   echo "  libsdl2-mixer-dev"
   echo "  libsdl2-ttf-dev"; echo
-  
+
   prompt_to_continue "Install SDL now?"
-  
+
   print_task "Updating packages" "\n\n"
   print_and_run "sudo apt update"
   echo; print_task "Installing packages" "\n\n"
   print_and_run "sudo apt install -y libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev"
   echo
-  
+
   if ! have_sdl2_libs?; then
     echo; error_msg "SDL libraries did not install correctly"
     exit
@@ -274,38 +274,38 @@ install_sdl_linux() {
 # Installs SDL from source
 #   Takes about 30 min on RPI 2
 install_sdl_source() {
-  
+
   echo "SDL will be compiled and installed from source."; echo
-  
+
   prompt_to_continue "Install SDL now?"
-  
+
   # Install SDL dependencies
   print_task "Installing SDL2 dependencies" "\n\n"
   sudo apt update
-  
+
   libs=(
     build-essential  # This may be missing on some ARM platforms
-    
+
     # SDL2
     libudev-dev
     libdbus-1-dev
     libasound2-dev
-    
+
     # SDL2_image
     libjpeg9-dev
     libpng12-dev
-    
+
     # SDL2_mixer
     libvorbis-dev
     libflac-dev
-    
+
     # SDL2_ttf
     libgl1-mesa-dev  # Solves error missing -lGL
     libfreetype6-dev
   )
-  
+
   sudo apt install -y ${libs[*]}
-  
+
   # Downloads, compiles, and installs an SDL library from source
   # params:
   #   $1  String  URL of the tar archive
@@ -325,9 +325,9 @@ install_sdl_source() {
     rm /tmp/$2.tar.gz
     rm -rf /tmp/$2
   }
-  
+
   # Note that `$have_*_lib` variables are set by `have_sdl2_libs?()`
-  
+
   if [[ $have_sdl2_lib == 'false' ]]; then
     echo; print_task "Downloading SDL2" "\n\n"
     if [[ $platform == 'arm' ]]; then
@@ -336,24 +336,24 @@ install_sdl_source() {
       install_sdl_lib $sdl_url $sdl_fname
     fi
   fi
-  
+
   if [[ $have_image_lib == 'false' ]]; then
     echo; print_task "Downloading SDL2_image" "\n\n"
     install_sdl_lib $image_url $image_fname
   fi
-  
+
   if [[ $have_mixer_lib == 'false' ]]; then
     echo; print_task "Downloading SMPEG2" "\n\n"
     install_sdl_lib $smpeg_url $smpeg_fname
     echo; print_task "Downloading SDL2_mixer" "\n\n"
     install_sdl_lib $mixer_url $mixer_fname
   fi
-  
+
   if [[ $have_ttf_lib == 'false' ]]; then
     echo; print_task "Downloading SDL2_ttf" "\n\n"
     install_sdl_lib $ttf_url $ttf_fname
   fi
-  
+
   echo
   if ! have_sdl2_libs?; then
     error_msg "SDL libraries did not install correctly"
@@ -378,19 +378,19 @@ install_sdl() {
 # params:
 #   $1  String  Version to install, either 'master' or $VERSION
 install_s2d() {
-  
+
   tmp_dir="/tmp/simple2d"
-  
+
   mkdir $tmp_dir
-  
+
   if [[ $1 == 'master' ]]; then
     f_name=$1
   else
     f_name="v$1"
   fi
-  
+
   url="https://github.com/simple2d/simple2d/archive/$f_name.zip"
-  
+
   print_task "Downloading Simple 2D" "\n\n"
   # Linux and Raspberry Pi may not have curl installed by default
   if which curl > /dev/null; then
@@ -398,30 +398,30 @@ install_s2d() {
   else
     print_and_run "wget -NP $tmp_dir $url"
   fi
-  
+
   # Check if archive was downloaded properly
   if [ ! -f "$tmp_dir/$f_name.zip" ]; then
     echo; error_msg "Simple 2D could not be downloaded"
     exit
   fi
-  
+
   echo; print_task "Unpacking" "\n\n"
   print_and_run "unzip -q $tmp_dir/$f_name -d $tmp_dir"
-  
+
   # Check if archive was unpacked properly
   if [[ $? != 0 ]]; then
     echo; error_msg "Could not unpack. The downloaded Simple 2D package may be damaged."
     exit
   fi
-  
+
   print_and_run "cd $tmp_dir/simple2d-$1"
-  
+
   echo; print_and_run "make"
   echo; print_and_run "sudo make install"
-  
+
   echo; print_task "Cleaning up" "\n"; echo
   print_and_run "rm -rf $tmp_dir"; echo
-  
+
   # Check if S2D installed correctly
   if ! have_lib? 'simple2d'; then
     echo; error_msg "Simple 2D did not install correctly"
@@ -435,17 +435,17 @@ install_s2d() {
 # params:
 #   $1  String  Flags used, e.g. `--sdl`
 install() {
-  
+
   # If macOS, print message and quit
   if [[ $platform == 'macos' ]]; then
     macos_homebrew_message $1
   fi
-  
+
   # If MinGW, print message and quit
   if [[ $platform == 'mingw' ]]; then
     mingw_not_implemented_message
   fi
-  
+
   # If SDL flag, install only SDL and quit
   if [[ $1 == '--sdl' ]]; then
     echo
@@ -456,41 +456,41 @@ install() {
     fi
     exit
   fi
-  
+
   # Welcome message
   echo -e "\n${BOLD}Welcome to Simple 2D!${NORMAL}"
   echo -e "${BLUE}---------------------${NORMAL}\n"
-  
+
   echo -e "Platform detected: ${BOLD}${platform_display}${NORMAL}\n"
-  
+
   if have_lib? 'simple2d' > /dev/null; then
     warning_msg "Simple 2D is already installed. Proceeding will reinstall."
   fi
-  
+
   echo -e "Simple 2D will be installed to the following locations:
   /usr/local/include/simple2d.h
   /usr/local/lib/libsimple2d.a
   /usr/local/bin/simple2d"
   echo
-  
+
   if [[ $1 == '--HEAD' ]]; then
     echo -e "This will install Simple 2D from the \`master\` development branch.\n"
   fi
-  
+
   prompt_to_continue "Continue?"
-  
+
   if have_sdl2_libs?; then
     echo
   else
     echo; install_sdl
   fi
-  
+
   if [[ $1 == '--HEAD' ]]; then
     install_s2d 'master'
   else
     install_s2d $VERSION
   fi
-  
+
   success_msg "Simple 2D installed successfully!"
 }
 
@@ -500,19 +500,19 @@ install() {
 
 # Uninstalls SDL on Linux
 uninstall_sdl_linux() {
-  
+
   echo -e "The following packages will be removed:"
   echo "  libsdl2-dev"
   echo "  libsdl2-image-dev"
   echo "  libsdl2-mixer-dev"
   echo "  libsdl2-ttf-dev"; echo
-  
+
   prompt_to_continue "Uninstall SDL now?"
-  
+
   print_task "Uninstalling packages" "\n\n"
   print_and_run "sudo apt remove -y --purge libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev"
   echo
-  
+
   if have_sdl2_libs?; then
     echo; error_msg "SDL libraries did not uninstall correctly"
   else
@@ -523,12 +523,12 @@ uninstall_sdl_linux() {
 
 # Uninstalls SDL from source
 uninstall_sdl_source() {
-  
+
   prompt_to_continue "Uninstall SDL now?"
-  
+
   # Uninstall packages in case they were used
   print_and_run "sudo apt remove -y --purge libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev"
-  
+
   uninstall_sdl_lib () {
     cd /tmp
     wget -N $1
@@ -539,24 +539,24 @@ uninstall_sdl_source() {
     rm /tmp/$2.tar.gz
     rm -rf /tmp/$2
   }
-  
+
   echo; print_task "Uninstalling SDL2_image" "\n\n"
   uninstall_sdl_lib $image_url $image_fname
-  
+
   echo; print_task "Uninstalling SDL2_mixer" "\n\n"
   uninstall_sdl_lib $smpeg_url $smpeg_fname
   uninstall_sdl_lib $mixer_url $mixer_fname
-  
+
   echo; print_task "Uninstalling SDL2_ttf" "\n\n"
   uninstall_sdl_lib $ttf_url $ttf_fname
-  
+
   echo; print_task "Uninstalling SDL2" "\n\n"
   if [[ $platform == 'arm' ]]; then
     uninstall_sdl_lib $sdl_url $sdl_fname "$sdl_arm_config_flags"
   else
     uninstall_sdl_lib $sdl_url $sdl_fname
   fi
-  
+
   echo
   if have_sdl2_libs?; then
     echo; error_msg "SDL libraries did not uninstall correctly"
@@ -569,14 +569,14 @@ uninstall_sdl_source() {
 
 # Uninstalls SDL
 uninstall_sdl() {
-  
+
   if have_sdl2_libs?; then
     echo
   else
     echo; info_msg "SDL appears to be already uninstalled"
     prompt_to_continue "Try uninstalling SDL anyways?"
   fi
-  
+
   if [[ $platform == 'linux' ]]; then
     uninstall_sdl_linux
   elif [[ $platform == 'arm' ]]; then
@@ -589,38 +589,38 @@ uninstall_sdl() {
 # params:
 #   $1  String  Flags used, e.g. `--sdl`
 uninstall() {
-  
+
   if [[ $platform == 'macos' ]]; then
     macos_homebrew_message $1
   fi
-  
+
   # If MinGW, print message and quit
   if [[ $platform == 'mingw' ]]; then
     mingw_not_implemented_message
   fi
-  
+
   if [[ $1 == '--sdl' ]]; then
     echo; uninstall_sdl
     exit
   fi
-  
+
   echo; echo -e "The following files will be removed:
   /usr/local/include/simple2d.h
   /usr/local/lib/libsimple2d.a
   /usr/local/bin/simple2d"
-  
+
   echo; prompt_to_continue "Uninstall Simple 2D?"
-  
+
   # Use hard-coded, absolute paths for safety
   print_and_run "rm -f /usr/local/include/simple2d.h"
   print_and_run "rm -f /usr/local/lib/libsimple2d.a"
   print_and_run "rm -f /usr/local/bin/simple2d"
-  
+
   # Check if files were actually deleted
   files=(/usr/local/include/simple2d.h
          /usr/local/lib/libsimple2d.a
          /usr/local/bin/simple2d)
-  
+
   if [ -f ${files[0]} -o -f ${files[1]} -o -f ${files[2]} ]; then
     echo; error_msg "Simple 2D files could not be removed. Try using \`sudo\`?"
   else
@@ -636,23 +636,23 @@ uninstall() {
 # params:
 #   $1  String  Flags used, e.g. `--HEAD`
 update() {
-  
+
   if [[ $platform == 'macos' ]]; then
     macos_homebrew_message
   fi
-  
+
   # If MinGW, print message and quit
   if [[ $platform == 'mingw' ]]; then
     mingw_not_implemented_message
   fi
-  
+
   # Check if Simple 2D is installed
   if ! have_lib? 'simple2d' > /dev/null; then
     error_msg "Simple 2D isn't currently installed"
     echo -e "Use the \`install\` command to install Simple 2D.\n"
     exit
   fi
-  
+
   # Check if SDL is installed
   update_check_sdl() {
     if have_sdl2_libs?; then
@@ -663,13 +663,13 @@ update() {
       exit
     fi
   }
-  
+
   # Read this script from repo, get the version number
   get_remote_str $SCRIPT_URL
   LATEST_VERSION=$(bash -c "$ret" -- -v)
-  
+
   compare_versions $LATEST_VERSION $VERSION
-  
+
   # $LATEST_VERSION is newer $VERSION (the version installed)
   if [[ $? == 1 ]]; then
     echo -e "A new version of Simple 2D is available.\n"
@@ -679,7 +679,7 @@ update() {
     success_msg "Simple 2D has been updated to $LATEST_VERSION!"
     echo -e "View the release notes:
 ${UNDERLINE}https://github.com/simple2d/simple2d/releases/latest${NORMAL}"; echo
-    
+
   # $LATEST_VERSION is the same as installed version
   else
     echo "Simple 2D is already up to date!"
@@ -692,23 +692,23 @@ ${UNDERLINE}https://github.com/simple2d/simple2d/releases/latest${NORMAL}"; echo
 
 # Runs the diagnostics
 doctor() {
-  
+
   echo; echo -e "Running diagnostics...\n"
-  
+
   errors=false
-  
+
   if ! have_sdl2_libs?; then
     errors=true
     echo; error_msg "SDL libraries missing"
   fi
-  
+
   if have_lib? 'simple2d'; then
     echo
   else
     errors=true
     echo; error_msg "Simple 2D library missing"
   fi
-  
+
   if $errors; then
     echo -e "Issues were found.\n"
   else
@@ -724,7 +724,7 @@ doctor() {
 # params:
 #   $1  String  The message to show, e.g. '--sdl'
 macos_homebrew_message() {
-  
+
   if [[ $1 == '--sdl' ]]; then
     echo -e "
 We recommend using ${BOLD}Homebrew${NORMAL} to install, update, and uninstall
@@ -767,7 +767,7 @@ Use ${BOLD}Homebrew${NORMAL} to install, update, and uninstall Simple 2D on macO
 Learn more at ${UNDERLINE}http://brew.sh${NORMAL}
 "
   fi
-  
+
   exit
 }
 
@@ -788,17 +788,17 @@ unamestr=$(uname)
 if [[ $unamestr == 'Darwin' ]]; then
   platform_display='macOS'
   platform='macos'
-  
+
 # ARM
 elif [[ $(uname -m) =~ 'arm' && $unamestr == 'Linux' ]]; then
   platform_display='ARM / Linux'
   platform='arm'
-  
+
 # Linux
 elif [[ $unamestr == 'Linux' ]]; then
   platform_display='Linux'
   platform='linux'
-  
+
 # Windows / MinGW
 elif [[ $unamestr =~ 'MINGW' ]]; then
   platform_display='Windows / MinGW'

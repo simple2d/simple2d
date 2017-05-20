@@ -8,16 +8,16 @@
  */
 S2D_Sound *S2D_CreateSound(const char *path) {
   S2D_Init();
-  
+
   // Check if sound file exists
   if (!S2D_FileExists(path)) {
     S2D_Error("S2D_CreateSound", "Sound file not found");
     return NULL;
   }
-  
+
   // Allocate the sound structure
   S2D_Sound *sound = (S2D_Sound *) malloc(sizeof(S2D_Sound));
-  
+
   // Load the sound data from file
   sound->data = Mix_LoadWAV(path);
   if (!sound->data) {
@@ -25,7 +25,7 @@ S2D_Sound *S2D_CreateSound(const char *path) {
     free(sound);
     return NULL;
   }
-  
+
   return sound;
 }
 

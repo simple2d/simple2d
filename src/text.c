@@ -8,23 +8,23 @@
  */
 S2D_Text *S2D_CreateText(const char *font, const char *msg, int size) {
   S2D_Init();
-  
+
   // Check if font file exists
   if (!S2D_FileExists(font)) {
     S2D_Error("S2D_CreateText", "Font file not found");
     return NULL;
   }
-  
+
   // `msg` cannot be an empty string or NULL for TTF_SizeText
   if (msg == NULL || strlen(msg) == 0) msg = " ";
-  
+
   // Allocate the text structure
   S2D_Text *txt = (S2D_Text *) malloc(sizeof(S2D_Text));
   if (!txt) {
     S2D_Error("S2D_CreateText", "Out of memory!");
     return NULL;
   }
-  
+
   // Set default values
   txt->msg = msg;
   txt->x = 0;
@@ -34,7 +34,7 @@ S2D_Text *S2D_CreateText(const char *font, const char *msg, int size) {
   txt->color.b = 1.f;
   txt->color.a = 1.f;
   txt->texture_id = 0;
-  
+
   // Open the font
   txt->font = TTF_OpenFont(font, size);
   if (!txt->font) {
@@ -42,10 +42,10 @@ S2D_Text *S2D_CreateText(const char *font, const char *msg, int size) {
     free(txt);
     return NULL;
   }
-  
+
   // Save the width and height of the text
   TTF_SizeText(txt->font, txt->msg, &txt->width, &txt->height);
-  
+
   return txt;
 }
 
@@ -55,14 +55,14 @@ S2D_Text *S2D_CreateText(const char *font, const char *msg, int size) {
  */
 void S2D_SetText(S2D_Text *txt, const char *msg) {
   if (!txt) return;
-  
+
   // `msg` cannot be an empty string or NULL for TTF_SizeText
   if (msg == NULL || strlen(msg) == 0) msg = " ";
-  
+
   txt->msg = msg;
-  
+
   TTF_SizeText(txt->font, txt->msg, &txt->width, &txt->height);
-  
+
   // Delete the current texture so a new one can be generated
   S2D_GL_FreeTexture(&txt->texture_id);
 }
@@ -73,7 +73,7 @@ void S2D_SetText(S2D_Text *txt, const char *msg) {
  */
 void S2D_DrawText(S2D_Text *txt) {
   if (!txt) return;
-  
+
   if (txt->texture_id == 0) {
     SDL_Color color = { 255, 255, 255 };
     txt->surface = TTF_RenderText_Blended(txt->font, txt->msg, color);
@@ -82,7 +82,7 @@ void S2D_DrawText(S2D_Text *txt) {
                          txt->surface->pixels, GL_NEAREST);
     SDL_FreeSurface(txt->surface);
   }
-  
+
   S2D_GL_DrawText(txt);
 }
 

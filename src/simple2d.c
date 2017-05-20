@@ -15,7 +15,7 @@ static bool initted = false;
  */
 bool S2D_FileExists(const char *path) {
   if (!path) return false;
-  
+
   if (access(path, F_OK) != -1) {
     return true;
   } else {
@@ -82,24 +82,24 @@ void S2D_Windows_EnableTerminalColors() {
  */
 bool S2D_Init() {
   if (initted) return true;
-  
+
   // Enable terminal colors in Windows
   S2D_Windows_EnableTerminalColors();
-  
+
   S2D_Log("Initializing Simple 2D", S2D_INFO);
-  
+
   // Initialize SDL
   if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
     S2D_Error("SDL_Init", SDL_GetError());
     return false;
   }
-  
+
   // Initialize SDL_ttf
   if (TTF_Init() != 0) {
     S2D_Error("TTF_Init", TTF_GetError());
     return false;
   }
-  
+
   // Initialize SDL_mixer
   int mix_flags = MIX_INIT_FLAC | MIX_INIT_OGG | MIX_INIT_MP3;
   int mix_initted = Mix_Init(mix_flags);
@@ -110,10 +110,10 @@ bool S2D_Init() {
     S2D_Error("Mix_OpenAudio", Mix_GetError());
     return false;
   }
-  
+
   // Call `S2D_Quit` at program exit
   atexit(S2D_Quit);
-  
+
   // All subsystems initted
   initted = true;
   return true;

@@ -40,11 +40,11 @@ void print_help() {
 
 void on_key(S2D_Event e) {
   if (e.type != S2D_KEY_DOWN) return;
-  
+
   if (strcmp(e.key, "Escape") == 0) {
     S2D_Close(window);
   }
-  
+
   switch (*e.key) {
     case 'H':
       print_help();
@@ -111,32 +111,32 @@ void on_key(S2D_Event e) {
 
 
 int main() {
-  
+
   S2D_Diagnostics(true);
-  
+
   window = S2D_CreateWindow(
     "Simple 2D — Audio", 200, 150, NULL, NULL, 0
   );
-  
+
   if (!window) return 1;
-  
+
   window->on_key = on_key;
-  
+
   snd1 = S2D_CreateSound("media/sound.wav");
   snd2 = S2D_CreateSound("media/music.ogg");
-  
+
   mus1 = S2D_CreateMusic("media/sound.wav");
   mus2 = S2D_CreateMusic("media/music.ogg");
-  
+
   print_help();
-  
+
   S2D_Show(window);
-  
+
   S2D_FreeSound(snd1);
   S2D_FreeSound(snd2);
   S2D_FreeMusic(mus1);
   S2D_FreeMusic(mus2);
   S2D_FreeWindow(window);
-  
+
   return 0;
 }

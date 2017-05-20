@@ -129,11 +129,11 @@ void render() {
 }
 
 int main() {
-  
+
   S2D_Window *window = S2D_CreateWindow(
     "Hello Triangle", 640, 480, NULL, render, 0
   );
-  
+
   S2D_Show(window);
   S2D_FreeWindow(window);
   return 0;
@@ -526,11 +526,11 @@ void on_key(S2D_Event e, const char *key) {
     case S2D_KEYDOWN:
 	    printf("Key %s pressed\n", key);
       break;
-    
+
     case S2D_KEY:
       printf("Key %s held down\n", key);
       break;
-    
+
     case S2D_KEYUP:
       printf("Key %s released\n", key);
       break;

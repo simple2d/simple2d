@@ -37,9 +37,9 @@ double to_d(int val) {
 
 
 void render() {
-  
+
   // Axises
-  
+
   S2D_DrawQuad(
     300,          0, 0, 1, 0, 1,
     300 + axis0,  0, 0, 1, 0, 1,
@@ -76,9 +76,9 @@ void render() {
     300 + axis5, 300, 0, 1, 0, 1,
     300,         300, 0, 1, 0, 1
   );
-  
+
   // Buttons
-  
+
   // Cell 1,1
   if (btn0)
     S2D_DrawQuad(
@@ -199,18 +199,18 @@ void render() {
       200, 400, 0, 0.5, 1, 1,
       150, 400, 0, 0.5, 1, 1
     );
-  
+
   // Vertical axis line
-  
+
   S2D_DrawQuad(
     300,   0, 1, 0, 0, 1,
     301,   0, 1, 0, 0, 1,
     301, 300, 1, 0, 0, 1,
     300, 300, 1, 0, 0, 1
   );
-  
+
   // Button grid
-  
+
   S2D_DrawQuad(
       0, 300, 1, 1, 1, 1,
     550, 300, 1, 1, 1, 1,
@@ -306,11 +306,11 @@ void render() {
 
 void on_key(S2D_Event e) {
   if (e.type != S2D_KEY_DOWN) return;
-  
+
   if (strcmp(e.key, "Escape") == 0) {
     S2D_Close(window);
   }
-  
+
   if (strcmp(e.key, "D") == 0) {
     S2D_DetectControllers();
   }
@@ -320,7 +320,7 @@ void on_key(S2D_Event e) {
 void on_controller(S2D_Event e) {
   puts("=== Controller Event ===");
   printf("Controller #%i\n", e.which);
-  
+
   switch (e.type) {
     case S2D_AXIS:
       printf("Axis: %i\n", e.axis);
@@ -333,9 +333,9 @@ void on_controller(S2D_Event e) {
       printf("Button #%i up\n", e.button);
       break;
   }
-  
+
   double scale = window->viewport.width / 2.0;
-  
+
   if (e.type == S2D_AXIS) {
     switch (e.axis) {
       case 0:
@@ -418,18 +418,18 @@ void on_controller(S2D_Event e) {
 
 
 int main() {
-  
+
   S2D_Diagnostics(true);
-  
+
   window = S2D_CreateWindow(
     "Simple 2D — Controller", 600, 400, NULL, render, 0
   );
-  
+
   window->on_key        = on_key;
   window->on_controller = on_controller;
-  
+
   puts("Press `D` to detect controllers.");
-  
+
   S2D_Show(window);
   S2D_FreeWindow(window);
   return 0;

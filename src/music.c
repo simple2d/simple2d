@@ -8,20 +8,20 @@
  */
 S2D_Music *S2D_CreateMusic(const char *path) {
   S2D_Init();
-  
+
   // Check if music file exists
   if (!S2D_FileExists(path)) {
     S2D_Error("S2D_CreateMusic", "Music file not found");
     return NULL;
   }
-  
+
   // Allocate the music structure
   S2D_Music *music = (S2D_Music *) malloc(sizeof(S2D_Music));
   if (!music) {
     S2D_Error("S2D_CreateMusic", "Out of memory!");
     return NULL;
   }
-  
+
   // Load the music data from file
   music->data = Mix_LoadMUS(path);
   if (!music->data) {
@@ -29,7 +29,7 @@ S2D_Music *S2D_CreateMusic(const char *path) {
     free(music);
     return NULL;
   }
-  
+
   return music;
 }
 
@@ -39,10 +39,10 @@ S2D_Music *S2D_CreateMusic(const char *path) {
  */
 void S2D_PlayMusic(S2D_Music *music, bool loop) {
   if (!music) return;
-  
+
   // If looping, set to -1 times; else 0
   int times = loop ? -1 : 0;
-  
+
   // times: 0 == once, -1 == forever
   if (Mix_PlayMusic(music->data, times) == -1) {
     // No music for you
