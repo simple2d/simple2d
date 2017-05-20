@@ -1,5 +1,9 @@
 // simple2d.h
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdio.h>
 #include <stdbool.h>
 #include <math.h>
@@ -546,4 +550,8 @@ void S2D_GL_Clear(S2D_Color clr);
   void S2D_GL3_DrawSprite(S2D_Sprite *spr);
   void S2D_GL2_DrawText(S2D_Text *txt);
   void S2D_GL3_DrawText(S2D_Text *txt);
+#endif
+
+#ifdef __cplusplus
+}
 #endif

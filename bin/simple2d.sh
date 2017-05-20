@@ -193,15 +193,8 @@ build() {
   # Strip file extension
   path=${src%.*}
 
-  # Specify C compiler
-  if [[ $platform == 'mingw' ]]; then
-    CC=gcc
-  else
-    CC=cc
-  fi
-
   # Compile
-  $CC $src `simple2d --libs` -o $path
+  gcc $src `simple2d --libs` -o $path
 }
 
 
