@@ -56,6 +56,7 @@ NORMAL='\033[0m'      # reset
 
 platform='unknown'
 platform_display='unknown'
+platform_rpi=false
 ret=''  # for storing function return values
 
 # Helper Functions #############################################################
@@ -324,7 +325,12 @@ install_sdl_source() {
   if [[ $have_sdl2_lib == 'false' ]]; then
     echo; print_task "Downloading SDL2" "\n\n"
     if [[ $platform == 'arm' ]]; then
-      install_sdl_lib $sdl_url $sdl_fname "$sdl_arm_config_flags"
+      if $platform_rpi; then
+        config="--host=arm-raspberry-linux-gnueabihf $sdl_arm_config_flags"
+      else
+        config=$sdl_arm_config_flags
+      fi
+      install_sdl_lib $sdl_url $sdl_fname "$config"
     else
       install_sdl_lib $sdl_url $sdl_fname
     fi
@@ -786,6 +792,11 @@ if [[ $unamestr == 'Darwin' ]]; then
 elif [[ $(uname -m) =~ 'arm' && $unamestr == 'Linux' ]]; then
   platform_display='ARM / Linux'
   platform='arm'
+
+  if [[ $(cat /etc/os-release | grep -i raspbian) ]]; then
+    platform_display='ARM / Linux (Raspberry Pi)'
+    platform_rpi=true
+  fi
 
 # Linux
 elif [[ $unamestr == 'Linux' ]]; then
