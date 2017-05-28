@@ -215,6 +215,8 @@ typedef struct {
   int y;
   int width;
   int height;
+  int clip_width;
+  int clip_height;
   GLfloat tx1;
   GLfloat ty1;
   GLfloat tx2;

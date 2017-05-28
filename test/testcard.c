@@ -385,7 +385,10 @@ int main() {
   spr = S2D_CreateSprite("media/sprite_sheet.png");
   spr->x = 450;
   spr->y = 200;
-  // Change color of sprite image:
+  // Change size of sprite
+  //   spr->width  = 100;
+  //   spr->height = 100;
+  // Change color of sprite
   //   spr->img->color.r = 1.0;
   //   spr->img->color.g = 1.0;
   //   spr->img->color.b = 1.0;
