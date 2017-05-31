@@ -291,38 +291,38 @@ void S2D_Quit(void);
  * Draw a triangle
  */
 void S2D_DrawTriangle(
-  GLfloat x1,  GLfloat y1,
-  GLfloat c1r, GLfloat c1g, GLfloat c1b, GLfloat c1a,
-  GLfloat x2,  GLfloat y2,
-  GLfloat c2r, GLfloat c2g, GLfloat c2b, GLfloat c2a,
-  GLfloat x3,  GLfloat y3,
-  GLfloat c3r, GLfloat c3g, GLfloat c3b, GLfloat c3a
+  GLfloat x1, GLfloat y1,
+  GLfloat r1, GLfloat g1, GLfloat b1, GLfloat a1,
+  GLfloat x2, GLfloat y2,
+  GLfloat r2, GLfloat g2, GLfloat b2, GLfloat a2,
+  GLfloat x3, GLfloat y3,
+  GLfloat r3, GLfloat g3, GLfloat b3, GLfloat a3
 );
 
 /*
  * Draw a quad, using two triangles
  */
 void S2D_DrawQuad(
-  GLfloat x1,  GLfloat y1,
-  GLfloat c1r, GLfloat c1g, GLfloat c1b, GLfloat c1a,
-  GLfloat x2,  GLfloat y2,
-  GLfloat c2r, GLfloat c2g, GLfloat c2b, GLfloat c2a,
-  GLfloat x3,  GLfloat y3,
-  GLfloat c3r, GLfloat c3g, GLfloat c3b, GLfloat c3a,
-  GLfloat x4,  GLfloat y4,
-  GLfloat c4r, GLfloat c4g, GLfloat c4b, GLfloat c4a
+  GLfloat x1, GLfloat y1,
+  GLfloat r1, GLfloat g1, GLfloat b1, GLfloat a1,
+  GLfloat x2, GLfloat y2,
+  GLfloat r2, GLfloat g2, GLfloat b2, GLfloat a2,
+  GLfloat x3, GLfloat y3,
+  GLfloat r3, GLfloat g3, GLfloat b3, GLfloat a3,
+  GLfloat x4, GLfloat y4,
+  GLfloat r4, GLfloat g4, GLfloat b4, GLfloat a4
 );
 
 /*
  * Draw a line from a quad
  */
 void S2D_DrawLine(
-  GLfloat x1,  GLfloat y1,  GLfloat x2,  GLfloat y2,
+  GLfloat x1, GLfloat y1, GLfloat x2, GLfloat y2,
   GLfloat width,
-  GLfloat c1r, GLfloat c1g, GLfloat c1b, GLfloat c1a,
-  GLfloat c2r, GLfloat c2g, GLfloat c2b, GLfloat c2a,
-  GLfloat c3r, GLfloat c3g, GLfloat c3b, GLfloat c3a,
-  GLfloat c4r, GLfloat c4g, GLfloat c4b, GLfloat c4a
+  GLfloat r1, GLfloat g1, GLfloat b1, GLfloat a1,
+  GLfloat r2, GLfloat g2, GLfloat b2, GLfloat a2,
+  GLfloat r3, GLfloat g3, GLfloat b3, GLfloat a3,
+  GLfloat r4, GLfloat g4, GLfloat b4, GLfloat a4
 );
 
 // Image ///////////////////////////////////////////////////////////////////////
@@ -498,12 +498,12 @@ void S2D_GL_CreateTexture(
   int w, int h,
   const GLvoid *data, GLint filter);
 void S2D_GL_DrawTriangle(
-  GLfloat x1,  GLfloat y1,
-  GLfloat c1r, GLfloat c1g, GLfloat c1b, GLfloat c1a,
-  GLfloat x2,  GLfloat y2,
-  GLfloat c2r, GLfloat c2g, GLfloat c2b, GLfloat c2a,
-  GLfloat x3,  GLfloat y3,
-  GLfloat c3r, GLfloat c3g, GLfloat c3b, GLfloat c3a);
+  GLfloat x1, GLfloat y1,
+  GLfloat r1, GLfloat g1, GLfloat b1, GLfloat a1,
+  GLfloat x2, GLfloat y2,
+  GLfloat r2, GLfloat g2, GLfloat b2, GLfloat a2,
+  GLfloat x3, GLfloat y3,
+  GLfloat r3, GLfloat g3, GLfloat b3, GLfloat a3);
 void S2D_GL_DrawImage(S2D_Image *img);
 void S2D_GL_DrawSprite(S2D_Sprite *spr);
 void S2D_GL_DrawText(S2D_Text *txt);
@@ -516,12 +516,12 @@ void S2D_GL_Clear(S2D_Color clr);
   int S2D_GLES_Init();
   void S2D_GLES_ApplyProjection(GLfloat orthoMatrix[16]);
   void S2D_GLES_DrawTriangle(
-    GLfloat x1,  GLfloat y1,
-    GLfloat c1r, GLfloat c1g, GLfloat c1b, GLfloat c1a,
-    GLfloat x2,  GLfloat y2,
-    GLfloat c2r, GLfloat c2g, GLfloat c2b, GLfloat c2a,
-    GLfloat x3,  GLfloat y3,
-    GLfloat c3r, GLfloat c3g, GLfloat c3b, GLfloat c3a);
+    GLfloat x1, GLfloat y1,
+    GLfloat r1, GLfloat g1, GLfloat b1, GLfloat a1,
+    GLfloat x2, GLfloat y2,
+    GLfloat r2, GLfloat g2, GLfloat b2, GLfloat a2,
+    GLfloat x3, GLfloat y3,
+    GLfloat r3, GLfloat g3, GLfloat b3, GLfloat a3);
   void S2D_GLES_DrawImage(S2D_Image *img);
   void S2D_GLES_DrawSprite(S2D_Sprite *spr);
   void S2D_GLES_DrawText(S2D_Text *txt);
@@ -531,19 +531,19 @@ void S2D_GL_Clear(S2D_Color clr);
   void S2D_GL2_ApplyProjection(int w, int h);
   void S2D_GL3_ApplyProjection(GLfloat orthoMatrix[16]);
   void S2D_GL2_DrawTriangle(
-    GLfloat x1,  GLfloat y1,
-    GLfloat c1r, GLfloat c1g, GLfloat c1b, GLfloat c1a,
-    GLfloat x2,  GLfloat y2,
-    GLfloat c2r, GLfloat c2g, GLfloat c2b, GLfloat c2a,
-    GLfloat x3,  GLfloat y3,
-    GLfloat c3r, GLfloat c3g, GLfloat c3b, GLfloat c3a);
+    GLfloat x1, GLfloat y1,
+    GLfloat r1, GLfloat g1, GLfloat b1, GLfloat a1,
+    GLfloat x2, GLfloat y2,
+    GLfloat r2, GLfloat g2, GLfloat b2, GLfloat a2,
+    GLfloat x3, GLfloat y3,
+    GLfloat r3, GLfloat g3, GLfloat b3, GLfloat a3);
   void S2D_GL3_DrawTriangle(
-    GLfloat x1,  GLfloat y1,
-    GLfloat c1r, GLfloat c1g, GLfloat c1b, GLfloat c1a,
-    GLfloat x2,  GLfloat y2,
-    GLfloat c2r, GLfloat c2g, GLfloat c2b, GLfloat c2a,
-    GLfloat x3,  GLfloat y3,
-    GLfloat c3r, GLfloat c3g, GLfloat c3b, GLfloat c3a);
+    GLfloat x1, GLfloat y1,
+    GLfloat r1, GLfloat g1, GLfloat b1, GLfloat a1,
+    GLfloat x2, GLfloat y2,
+    GLfloat r2, GLfloat g2, GLfloat b2, GLfloat a2,
+    GLfloat x3, GLfloat y3,
+    GLfloat r3, GLfloat g3, GLfloat b3, GLfloat a3);
   void S2D_GL2_DrawImage(S2D_Image *img);
   void S2D_GL3_DrawImage(S2D_Image *img);
   void S2D_GL2_DrawSprite(S2D_Sprite *spr);
