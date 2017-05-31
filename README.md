@@ -2,7 +2,7 @@
 
 Simple 2D is a small, open-source graphics engine providing essential 2D drawing, media, and input capabilities. It's written in C and works across many platforms, creating native windows and interacting with hardware using [SDL](https://www.libsdl.org) while rendering content with [OpenGL](https://www.opengl.org).
 
-Note that this README will be continuously updated as new features are added, bugs are fixed, and other changes are made. [View the release notes](https://github.com/simple2d/simple2d/releases) for a link to that version's documentation.
+Please note this README will be continuously updated as new features are added, bugs are fixed, and other changes are made. [View the release notes](https://github.com/simple2d/simple2d/releases) for a link to that version's documentation.
 
 If you encounter any issues, ping the [mailing list](https://groups.google.com/d/forum/simple2d). Learn about [contributing](#contributing) below.
 
@@ -33,7 +33,7 @@ Run the [`simple2d.sh`](bin/simple2d.sh) Bash script. Everything will be explain
 url='https://raw.githubusercontent.com/simple2d/simple2d/master/bin/simple2d.sh'; which curl > /dev/null && cmd='curl -fsSL' || cmd='wget -qO -'; bash <($cmd $url) install
 ```
 
-#### A note on Linux/ARM platforms
+#### Linux/ARM platforms
 
 Simple 2D supports ARM platforms running Linux, like the [Raspberry Pi](https://www.raspberrypi.org) and [CHIP](https://getchip.com). Since most Linux distributions have SDL packages configured for traditional desktop platforms, the install script will compile SDL from source when ARM is detected, disabling windowing systems (like X11) and OpenGL (forcing OpenGL ES).
 
@@ -64,25 +64,25 @@ Next, build and install on Unix-like systems, including Windows using MinGW, by 
 make && make install
 ```
 
-Or on Windows using Visual C++, open a 64-bit Visual Studio command prompt and run:
+On Windows using Visual C++, open a 64-bit Visual Studio command prompt and run:
 
 ```cmd
 nmake /f NMakefile all install
 ```
 
-Note, on macOS and Linux, the makefile will not check for or install dependencies, unlike installing via Homebrew or the `simple2d.sh` script, respectively. Dependencies for Windows, supporting both Visual C++ and MinGW, _are_ included in this repo (referenced by the [`windows-deps`](https://github.com/simple2d/windows-deps) submodule) and installed by both makefiles.
+Note that on macOS and Linux, the makefile will not check for or install dependencies, unlike installing via Homebrew or the `simple2d.sh` script, respectively. Dependencies for Windows, supporting both Visual C++ and MinGW, _are_ included in this repo (referenced by the [`windows-deps`](https://github.com/simple2d/windows-deps) submodule) and installed by both makefiles.
 
-On Windows using Visual C++, Simple 2D will be installed to `%LOCALAPPDATA%\simple2d`, so make sure to add that to your path (for example with `set PATH=%PATH%;%LOCALAPPDATA%\simple2d`). In all other cases, it will be installed to `/usr/local/`. On Windows using MinGW, make sure to add `/usr/local/bin` to your path.
+On Windows using Visual C++, Simple 2D will be installed to `%LOCALAPPDATA%\simple2d`, so make sure to add that to your path (for example with `set PATH=%PATH%;%LOCALAPPDATA%\simple2d`). In all other cases, it will be installed to `/usr/local/`. On Windows using MinGW, make sure to add `/usr/local/bin` to your path as well.
 
 ## Tests
 
-Simple 2D has a few test programs to make sure all functionality is working as it should.
+Simple 2D has a few test programs to make sure everything is working as it should.
 
-- [`auto.c`](test/auto.c) – A set of automated unit tests for the public interface.
-- [`triangle.c`](test/triangle.c) – The "Hello Triangle" example in this README.
-- [`testcard.c`](test/testcard.c) – A graphical card, similar to [TV test cards](https://en.wikipedia.org/wiki/Test_card), with the goal of ensuring all visuals and inputs are working properly.
-- [`audio.c`](test/audio.c) – Tests audio functions with various file formats interpreted as sound samples and music.
-- [`controller.c`](test/controller.c) – Provides visual and numeric feedback of controller input.
+- [`auto.c`](test/auto.c) — A set of automated unit tests for the public interface.
+- [`triangle.c`](test/triangle.c) — The "Hello Triangle" example in this README.
+- [`testcard.c`](test/testcard.c) — A graphical card, similar to [TV test cards](https://en.wikipedia.org/wiki/Test_card), with the goal of ensuring visuals and inputs are working properly.
+- [`audio.c`](test/audio.c) — Tests audio functions with various file formats interpreted as sound samples and music.
+- [`controller.c`](test/controller.c) — Provides visual and numeric feedback of controller input.
 
 ### Building and running tests
 
@@ -177,10 +177,10 @@ S2D_Window *window = S2D_CreateWindow(
 The window flags can be `0` or any one of the following:
 
 ```c
-S2D_RESIZABLE
-S2D_BORDERLESS
-S2D_FULLSCREEN
-S2D_HIGHDPI
+S2D_RESIZABLE   // allow window to be resized
+S2D_BORDERLESS  // show window without a border
+S2D_FULLSCREEN  // show window at fullscreen
+S2D_HIGHDPI     // enable high DPI mode
 ```
 
 Flags can also be combined using the bitwise OR operator, for example: `S2D_RESIZABLE | S2D_BORDERLESS`
@@ -204,7 +204,7 @@ Before showing the window, this attribute can be set:
 window->vsync = false;  // set the vertical sync, true by default
 ```
 
-Once your window is ready to go, it can be shown using:
+Once your window is ready to go, show it using:
 
 ```c
 S2D_Show(window);
@@ -267,7 +267,7 @@ b = blue
 a = alpha
 ```
 
-So, for example, `x2` would be the second `x` coordinate, and `b2` would be the blue value at that vertex.
+Using this notation, `x2` would be the second `x` coordinate, and `b2` would be the blue value at that vertex.
 
 ### Shapes
 
@@ -288,9 +288,20 @@ S2D_DrawQuad(x1, y1, r1, g1, b1, a1,
              x4, y4, r4, g4, b4, a4);
 ```
 
+Lines are drawn with `S2D_DrawLine`:
+
+```c
+S2D_DrawLine(x1, y1, x2, y2,
+             width,
+             r1, g1, b1, a1,
+             r2, g2, b2, a2,
+             r3, g3, b3, a3,
+             r4, g4, b4, a4);
+```
+
 ### Images
 
-Images in many popular formats, like JPEG, PNG, and BMP can also be drawn in the window. Unlike shapes, images need to be read from files and stored in memory. Simply declare a pointer to an `S2D_Image` structure and initialize it using `S2D_CreateImage`, giving it the file path to the image:
+Images in many popular formats, like JPEG, PNG, and BMP can be drawn in the window. Unlike shapes, images need to be read from files and stored in memory. Simply declare a pointer to an `S2D_Image` structure and initialize it using `S2D_CreateImage` providing the file path to the image.
 
 ```c
 S2D_Image *img = S2D_CreateImage("image.png");
@@ -336,7 +347,7 @@ S2D_FreeImage(img);
 
 ### Sprites
 
-Sprites are special kinds of images which can be used to create animations. To create a sprite, declare a pointer to an `S2D_Sprite` structure and initialize it with `S2D_CreateSprite` providing the file path to the sprite sheet image.
+Sprites are special kinds of images which can be used to create animations. To create a sprite, declare a pointer to an `S2D_Sprite` structure and initialize it using `S2D_CreateSprite` providing the file path to the sprite sheet image.
 
 ```c
 S2D_Sprite spr = S2D_CreateSprite("sprite_sheet.png");
@@ -344,7 +355,7 @@ S2D_Sprite spr = S2D_CreateSprite("sprite_sheet.png");
 
 If the sprite image can't be found, `S2D_CreateSprite` will return `NULL`.
 
-Clip the sprite sheet to a single image using `S2D_ClipSprite` with a clipping rectangle:
+Clip the sprite sheet to a single image using `S2D_ClipSprite` and providing a clipping rectangle:
 
 ```c
 S2D_ClipSprite(spr, x, y, width, height);
@@ -357,14 +368,21 @@ spr->x = 150;
 spr->y = 275;
 ```
 
+Change the size of the sprite by adjusting its width and height:
+
+```c
+spr->width  = 100;
+spr->height = 100;
+```
+
 You can also adjust the color of the sprite image like this:
 
 ```c
 // Default is 1.0 for each, a white color filter
-spr->img->color.r = 1.0;
-spr->img->color.g = 0.8;
-spr->img->color.b = 0.2;
-spr->img->color.a = 1.0;
+spr->color.r = 1.0;
+spr->color.g = 0.8;
+spr->color.b = 0.2;
+spr->color.a = 1.0;
 ```
 
 Finally, draw the sprite using:
@@ -381,7 +399,7 @@ S2D_FreeSprite(spr);
 
 ### Text
 
-Text is drawn much like images. Start by finding your favorite OpenType font (with a `.ttf` or `.otf` file extension), then declare a pointer to a `S2D_Text` structure, and initialize it using `S2D_CreateText` giving it the file path to the font, the message to display, and the size:
+Text is drawn much like images. Start by finding your favorite OpenType font (with a `.ttf` or `.otf` file extension), then declare a pointer to a `S2D_Text` structure, and initialize it using `S2D_CreateText` providing the file path to the font, the message to display, and the size:
 
 ```c
 S2D_Text *txt = S2D_CreateText("vera.ttf", "Hello world!", 20);
@@ -404,13 +422,13 @@ txt->color.b = 0.0;
 txt->color.a = 0.7;
 ```
 
-Draw the text using:
+Finally, draw the text using:
 
 ```c
 S2D_DrawText(txt);
 ```
 
-You can also change the text message at any time. Use `S2D_SetText` and give it the `Text` pointer along with the new message:
+You can also change the text message at any time. Use `S2D_SetText` and provide the `Text` pointer along with the new message:
 
 ```c
 S2D_SetText(txt, "A different message!");
@@ -481,6 +499,38 @@ S2D_FreeMusic(mus);
 
 Simple 2D can capture input from just about anything. Let's learn how to grab input events from the mouse, keyboard, and game controllers.
 
+### Keyboard
+
+There are three types of keyboard events captured by the window: when a key is pressed down, a key is being held down, and a key is released. When a keyboard event takes place, the window calls its `on_key` function.
+
+To capture keyboard input, first define the `on_key` function and read the event details from the `S2D_Event` structure, for example:
+
+```c
+void on_key(S2D_Event e) {
+  // Check `e.key` for the key being interacted with
+
+  switch (e.type) {
+    case S2D_KEY_DOWN:
+      // Key was pressed
+      break;
+
+    case S2D_KEY_HELD:
+      // Key is being held down
+      break;
+
+   case S2D_KEY_UP:
+      // Key was released
+      break;
+  }
+}
+```
+
+Then, attach the callback to the window:
+
+```c
+window->on_key = on_key;
+```
+
 ### Mouse
 
 The cursor position of the mouse or trackpad can be read at any time from the window. Note that the top, left corner is the origin, `(0, 0)`.
@@ -490,15 +540,47 @@ window->mouse.x;
 window->mouse.y;
 ```
 
-To capture mouse button presses, first define a function to be called when a mouse button is clicked:
+To capture mouse button input, first define the `on_mouse` function and read the event details from the `S2D_Event` structure, for example:
 
 ```c
-void on_mouse(int x, int y) {
-  // mouse clicked at x, y
+// `e.button` can be one of:
+//   S2D_MOUSE_LEFT
+//   S2D_MOUSE_MIDDLE
+//   S2D_MOUSE_RIGHT
+//   S2D_MOUSE_X1
+//   S2D_MOUSE_X2
+
+void on_mouse(S2D_Event e) {
+  switch (e.type) {
+    case S2D_MOUSE_DOWN:
+      // Mouse button was pressed
+      // Use `e.button` to see what button was clicked
+      // Check `e.dblclick` to see if was a double click
+      break;
+
+    case S2D_MOUSE_UP:
+      // Mouse button was released
+      // Use `e.button` to see what button was clicked
+      // Check `e.dblclick` to see if was a double click
+      break;
+
+    case S2D_MOUSE_SCROLL:
+      // Mouse was scrolled
+      // Check `e.direction` for direction being scrolled, normal or inverted:
+      //   S2D_MOUSE_SCROLL_NORMAL
+      //   S2D_MOUSE_SCROLL_INVERTED
+      // Check `e.delta_x` and `e.delta_y` for the difference in x and y position
+      break;
+
+    case S2D_MOUSE_MOVE:
+      // Mouse was moved
+      // Check `e.delta_x` and `e.delta_y` for the difference in x and y position
+      break;
+  }
 }
 ```
 
-Then attach the callback to the window:
+Then, attach the callback to the window:
 
 ```c
 window->on_mouse = on_mouse;
@@ -514,52 +596,36 @@ S2D_ShowCursor(true);
 S2D_ShowCursor(false);
 ```
 
-### Keyboard
+### Game controllers and joysticks
 
-There are three types of keyboard events captured by the window: a single key press, when a key is held down, and when a key is released. When a keyboard event takes place, the window calls its `on_key` function once.
+There are two types of controller or joystick events captured by the window: axis motion and button presses. When a button is pressed or a joystick moved, the window calls its `on_controller` function.
 
-To start capturing keyboard input, first define the `on_key` function and do something interesting with `S2D_Event` and `key`, for example:
+To capture game controller or joystick input, first define the `on_controller` function and read the event details from the `S2D_Event` structure, for example:
 
 ```c
-void on_key(S2D_Event e, const char *key) {
-  switch (e) {
-    case S2D_KEYDOWN:
-	    printf("Key %s pressed\n", key);
+void on_controller(S2D_Event e) {
+  // Check `e.which` for the controller being interacted with
+
+  switch (e.type) {
+    case S2D_AXIS:
+      // Controller axis was moved
+      // Use `e.axis` to get the numbered axis
+      // Use `e.value` to get the value of the axis
       break;
 
-    case S2D_KEY:
-      printf("Key %s held down\n", key);
+    case S2D_BUTTON_DOWN:
+      // Controller button was pressed
+      // Use `e.button` to get the button pressed
       break;
 
-    case S2D_KEYUP:
-      printf("Key %s released\n", key);
+    case S2D_BUTTON_UP:
+      // Use `e.button` to get the button pressed
       break;
   }
 }
 ```
 
-Then attach the callback to the window:
-
-```c
-window->on_key = on_key;
-```
-
-### Game controllers and joysticks
-
-There are two types of controller or joystick events captured by the window: axis motion and button presses. When a button is pressed or a joystick moved, the window calls its `on_controller` function once.
-
-To start capturing game controller or joystick input, first define the `on_controller` function:
-
-```c
-// Do something with `axis` and `val` if `is_axis` is true
-//   or...
-// Do something with `btn` if `is_btn` is true
-//
-// Multiple controllers or joysticks may be distinguished by the ID number in `which`
-void on_controller(int which, bool is_axis, int axis, int val, bool is_btn, int btn, bool pressed) { ... }
-```
-
-Then attach the callback to the window:
+Then, attach the callback to the window:
 
 ```c
 window->on_controller = on_controller;
@@ -594,7 +660,7 @@ Check out the [open issues](https://github.com/simple2d/simple2d/issues) and joi
 
 # About the project
 
-Simple 2D was created by [Tom Black](https://twitter.com/blacktm), who thought simple graphics programming was way too difficult and decided to do something about it.
+Simple 2D was created by [Tom Black](http://www.blacktm.com), who thought simple graphics programming was way too difficult and decided to do something about it.
 
 Everything is [MIT Licensed](LICENSE.md), so hack away.
 
