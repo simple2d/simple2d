@@ -336,26 +336,26 @@ void S2D_GL_FreeTexture(GLuint *id) {
 /*
  * Draw a triangle
  */
-void S2D_GL_DrawTriangle(GLfloat x1,  GLfloat y1,
-                         GLfloat c1r, GLfloat c1g, GLfloat c1b, GLfloat c1a,
-                         GLfloat x2,  GLfloat y2,
-                         GLfloat c2r, GLfloat c2g, GLfloat c2b, GLfloat c2a,
-                         GLfloat x3,  GLfloat y3,
-                         GLfloat c3r, GLfloat c3g, GLfloat c3b, GLfloat c3a) {
+void S2D_GL_DrawTriangle(GLfloat x1, GLfloat y1,
+                         GLfloat r1, GLfloat g1, GLfloat b1, GLfloat a1,
+                         GLfloat x2, GLfloat y2,
+                         GLfloat r2, GLfloat g2, GLfloat b2, GLfloat a2,
+                         GLfloat x3, GLfloat y3,
+                         GLfloat r3, GLfloat g3, GLfloat b3, GLfloat a3) {
 
   #if GLES
-    S2D_GLES_DrawTriangle(x1, y1, c1r, c1g, c1b, c1a,
-                          x2, y2, c2r, c2g, c2b, c2a,
-                          x3, y3, c3r, c3g, c3b, c3a);
+    S2D_GLES_DrawTriangle(x1, y1, r1, g1, b1, a1,
+                          x2, y2, r2, g2, b2, a2,
+                          x3, y3, r3, g3, b3, a3);
   #else
     if (S2D_GL2) {
-      S2D_GL2_DrawTriangle(x1, y1, c1r, c1g, c1b, c1a,
-                           x2, y2, c2r, c2g, c2b, c2a,
-                           x3, y3, c3r, c3g, c3b, c3a);
+      S2D_GL2_DrawTriangle(x1, y1, r1, g1, b1, a1,
+                           x2, y2, r2, g2, b2, a2,
+                           x3, y3, r3, g3, b3, a3);
     } else {
-      S2D_GL3_DrawTriangle(x1, y1, c1r, c1g, c1b, c1a,
-                           x2, y2, c2r, c2g, c2b, c2a,
-                           x3, y3, c3r, c3g, c3b, c3a);
+      S2D_GL3_DrawTriangle(x1, y1, r1, g1, b1, a1,
+                           x2, y2, r2, g2, b2, a2,
+                           x3, y3, r3, g3, b3, a3);
     }
   #endif
 }

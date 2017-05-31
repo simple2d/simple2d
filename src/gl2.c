@@ -46,17 +46,17 @@ int S2D_GL2_Init() {
 /*
  * Draw triangle
  */
-void S2D_GL2_DrawTriangle(GLfloat x1,  GLfloat y1,
-                          GLfloat c1r, GLfloat c1g, GLfloat c1b, GLfloat c1a,
-                          GLfloat x2,  GLfloat y2,
-                          GLfloat c2r, GLfloat c2g, GLfloat c2b, GLfloat c2a,
-                          GLfloat x3,  GLfloat y3,
-                          GLfloat c3r, GLfloat c3g, GLfloat c3b, GLfloat c3a) {
+void S2D_GL2_DrawTriangle(GLfloat x1, GLfloat y1,
+                          GLfloat r1, GLfloat g1, GLfloat b1, GLfloat a1,
+                          GLfloat x2, GLfloat y2,
+                          GLfloat r2, GLfloat g2, GLfloat b2, GLfloat a2,
+                          GLfloat x3, GLfloat y3,
+                          GLfloat r3, GLfloat g3, GLfloat b3, GLfloat a3) {
 
   glBegin(GL_TRIANGLES);
-    glColor4f(c1r, c1g, c1b, c1a); glVertex2f(x1, y1);
-    glColor4f(c2r, c2g, c2b, c2a); glVertex2f(x2, y2);
-    glColor4f(c3r, c3g, c3b, c3a); glVertex2f(x3, y3);
+    glColor4f(r1, g1, b1, a1); glVertex2f(x1, y1);
+    glColor4f(r2, g2, b2, a2); glVertex2f(x2, y2);
+    glColor4f(r3, g3, b3, a3); glVertex2f(x3, y3);
   glEnd();
 }
 
