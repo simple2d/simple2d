@@ -211,6 +211,7 @@ typedef struct {
 // S2D_Sprite
 typedef struct {
   S2D_Image *img;
+  S2D_Color color;
   int x;
   int y;
   int width;
