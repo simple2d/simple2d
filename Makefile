@@ -10,6 +10,10 @@ ifneq (,$(findstring arm,$(shell uname -m)))
 	# Raspberry Pi includes
 	INCLUDES=-I/opt/vc/include/
 endif
+ifeq ($(UNAME_M),armv7l)
+  PLATFORM=rpi
+  INCLUDES=-I/opt/vc/include/
+endif
 
 # For Linux
 ifeq ($(shell uname),Linux)
