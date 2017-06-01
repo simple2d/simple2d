@@ -19,6 +19,10 @@ S2D_Sprite *S2D_CreateSprite(const char *path) {
 
   spr->x = 0;
   spr->y = 0;
+  spr->color.r = 1.f;
+  spr->color.g = 1.f;
+  spr->color.b = 1.f;
+  spr->color.a = 1.f;
   spr->width  = spr->img->width;
   spr->height = spr->img->height;
   spr->clip_width  = spr->img->width;

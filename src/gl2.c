@@ -105,7 +105,7 @@ void S2D_GL2_DrawImage(S2D_Image *img) {
 void S2D_GL2_DrawSprite(S2D_Sprite *spr) {
   S2D_GL2_DrawTexture(
     spr->x, spr->y, spr->width, spr->height,
-    spr->img->color.r, spr->img->color.g, spr->img->color.b, spr->img->color.a,
+    spr->color.r, spr->color.g, spr->color.b, spr->color.a,
     spr->tx1, spr->ty1, spr->tx2, spr->ty2, spr->tx3, spr->ty3, spr->tx4, spr->ty4,
     spr->img->texture_id
   );

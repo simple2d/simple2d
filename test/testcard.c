@@ -389,10 +389,10 @@ int main() {
   //   spr->width  = 100;
   //   spr->height = 100;
   // Change color of sprite
-  //   spr->img->color.r = 1.0;
-  //   spr->img->color.g = 1.0;
-  //   spr->img->color.b = 1.0;
-  //   spr->img->color.a = 1.0;
+  //   spr->color.r = 1.0;
+  //   spr->color.g = 1.0;
+  //   spr->color.b = 1.0;
+  //   spr->color.a = 1.0;
 
   txt_clr_r = S2D_CreateText(font, "R", font_size);
   txt_clr_r->x = 44;
