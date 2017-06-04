@@ -19,7 +19,6 @@ endif
 # For MinGW
 ifneq (,$(findstring MINGW,$(shell uname -s)))
 	PLATFORM=mingw
-	MINGW=true
 	CC=gcc
 	INCLUDES=-I/usr/local/include/
 endif
@@ -43,7 +42,7 @@ endef
 
 define run_test
 	$(call task,Running $(1).c)
-	@$(if $(MINGW), cd test/; $(1).exe, cd test/ ; ./$(1))
+	@cd test/; ./$(1)
 endef
 
 
