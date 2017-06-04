@@ -12,7 +12,7 @@
 # Set Constants ################################################################
 
 # The installed version
-VERSION='0.5.1'
+VERSION='0.6.0'
 
 # URL to this script in the repo
 SCRIPT_URL="https://raw.githubusercontent.com/simple2d/simple2d/master/bin/simple2d.sh"
