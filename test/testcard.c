@@ -108,6 +108,27 @@ void on_mouse(S2D_Event e) {
   if (e.type != S2D_MOUSE_SCROLL) printf("x: %i, y: %i\n", e.x, e.y);
 }
 
+void on_touch(S2D_Event e) {
+  puts("=== Touch Event ===");
+  printf("finger: %" PRId64 ", device:%" PRId64 " ",e.finger_id,e.touch_id);
+  switch (e.type) {
+    case S2D_FINGER_DOWN:
+      puts("Finger down");
+      break;
+
+    case S2D_FINGER_UP:
+      puts("Finger up");
+      break;
+
+    case S2D_FINGER_MOTION:
+      puts("Finger motion");
+      printf("delta x: %i\ndelta y: %i\n", e.delta_x, e.delta_y);
+      break;
+
+  }
+
+  printf("x: %i, y: %i\n", e.x, e.y);
+}
 
 void on_controller(S2D_Event e) {
   puts("=== Controller Event ===");
@@ -334,12 +355,12 @@ int main() {
 
   S2D_Diagnostics(true);
 
-  window = S2D_CreateWindow("Simple 2D — Test Card", 600, 500, update, render, S2D_RESIZABLE);
+  window = S2D_CreateWindow("Simple 2D — Test Card", 800, 480, update, render, S2D_RESIZABLE);
 
   window->on_key        = on_key;
   window->on_mouse      = on_mouse;
   window->on_controller = on_controller;
-
+  window->on_touch      = on_touch;
   img_png = S2D_CreateImage("media/image.png");
   img_png->x = 300;
   img_png->y = 0;

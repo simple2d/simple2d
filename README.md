@@ -596,6 +596,43 @@ S2D_ShowCursor(true);
 S2D_ShowCursor(false);
 ```
 
+### Touch Displays
+
+There are three types of touch event captured by the window: touch start, finger movement, and touch end.
+When a touch event is detected, the window calls its `on_touch` function.
+
+To capture game touch input, first define the `on_touch` function and read the 
+event details from the S2D_Event structure, for example:
+
+void on_touch(S2D_Event e) {
+  // Check `e.touch_id` for the device being interacted with 
+  // Check `e.x` and `e.y` for the coordinates of a touch event 
+  switch (e.type) {
+    case S2D_FINGER_DOWN:
+      // A touch sensitive device was touched
+      // Use `e.finger_id` to trace which finger is touching 
+      break;
+
+    case S2D_FINGER_UP:
+      // A finger has been lifted from a touch sensitive device
+      // Use `e.finger_id` to see what finger was lifted
+      break;
+
+    case S2D_FINGER_MOTION:
+      // A finger has moved on a touch device
+      // Check `e.delta_x` and `e.delta_y` for the difference in x and y position
+      break;
+
+  }
+}
+```
+
+Then, attach the callback to the window:
+
+```c
+window->on_touch = on_touch;
+```
+
 ### Game controllers and joysticks
 
 There are two types of controller or joystick events captured by the window: axis motion and button presses. When a button is pressed or a joystick moved, the window calls its `on_controller` function.

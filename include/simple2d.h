@@ -7,7 +7,7 @@ extern "C" {
 #include <stdio.h>
 #include <stdbool.h>
 #include <math.h>
-
+#include <inttypes.h>
 // Set Platform Constants //////////////////////////////////////////////////////
 
 // If ARM, assume GLES
@@ -109,6 +109,11 @@ extern "C" {
 #define S2D_BUTTON_DOWN 2
 #define S2D_BUTTON_UP   3
 
+// Touch events
+#define S2D_FINGER_DOWN   1
+#define S2D_FINGER_UP     2
+#define S2D_FINGER_MOTION 3
+
 // Internal Shared Data ////////////////////////////////////////////////////////
 
 extern char S2D_msg[1024];    // for S2D_Log messages
@@ -130,6 +135,8 @@ typedef struct {
   int direction;
   int axis;
   int value;
+  int64_t finger_id;
+  int64_t touch_id;
 } S2D_Event;
 
 typedef void (*S2D_Update)();
@@ -137,6 +144,7 @@ typedef void (*S2D_Render)();
 typedef void (*S2D_On_Key)(S2D_Event e);
 typedef void (*S2D_On_Mouse)(S2D_Event e);
 typedef void (*S2D_On_Controller)(S2D_Event e);
+typedef void (*S2D_On_Touch)(S2D_Event e);
 
 // S2D_Color
 typedef struct {
@@ -183,6 +191,7 @@ typedef struct {
   S2D_On_Key on_key;
   S2D_On_Mouse on_mouse;
   S2D_On_Controller on_controller;
+  S2D_On_Touch on_touch;
   bool vsync;
   int fps_cap;
   S2D_Color background;
