@@ -194,7 +194,7 @@ int S2D_Show(S2D_Window *window) {
         case SDL_FINGERMOTION:
          {
             if (window->on_touch) {
-           float fx,dx, fy, dy; 
+           float fx,dx, fy, dy;
            fx = e.tfinger.x * window->width; // TODO: Viewport in scaling
            fy = e.tfinger.y * window->height;
            dx = e.tfinger.dx * window->width;
@@ -209,10 +209,10 @@ int S2D_Show(S2D_Window *window) {
           }
 
         }break;
-	case SDL_FINGERDOWN:
+        case SDL_FINGERDOWN: case SDL_FINGERUP:
         {
           if (window->on_touch) {
-           float fx, fy; 
+           float fx, fy;
            fx = e.tfinger.x * window->width; // TODO: Viewport in scaling
            fy = e.tfinger.y * window->height;
            S2D_GetMouseOnViewport(window, (int)fx, (int)fy, &mx, &my);
@@ -221,29 +221,10 @@ int S2D_Show(S2D_Window *window) {
               .touch_id = e.tfinger.touchId
 
             };
-            event.type = S2D_FINGER_DOWN;;
+            event.type = e.type == SDL_FINGERUP ? S2D_FINGER_UP : S2D_FINGER_DOWN;;
             window->on_touch(event);
           }
         }break;
-	case SDL_FINGERUP:
-        {
-          if (window->on_touch) {
-           float fx, fy; 
-           // TODO: Finger ID tracking
-           fx = e.tfinger.x * window->width; // TODO: Viewport in scaling
-           fy = e.tfinger.y * window->height;
-           S2D_GetMouseOnViewport(window, (int)fx, (int)fy, &mx, &my);
-            S2D_Event event = {
-              .x = mx, .y = my, .finger_id = e.tfinger.fingerId,
-              .touch_id = e.tfinger.touchId
-
-            };
-            event.type = S2D_FINGER_UP;
-            window->on_touch(event);
-          }
-
-        }break;
-
         case SDL_JOYAXISMOTION:
           if (window->on_controller) {
             S2D_Event event = {
