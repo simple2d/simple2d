@@ -108,9 +108,12 @@ void on_mouse(S2D_Event e) {
   if (e.type != S2D_MOUSE_SCROLL) printf("x: %i, y: %i\n", e.x, e.y);
 }
 
+
 void on_touch(S2D_Event e) {
   puts("=== Touch Event ===");
-  printf("finger: %" PRId64 ", device:%" PRId64 " ",e.finger_id,e.touch_id);
+  printf("finger: %lli\n", e.finger_id);
+  printf("device: %lli\n", e.touch_id);
+
   switch (e.type) {
     case S2D_FINGER_DOWN:
       puts("Finger down");
@@ -124,11 +127,11 @@ void on_touch(S2D_Event e) {
       puts("Finger motion");
       printf("delta x: %i\ndelta y: %i\n", e.delta_x, e.delta_y);
       break;
-
   }
 
   printf("x: %i, y: %i\n", e.x, e.y);
 }
+
 
 void on_controller(S2D_Event e) {
   puts("=== Controller Event ===");
