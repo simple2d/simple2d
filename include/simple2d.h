@@ -7,7 +7,7 @@ extern "C" {
 #include <stdio.h>
 #include <stdbool.h>
 #include <math.h>
-#include <inttypes.h>
+
 // Set Platform Constants //////////////////////////////////////////////////////
 
 // If ARM, assume GLES
@@ -135,8 +135,8 @@ typedef struct {
   int direction;
   int axis;
   int value;
-  int64_t finger_id;
-  int64_t touch_id;
+  long long finger_id;
+  long long touch_id;
 } S2D_Event;
 
 typedef void (*S2D_Update)();
