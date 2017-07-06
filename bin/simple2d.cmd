@@ -5,20 +5,23 @@
 :: The installed version
 set S2D_VERSION=0.6.0
 
+:: Set flags used to build Simple 2D apps
+set S2D_FLAGS=/I %LOCALAPPDATA%\simple2d /link /LIBPATH %LOCALAPPDATA%\simple2d\simple2d.lib /SUBSYSTEM:CONSOLE
+
 :: Compile a C file
 if "%~1"=="build" (
   if "%~2"=="" (
     echo Error: no input files
     exit /b 0
   )
-  cl %2 /Fo%~np2 /Fe%~np2 /I %LOCALAPPDATA%\simple2d /link /LIBPATH %LOCALAPPDATA%\simple2d\simple2d.lib /SUBSYSTEM:CONSOLE
+  cl %2 /Fo%~np2 /Fe%~np2 %S2D_FLAGS%
   del %~np2.obj
   exit /b 0
 )
 
 :: Output includes and libraries
 if "%~1"=="--libs" (
-  echo /I %LOCALAPPDATA%\simple2d /link /LIBPATH %LOCALAPPDATA%\simple2d\simple2d.lib /SUBSYSTEM:CONSOLE
+  echo %S2D_FLAGS%
   exit /b 0
 )
 
