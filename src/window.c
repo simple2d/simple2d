@@ -201,20 +201,12 @@ int S2D_Show(S2D_Window *window) {
           }
           break;
 
-        case SDL_JOYBUTTONDOWN:
+        case SDL_JOYBUTTONDOWN: case SDL_JOYBUTTONUP:
           if (window->on_controller) {
             S2D_Event event = {
-              .which = e.jaxis.which, .type = S2D_BUTTON_DOWN, .button = e.jbutton.button
+              .which = e.jaxis.which, .button = e.jbutton.button
             };
-            window->on_controller(event);
-          }
-          break;
-
-        case SDL_JOYBUTTONUP:
-          if (window->on_controller) {
-            S2D_Event event = {
-              .which = e.jaxis.which, .type = S2D_BUTTON_UP, .button = e.jbutton.button
-            };
+            event.type = e.type == SDL_JOYBUTTONDOWN ? S2D_BUTTON_DOWN : S2D_BUTTON_UP;
             window->on_controller(event);
           }
           break;
