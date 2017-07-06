@@ -8,21 +8,33 @@ extern "C" {
 
 // Set Platform Constants //////////////////////////////////////////////////////
 
-// If ARM, assume GLES
-#ifdef __arm__
-  #define GLES true
-#else
-  #define GLES false
+// Apple
+#ifdef __APPLE__
+  #include "TargetConditionals.h"
+  #if TARGET_OS_OSX
+    #define MACOS true
+  #elif TARGET_OS_IOS
+    #define IOS   true
+  #elif TARGET_OS_TV
+    #define TVOS  true
+  #endif
 #endif
 
-// If Windows
+// Windows
 #ifdef _WIN32
   #define WINDOWS true
 #endif
 
-// If Windows and MinGW
+// Windows and MinGW
 #ifdef __MINGW32__
   #define MINGW true
+#endif
+
+// GLES
+#if defined(__arm__) || IOS || TVOS
+  #define GLES true
+#else
+  #define GLES false
 #endif
 
 // Includes ////////////////////////////////////////////////////////////////////
@@ -43,7 +55,11 @@ extern "C" {
 #endif
 
 // SDL
-#include <SDL2/SDL.h>
+#if IOS || TVOS
+  #include "SDL2/SDL.h"
+#else
+  #include <SDL2/SDL.h>
+#endif
 
 // If MinGW, undefine `main()` from SDL_main.c
 #if MINGW
@@ -52,7 +68,11 @@ extern "C" {
 
 // OpenGL
 #if GLES
-  #include <SDL2/SDL_opengles2.h>
+  #if IOS || TVOS
+    #include "SDL2/SDL_opengles2.h"
+  #else
+    #include <SDL2/SDL_opengles2.h>
+  #endif
 #else
   #define GL_GLEXT_PROTOTYPES 1
   #if WINDOWS
@@ -62,9 +82,15 @@ extern "C" {
 #endif
 
 // SDL libraries
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL_mixer.h>
-#include <SDL2/SDL_ttf.h>
+#if IOS || TVOS
+  #include "SDL2/SDL_image.h"
+  #include "SDL2/SDL_mixer.h"
+  #include "SDL2/SDL_ttf.h"
+#else
+  #include <SDL2/SDL_image.h>
+  #include <SDL2/SDL_mixer.h>
+  #include <SDL2/SDL_ttf.h>
+#endif
 
 // Simple 2D Definitions ///////////////////////////////////////////////////////
 
@@ -78,6 +104,8 @@ extern "C" {
 #define S2D_BORDERLESS SDL_WINDOW_BORDERLESS
 #define S2D_FULLSCREEN SDL_WINDOW_FULLSCREEN_DESKTOP
 #define S2D_HIGHDPI    SDL_WINDOW_ALLOW_HIGHDPI
+#define S2D_DISPLAY_WIDTH  0
+#define S2D_DISPLAY_HEIGHT 0
 
 // Viewport scaling modes
 #define S2D_FIXED   1
@@ -109,7 +137,6 @@ extern "C" {
 
 // Internal Shared Data ////////////////////////////////////////////////////////
 
-extern char S2D_msg[1024];    // for S2D_Log messages
 extern bool S2D_diagnostics;  // flag for whether to print diagnostics with S2D_Log
 
 // Type Definitions ////////////////////////////////////////////////////////////
@@ -259,7 +286,7 @@ bool S2D_FileExists(const char *path);
 /*
  * Logs standard messages to the console
  */
-void S2D_Log(const char *msg, int type);
+void S2D_Log(int type, const char *msg, ...);
 
 /*
  * Logs Simple 2D errors to the console, with caller and message body

@@ -46,9 +46,9 @@ BOLD='\033[1;39m'     # default, bold
 UNDERLINE='\033[4m'   # underline
 TASK='\033[1;34m'     # blue, bold
 BLUE=$TASK
-INFO='\033[4;36m'     # cyan, underline
-WARN='\033[4;33m'     # yellow, underline
-ERROR='\033[4;31m'    # red, underline
+INFO='\033[1;36m'     # cyan, underline
+WARN='\033[1;33m'     # yellow, underline
+ERROR='\033[1;31m'    # red, underline
 SUCCESS='\033[1;32m'  # green, bold
 NORMAL='\033[0m'      # reset
 
@@ -58,6 +58,13 @@ platform='unknown'
 platform_display='unknown'
 platform_rpi=false
 ret=''  # for storing function return values
+
+# Use xcpretty for nicer output: gem install xcpretty
+if xcpretty -v &>/dev/null; then
+  XCPRETTY=xcpretty
+else
+  XCPRETTY=cat
+fi
 
 # Helper Functions #############################################################
 
@@ -181,21 +188,76 @@ compare_versions() {
 
 
 # Builds a Simple 2D program
-# params:
-#   $1  String  The source file
+# If directory contains an Xcode project, it will call `xcodebuild`.
+# If $1 is a C or C++ source file, it will attempt to compile using `gcc`.
 build() {
-  src=$1
 
-  # If no input, print `cc` message and quit
-  if [[ $src == "" ]]; then
-    echo "Error: no input files"; exit
+  # If no input, print build usage
+  if [[ $1 == '' ]]; then print_usage_build; exit; fi
+
+  # If C or C++ source file given, e.g.:
+  #   build app.c; build app.cpp
+  if [[ ${1: -2} == '.c' || ${1: -4} == '.cpp' ]]; then
+    # Compile
+    gcc -std=c11 $1 `simple2d --libs` -o ${1%.*}
+    exit
   fi
 
-  # Strip file extension
-  path=${src%.*}
+  # Check if current directory has an Xcode project
+  has_xcodeproj?() {
+    if [[ $(ls *.xcodeproj 2>/dev/null) ]]; then
+      return 0
+    else
+      return 1
+    fi
+  }
 
-  # Compile
-  gcc $src `simple2d --libs` -o $path
+  # Build an Xcode project
+  build_with_xcodebuild() {
+    if [[ $XCPRETTY != 'xcpretty' ]]; then
+      echo -e "xcpretty not found: Run \`gem install xcpretty\` for nicer xcodebuild output.\n"
+    fi
+    case $1 in
+      --ios)
+        xcodebuild -sdk iphonesimulator  | $XCPRETTY; exit;;
+      --ios-device)
+        xcodebuild -sdk iphoneos         | $XCPRETTY; exit;;
+      --tvos)
+        xcodebuild -sdk appletvsimulator | $XCPRETTY; exit;;
+      --tvos-device)
+        xcodebuild -sdk appletvos        | $XCPRETTY; exit;;
+    esac
+  }
+
+  # If bad SDK flag, print build usage
+  if ! [[ $1 =~ ^(--ios|--ios-device|--tvos|--tvos-device)$ ]]; then
+    print_usage_build; exit 1
+  fi
+
+  # If current directory has an Xcode project, e.g.:
+  #   build --[ios|tvos][-device]
+  if has_xcodeproj?; then
+    build_with_xcodebuild $1
+  fi
+
+  # If an Xcode project path and options are provided, e.g.:
+  #   build --ios[-device] build/ios
+  #   build --tvos[-device] build/tvos
+  #   build --ios[-device] build/ios/MyApp.xcodeproj
+  #   build --tvos[-device] build/tvos/MyApp.xcodeproj
+  if [[ ${2: -10} == '.xcodeproj' ]]; then
+    cd $(dirname $2)
+  elif [[ -d $2 ]]; then
+    cd $2
+  else
+    error_msg "\"$2\" is not a directory or Xcode project"; exit 1
+  fi
+
+  if ! has_xcodeproj?; then
+    error_msg "The directory does not contain an Xcode project"; exit 1
+  fi
+
+  build_with_xcodebuild $1
 }
 
 
@@ -257,8 +319,7 @@ install_sdl_linux() {
   echo
 
   if ! have_sdl2_libs?; then
-    echo; error_msg "SDL libraries did not install correctly"
-    exit
+    echo; error_msg "SDL libraries did not install correctly"; exit 1
   else
     echo; info_msg "SDL was installed successfully"
   fi
@@ -355,8 +416,7 @@ install_sdl_source() {
 
   echo
   if ! have_sdl2_libs?; then
-    error_msg "SDL libraries did not install correctly"
-    exit
+    error_msg "SDL libraries did not install correctly"; exit 1
   else
     echo; info_msg "SDL was installed successfully"
   fi
@@ -399,9 +459,8 @@ install_s2d() {
   fi
 
   # Check if archive was downloaded properly
-  if [ ! -f "$tmp_dir/$f_name.zip" ]; then
-    echo; error_msg "Simple 2D could not be downloaded"
-    exit
+  if [[ ! -f "$tmp_dir/$f_name.zip" ]]; then
+    echo; error_msg "Simple 2D could not be downloaded"; exit 1
   fi
 
   echo; print_task "Unpacking" "\n\n"
@@ -409,8 +468,7 @@ install_s2d() {
 
   # Check if archive was unpacked properly
   if [[ $? != 0 ]]; then
-    echo; error_msg "Could not unpack. The downloaded Simple 2D package may be damaged."
-    exit
+    echo; error_msg "Could not unpack. The downloaded Simple 2D package may be damaged."; exit 1
   fi
 
   print_and_run "cd $tmp_dir/simple2d-$1"
@@ -423,8 +481,7 @@ install_s2d() {
 
   # Check if S2D installed correctly
   if ! have_lib? 'simple2d'; then
-    echo; error_msg "Simple 2D did not install correctly"
-    exit
+    echo; error_msg "Simple 2D did not install correctly"; exit 1
   fi
   echo
 }
@@ -558,8 +615,7 @@ uninstall_sdl_source() {
 
   echo
   if have_sdl2_libs?; then
-    echo; error_msg "SDL libraries did not uninstall correctly"
-    exit
+    echo; error_msg "SDL libraries did not uninstall correctly"; exit 1
   else
     echo; info_msg "SDL was uninstalled successfully"
   fi
@@ -649,7 +705,7 @@ update() {
   if ! have_lib? 'simple2d' > /dev/null; then
     error_msg "Simple 2D isn't currently installed"
     echo -e "Use the \`install\` command to install Simple 2D.\n"
-    exit
+    exit 1
   fi
 
   # Check if SDL is installed
@@ -659,7 +715,7 @@ update() {
     else
       echo; error_msg "SDL libraries missing"
       echo -e "Run \`simple2d install --sdl\` to install SDL.\n"
-      exit
+      exit 1
     fi
   }
 
@@ -713,6 +769,104 @@ doctor() {
   else
     success_msg "No issues found!"
   fi
+}
+
+
+# Simulator ####################################################################
+
+
+# Get list of booted iOS or tvOS simulators, store in $booted
+#   $1  Equals 'cmd' if called from command line
+simulator_booted() {
+  booted=`xcrun simctl list devices | grep Booted`
+  if [[ $1 == 'cmd' ]]; then
+    if [[ $booted == '' ]]; then
+      echo "No devices are booted."
+    else
+      echo $booted
+    fi
+  fi
+}
+
+
+# List all iOS and tvOS simulator devices available
+simulator_list() {
+  xcrun simctl list devices | grep -iv unavailable
+}
+
+
+# Open an iOS or tvOS simulator
+#   $1  The device name, e.g. iPhone 7
+# See `simulator_list` function for available names
+simulator_open() {
+  device=$1
+
+  # Check if device name exists
+  if ! xcrun simctl list devices | grep -q "$device"; then
+    error_msg "\"$device\" does not match any simulator device names"
+    echo -e "Choose a device name from the following:\n"
+    simulator_list
+    exit 1
+  fi
+
+  # Get the device UDID
+  device_udid=`xcrun simctl list devices | grep "$device" | head -n1 | egrep -wo '\([-0-9A-F]+\)' | tr -d '\(\)'`
+  echo "Requested device: $device with UDID $device_udid"
+  simulator_booted
+
+  # If the current simulator running is not the requested device, then quit
+  if [[ $booted != '' && $booted != *$device* ]]; then
+    echo "Quitting current device simulator..."
+    osascript -e 'quit app "Simulator"'
+  fi
+
+  # Open the requsted simulator
+  echo "Opening $device simulator..."
+  open -a Simulator --args -CurrentDeviceUDID $device_udid
+
+  # Wait for device to boot
+  not_booted=true
+  while $not_booted; do
+    simulator_booted
+    if [[ $booted == *$device* ]]; then
+      not_booted=false
+    else
+      sleep 2
+    fi
+  done
+}
+
+
+# Install an app on the booted iOS or tvOS simulator
+#   $1  The path to the `.app` file, e.g. Release-iphonesimulator/MyApp.app
+simulator_install() {
+  echo "Installing app..."
+  xcrun simctl install booted $1
+}
+
+
+# Launch an installed app on the booted iOS or tvOS simulator
+#   $1  The bundle identifier, e.g. "Simple2D.MyApp"
+simulator_launch() {
+  echo "Launching app..."
+  xcrun simctl launch booted $1
+}
+
+
+# Stream log of currently running iOS or tvOS simulator
+#   $1  Optional app name to filter by
+simulator_log() {
+  if [[ $1 == '' ]]; then
+    xcrun simctl spawn booted log stream --level=debug
+  else
+    xcrun simctl spawn booted log stream --predicate "processImagePath endswith \"$1\""
+  fi
+}
+
+
+# Stream log of currently running iOS or tvOS simulator, error messages only
+simulator_log_errors() {
+  xcrun simctl spawn booted log stream --predicate 'eventMessage contains "error" or messageType == error'
 }
 
 
@@ -771,10 +925,15 @@ Learn more at ${UNDERLINE}http://brew.sh${NORMAL}
 }
 
 
+# Commands only available on macOS
+macos_only_command() {
+  echo -e "This command is only available on macOS"; exit 1
+}
+
+
 # For stuff not yet implemented in MinGW
 mingw_not_implemented_message() {
-  echo -e "This isn't implemented in MinGW yet :("
-  exit
+  echo -e "This isn't implemented in MinGW yet :("; exit 1
 }
 
 
@@ -811,8 +970,7 @@ fi
 
 # Unsupported platform
 if [[ $platform == 'unknown' ]]; then
-  echo; error_msg "Not a supported system (macOS, Linux, or ARM platform)"
-  exit
+  echo; error_msg "Not a supported system (macOS, Linux, or ARM platform)"; exit 1
 fi
 
 
@@ -826,7 +984,7 @@ Usage: simple2d [--libs] [-v|--version]
                 <command> <options>
 
 Summary of commands and options:
-  build         Compiles a Simple 2D app provided a C/C++ source file
+  build         Build a C/C++ source file or Xcode project; run for options
   install       Installs the latest release
     --HEAD        Installs from the development branch
     --sdl         Installs SDL only
@@ -834,15 +992,57 @@ Summary of commands and options:
     --sdl         Removes SDL only
   update        Updates to latest release
   doctor        Runs diagnostics, checks installation, reports issues
+  simulator     Interact with iOS and tvOS simulators; run for options
   --libs        Outputs libraries needed to compile Simple 2D apps
   -v|--version  Prints the installed version
 "
 }
 
 
+print_usage_build() {
+  echo -e "
+Use the ${BOLD}build${NORMAL} command to compile or build Simple 2D apps.
+
+For compiling C/C++ source files, use:
+  build <c_or_cpp_file>
+
+To build an Xcode project, use:
+  build <sdk_option> <optional_path_to_xcode_project>
+
+For <sdk_option> above, use one of the following:
+  --ios            iOS simulator SDK
+  --ios-device     iOS device SDK (requires signing)
+  --tvos           tvOS simulator SDK
+  --tvos-device    tvOS device SDK (requires signing)
+"
+}
+
+
+print_usage_simulator() {
+echo -e "
+Choose an option with the ${BOLD}simulator${NORMAL} command:
+
+  --list      List available devices
+  --booted    Show currently booted devices
+
+  --open <device_name>    Open a simulator device with a given device name
+
+  --install <app_file>    Install an app on the booted simulator given the path
+                          to the app e.g. \"Release-iphonesimulator/MyApp.app\"
+
+  --launch <bundle_id>    Launch an app given the app bundle's identifier,
+                          e.g. \"Simple2D.MyApp\"
+
+  --log           Stream log of the booted simulator
+  --log <app>     Stream log for the app only, given the app name
+  --log-errors    Stream log containing only error messages
+"
+}
+
+
 case $1 in
   build)
-    build $2;;
+    build $2 $3;;
   install)
     case $2 in
       '')
@@ -874,6 +1074,28 @@ case $1 in
     esac;;
   doctor)
     doctor;;
+  simulator)
+    if [[ $platform != 'macos' ]]; then macos_only_command; fi
+    case $2 in
+      '')
+        print_usage_simulator;;
+      --list)
+        simulator_list;;
+      --booted)
+        simulator_booted 'cmd';;
+      --open)
+        simulator_open "$3";;
+      --install)
+        simulator_install "$3";;
+      --launch)
+        simulator_launch "$3";;
+      --log)
+        simulator_log "$3";;
+      --log-errors)
+        simulator_log_errors;;
+      *)
+        print_usage_simulator;;
+    esac;;
   --libs)
     if [[ $platform == 'macos' ]]; then
       FLAGS='-Wl,-framework,OpenGL'

@@ -1,8 +1,8 @@
 // OpenGL 2.1
 
-#if !GLES
-
 #include "../include/simple2d.h"
+
+#if !GLES
 
 
 /*

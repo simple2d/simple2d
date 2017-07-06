@@ -9,8 +9,7 @@
 void S2D_DetectControllers() {
 
   if (SDL_NumJoysticks() > 0) {
-    sprintf(S2D_msg, "Controllers detected: %i", SDL_NumJoysticks());
-    S2D_Log(S2D_msg, S2D_INFO);
+    S2D_Log(S2D_INFO, "Controllers detected: %i", SDL_NumJoysticks());
   }
 
   // Variables for controllers and joysticks
@@ -24,25 +23,21 @@ void S2D_DetectControllers() {
     if (SDL_IsGameController(i)) {
       controller = SDL_GameControllerOpen(i);
       if (controller) {
-        sprintf(S2D_msg, "Controller #%i: %s", i, SDL_GameControllerName(controller));
-        S2D_Log(S2D_msg, S2D_INFO);
+        S2D_Log(S2D_INFO, "Controller #%i: %s", i, SDL_GameControllerName(controller));
       } else {
-        sprintf(S2D_msg, "Could not open controller #%i: %s", i, SDL_GetError());
-        S2D_Log(S2D_msg, S2D_ERROR);
+        S2D_Log(S2D_ERROR, "Could not open controller #%i: %s", i, SDL_GetError());
       }
 
     // Controller interface not supported, try to open as joystick
     } else {
       joy = SDL_JoystickOpen(i);
       if (joy) {
-        sprintf(S2D_msg,
+        S2D_Log(S2D_INFO,
           "Controller #%i (generic): %s\n      Axes: %d\n      Buttons: %d\n      Balls: %d",
           i, SDL_JoystickName(joy), SDL_JoystickNumAxes(joy),
           SDL_JoystickNumButtons(joy), SDL_JoystickNumBalls(joy));
-        S2D_Log(S2D_msg, S2D_INFO);
       } else {
-        sprintf(S2D_msg, "Could not open generic controller #%i", i);
-        S2D_Log(S2D_msg, S2D_ERROR);
+        S2D_Log(S2D_ERROR, "Could not open generic controller #%i", i);
       }
     }
   }
