@@ -4,9 +4,7 @@
 extern "C" {
 #endif
 
-#include <stdio.h>
 #include <stdbool.h>
-#include <math.h>
 
 // Set Platform Constants //////////////////////////////////////////////////////
 
