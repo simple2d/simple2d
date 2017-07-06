@@ -1,8 +1,8 @@
 // OpenGL ES 2.0
 
-#if GLES
-
 #include "../include/simple2d.h"
+
+#if GLES
 
 // Triangle shader
 static GLuint shaderProgram;

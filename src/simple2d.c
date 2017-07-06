@@ -3,7 +3,6 @@
 #include "../include/simple2d.h"
 
 // Initalize S2D shared data
-char S2D_msg[1024];
 bool S2D_diagnostics = false;
 
 // S2D initialization status
@@ -27,21 +26,27 @@ bool S2D_FileExists(const char *path) {
 /*
  * Logs standard messages to the console
  */
-void S2D_Log(const char *msg, int type) {
+void S2D_Log(int type, const char *msg, ...) {
   if (S2D_diagnostics) {
+
+    va_list args;
+    va_start(args, msg);
+
     switch (type) {
       case S2D_INFO:
-        printf("\033[4;36mInfo:\033[0m %s\n", msg);
+        printf("\033[1;36mInfo:\033[0m ");
         break;
       case S2D_WARN:
-        printf("\033[4;33mWarning:\033[0m %s\n", msg);
+        printf("\033[1;33mWarning:\033[0m ");
         break;
       case S2D_ERROR:
-        printf("\033[4;31mError:\033[0m %s\n", msg);
+        printf("\033[1;31mError:\033[0m ");
         break;
-      default:
-        printf("%s\n", msg);
     }
+
+    vprintf(msg, args);
+    printf("\n");
+    va_end(args);
   }
 }
 
@@ -50,8 +55,7 @@ void S2D_Log(const char *msg, int type) {
  * Logs Simple 2D errors to the console, with caller and message body
  */
 void S2D_Error(const char *caller, const char *msg) {
-  sprintf(S2D_msg, "(%s) %s", caller, msg);
-  S2D_Log(S2D_msg, S2D_ERROR);
+  S2D_Log(S2D_ERROR, "(%s) %s", caller, msg);
 }
 
 
@@ -86,7 +90,7 @@ bool S2D_Init() {
   // Enable terminal colors in Windows
   S2D_Windows_EnableTerminalColors();
 
-  S2D_Log("Initializing Simple 2D", S2D_INFO);
+  S2D_Log(S2D_INFO, "Initializing Simple 2D");
 
   // Initialize SDL
   if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {

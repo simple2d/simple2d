@@ -3,4 +3,4 @@
 	url = https://github.com/simple2d/test_media.git
 [submodule "deps"]
 	path = deps
-	url = https://github.com/simple2d/windows-deps.git
+	url = https://github.com/simple2d/deps.git

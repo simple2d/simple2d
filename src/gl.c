@@ -21,8 +21,7 @@ static GLfloat orthoMatrix[16] =
  * Prints current GL error
  */
 void S2D_GL_PrintError(char *error) {
-  sprintf(S2D_msg, "%s (%d)", error, glGetError());
-  S2D_Log(S2D_msg, S2D_ERROR);
+  S2D_Log(S2D_ERROR, "%s (%d)", error, glGetError());
 }
 
 
@@ -30,7 +29,7 @@ void S2D_GL_PrintError(char *error) {
  * Print info about the current OpenGL context
  */
 void S2D_GL_PrintContextInfo(S2D_Window *window) {
-  sprintf(S2D_msg,
+  S2D_Log(S2D_INFO,
     "OpenGL Context\n"
     "      GL_VENDOR: %s\n"
     "      GL_RENDERER: %s\n"
@@ -41,7 +40,6 @@ void S2D_GL_PrintContextInfo(S2D_Window *window) {
     window->S2D_GL_VERSION,
     window->S2D_GL_SHADING_LANGUAGE_VERSION
   );
-  S2D_Log(S2D_msg, S2D_INFO);
 }
 
 
@@ -217,8 +215,13 @@ void S2D_GL_SetViewport(S2D_Window *window) {
  */
 int S2D_GL_Init(S2D_Window *window) {
 
-  // Specify the OpenGL Context
-  #if !GLES
+  // Specify OpenGL contexts and set attributes
+  #if GLES
+    SDL_GL_SetAttribute(SDL_GL_RED_SIZE,   8);
+    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE,  8);
+    SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
+  #else
     // Use legacy OpenGL 2.1
     if (FORCE_GL2) {
       SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
@@ -283,7 +286,7 @@ int S2D_GL_Init(S2D_Window *window) {
       // Could not create any OpenGL contexts, hard failure
       } else {
         S2D_Error("GL2 / SDL_GL_CreateContext", SDL_GetError());
-        S2D_Log("An OpenGL context could not be created", S2D_ERROR);
+        S2D_Log(S2D_ERROR, "An OpenGL context could not be created");
         return -1;
       }
     #endif
