@@ -1,5 +1,7 @@
 // OpenGL ES 2.0
 
+#if GLES
+
 #include "../include/simple2d.h"
 
 // Triangle shader
@@ -285,3 +287,5 @@ void S2D_GLES_DrawText(S2D_Text *txt) {
     txt->texture_id
   );
 }
+
+#endif

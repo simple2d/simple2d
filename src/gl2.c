@@ -1,5 +1,7 @@
 // OpenGL 2.1
 
+#if !GLES
+
 #include "../include/simple2d.h"
 
 
@@ -123,3 +125,5 @@ void S2D_GL2_DrawText(S2D_Text *txt) {
     txt->texture_id
   );
 }
+
+#endif

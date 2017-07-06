@@ -6,7 +6,6 @@ CFLAGS=-std=c11
 
 # For ARM platforms
 ifneq (,$(findstring arm,$(shell uname -m)))
-	PLATFORM=arm
 	# Raspberry Pi includes
 	INCLUDES=-I/opt/vc/include/
 endif
@@ -23,13 +22,7 @@ ifneq (,$(findstring MINGW,$(shell uname -s)))
 	INCLUDES=-I/usr/local/include/
 endif
 
-SOURCES=simple2d shapes image sprite text sound music input controllers window
-ifeq ($(PLATFORM),arm)
-	SOURCES+=gl gles
-else
-	SOURCES+=gl gl2 gl3
-endif
-
+SOURCES=simple2d shapes image sprite text sound music input controllers window gl gl2 gl3 gles
 OBJECTS=$(foreach var,$(SOURCES),build/$(var).o)
 
 # Install directory and filename for the MinGW Windows installer

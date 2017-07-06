@@ -1,5 +1,7 @@
 // OpenGL 3.3
 
+#if !GLES
+
 #include "../include/simple2d.h"
 
 static GLuint shaderProgram;
@@ -252,3 +254,5 @@ void S2D_GL3_DrawText(S2D_Text *txt) {
     txt->texture_id
   );
 }
+
+#endif
