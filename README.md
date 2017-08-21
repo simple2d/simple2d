@@ -122,7 +122,7 @@ nmake /f NMakefile rebuild auto testcard
 
 #### iOS and tvOS
 
-To run the iOS and tvOS test, first run `make release` to build the iOS and tvOS frameworks. Next, run `make ios` to run in an iOS simulator and `make tvos` to run in a tvOS Simulator.
+To run the iOS and tvOS test, first run `make frameworks && make install-frameworks` to build and install the iOS and tvOS frameworks. Next, run `make ios` to run the test in an iOS simulator and `make tvos` to run in a tvOS Simulator.
 
 ---
 

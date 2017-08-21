@@ -94,20 +94,8 @@ install:
 	cp build/simple2d      $(PREFIX)/bin/
 
 ifeq ($(PLATFORM),apple)
-install-frameworks:
-ifeq ($(shell test -d build/ios/Simple2D.framework && test -d build/tvos/Simple2D.framework; echo $$?),1)
-	$(error Frameworks missing, run `release` target first)
-endif
-	$(call task_msg,Installing iOS and tvOS frameworks)
-	mkdir -p $(PREFIX)/Frameworks/Simple2D/iOS/
-	mkdir -p $(PREFIX)/Frameworks/Simple2D/tvOS/
-	cp -R build/ios/Simple2D.framework  $(PREFIX)/Frameworks/Simple2D/iOS/
-	cp -R build/tvos/Simple2D.framework $(PREFIX)/Frameworks/Simple2D/tvOS/
-endif
-
-ifeq ($(PLATFORM),apple)
-release: clean all
-	$(call task_msg,Building iOS and tvOS release)
+frameworks:
+	$(call task_msg,Building iOS and tvOS frameworks)
 	xcodebuild -version
 ifneq ($(XCPRETTY_STATUS),0)
 	@echo "xcpretty not found: Run \`gem install xcpretty\` for nicer xcodebuild output.\n"
@@ -135,13 +123,30 @@ endif
 	cp deps/xcode/Info.plist build/tvos/Simple2D.framework/Info.plist
 	mv build/ios/Simple2D  build/ios/Simple2D.framework
 	mv build/tvos/Simple2D build/tvos/Simple2D.framework
+	$(call info_msg,iOS framework built at \`build/ios/Simple2D.framework\`)
+	$(call info_msg,tvOS framework built at \`build/tvos/Simple2D.framework\`)
+endif
+
+ifeq ($(PLATFORM),apple)
+install-frameworks:
+ifeq ($(shell test -d build/ios/Simple2D.framework && test -d build/tvos/Simple2D.framework; echo $$?),1)
+	$(error Frameworks missing. Run `frameworks` target first)
+endif
+	$(call task_msg,Installing iOS and tvOS frameworks)
+	mkdir -p $(PREFIX)/Frameworks/Simple2D/iOS/
+	mkdir -p $(PREFIX)/Frameworks/Simple2D/tvOS/
+	cp -R build/ios/Simple2D.framework  $(PREFIX)/Frameworks/Simple2D/iOS/
+	cp -R build/tvos/Simple2D.framework $(PREFIX)/Frameworks/Simple2D/tvOS/
+endif
+
+ifeq ($(PLATFORM),apple)
+release: clean frameworks
+	$(call task_msg,Building iOS and tvOS release)
 	mkdir -p build/$(APPLE_RELEASE_DIR)/Simple2D/iOS
 	mkdir -p build/$(APPLE_RELEASE_DIR)/Simple2D/tvOS
 	cp -R build/ios/*  build/$(APPLE_RELEASE_DIR)/Simple2D/iOS/
 	cp -R build/tvos/* build/$(APPLE_RELEASE_DIR)/Simple2D/tvOS/
 	cd build; zip -rq $(APPLE_RELEASE_DIR).zip $(APPLE_RELEASE_DIR)
-	$(call info_msg,iOS framework built at \`build/ios/Simple2D.framework\`)
-	$(call info_msg,tvOS framework built at \`build/tvos/Simple2D.framework\`)
 	$(call info_msg,Frameworks zipped at \`build/$(APPLE_RELEASE_DIR).zip\`)
 endif
 
@@ -215,8 +220,8 @@ controller:
 
 ifeq ($(PLATFORM),apple)
 ios:
-ifeq ($(shell test -d build/ios/Simple2D.framework; echo $$?),1)
-	$(error Simple2D.framework missing, run `release` target first)
+ifeq ($(shell test -d /usr/local/Frameworks/Simple2D/iOS/Simple2D.framework; echo $$?),1)
+	$(error Simple2D.framework missing for iOS. Run `frameworks` and `install-frameworks` targets first)
 endif
 	$(call task_msg,Running iOS test)
 	cp -R deps/xcode/ios/* build/ios
@@ -229,8 +234,8 @@ endif
 
 ifeq ($(PLATFORM),apple)
 tvos:
-ifeq ($(shell test -d build/tvos/Simple2D.framework; echo $$?),1)
-	$(error Simple2D.framework missing, run `release` target first)
+ifeq ($(shell test -d /usr/local/Frameworks/Simple2D/tvOS/Simple2D.framework; echo $$?),1)
+	$(error Simple2D.framework missing for tvOS. Run `frameworks` and `install-frameworks` targets first)
 endif
 	$(call task_msg,Running tvOS test)
 	cp -R deps/xcode/tvos/* build/tvos
