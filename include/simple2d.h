@@ -47,6 +47,8 @@ extern "C" {
 #endif
 
 #if WINDOWS
+  #include <stdio.h>
+  #include <math.h>
   #include <windows.h>
   // For terminal colors
   #ifndef  ENABLE_VIRTUAL_TERMINAL_PROCESSING
