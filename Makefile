@@ -194,11 +194,11 @@ endif
 
 test:
 	$(call task_msg,Building tests)
-	bin/simple2d.sh build test/auto.c
-	bin/simple2d.sh build test/triangle.c
-	bin/simple2d.sh build test/testcard.c
-	bin/simple2d.sh build test/audio.c
-	bin/simple2d.sh build test/controller.c
+	simple2d build test/auto.c
+	simple2d build test/triangle.c
+	simple2d build test/testcard.c
+	simple2d build test/audio.c
+	simple2d build test/controller.c
 
 rebuild: uninstall clean all install test
 
@@ -225,10 +225,10 @@ endif
 	$(call task_msg,Running iOS test)
 	cp -R deps/xcode/ios/* build/ios
 	cp test/triangle-ios-tvos.c build/ios/main.c
-	bin/simple2d.sh build --ios build/ios/MyApp.xcodeproj
-	bin/simple2d.sh simulator --open "iPhone 7"
-	bin/simple2d.sh simulator --install "build/ios/build/Release-iphonesimulator/MyApp.app"
-	bin/simple2d.sh simulator --launch "Simple2D.MyApp"
+	simple2d build --ios build/ios/MyApp.xcodeproj
+	simple2d simulator --open "iPhone 7"
+	simple2d simulator --install "build/ios/build/Release-iphonesimulator/MyApp.app"
+	simple2d simulator --launch "Simple2D.MyApp"
 endif
 
 ifeq ($(PLATFORM),apple)
@@ -239,10 +239,10 @@ endif
 	$(call task_msg,Running tvOS test)
 	cp -R deps/xcode/tvos/* build/tvos
 	cp test/triangle-ios-tvos.c build/tvos/main.c
-	bin/simple2d.sh build --tvos build/tvos/MyApp.xcodeproj
-	bin/simple2d.sh simulator --open "Apple TV"
-	bin/simple2d.sh simulator --install "build/tvos/build/Release-appletvsimulator/MyApp.app"
-	bin/simple2d.sh simulator --launch "Simple2D.MyApp"
+	simple2d build --tvos build/tvos/MyApp.xcodeproj
+	simple2d simulator --open "Apple TV"
+	simple2d simulator --install "build/tvos/build/Release-appletvsimulator/MyApp.app"
+	simple2d simulator --launch "Simple2D.MyApp"
 endif
 
 .PHONY: build test
