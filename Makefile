@@ -39,9 +39,8 @@ OBJECTS=$(addprefix build/,$(notdir $(SOURCES:.c=.o)))
 VERSION=$(shell bash bin/simple2d.sh -v)
 
 # Release directories and archive filenames
-MINGW_RELEASE_DIR=build/simple2d-windows-mingw-$(VERSION)
-MINGW_RELEASE_FNAME=simple2d-windows-mingw-$(VERSION).zip
-APPLE_RELEASE_DIR=simple2d-apple-frameworks-$(VERSION)
+APPLE_RELEASE=simple2d-apple-frameworks-$(VERSION)
+MINGW_RELEASE=simple2d-windows-mingw-$(VERSION)
 
 # Helper functions
 
@@ -100,6 +99,7 @@ frameworks:
 ifneq ($(XCPRETTY_STATUS),0)
 	@echo "xcpretty not found: Run \`gem install xcpretty\` for nicer xcodebuild output.\n"
 endif
+	mkdir -p build
 	cp -R deps/xcode/Simple2D.xcodeproj build
 	cd build && \
 	xcodebuild -sdk iphoneos         | $(XCPRETTY) && \
@@ -142,35 +142,34 @@ endif
 ifeq ($(PLATFORM),apple)
 release: clean frameworks
 	$(call task_msg,Building iOS and tvOS release)
-	mkdir -p build/$(APPLE_RELEASE_DIR)/Simple2D/iOS
-	mkdir -p build/$(APPLE_RELEASE_DIR)/Simple2D/tvOS
-	cp -R build/ios/*  build/$(APPLE_RELEASE_DIR)/Simple2D/iOS/
-	cp -R build/tvos/* build/$(APPLE_RELEASE_DIR)/Simple2D/tvOS/
-	cd build; zip -rq $(APPLE_RELEASE_DIR).zip $(APPLE_RELEASE_DIR)
-	$(call info_msg,Frameworks zipped at \`build/$(APPLE_RELEASE_DIR).zip\`)
+	mkdir -p build/$(APPLE_RELEASE)/Simple2D/iOS
+	mkdir -p build/$(APPLE_RELEASE)/Simple2D/tvOS
+	cp -R build/ios/*  build/$(APPLE_RELEASE)/Simple2D/iOS/
+	cp -R build/tvos/* build/$(APPLE_RELEASE)/Simple2D/tvOS/
+	cd build; zip -rq $(APPLE_RELEASE).zip $(APPLE_RELEASE)
+	$(call info_msg,Frameworks zipped at \`build/$(APPLE_RELEASE).zip\`)
 endif
 
 ifeq ($(PLATFORM),mingw)
 release: clean all
-	mkdir -p $(MINGW_RELEASE_DIR)/include
-	mkdir -p $(MINGW_RELEASE_DIR)/lib
-	mkdir -p $(MINGW_RELEASE_DIR)/bin
-	cp -R deps/mingw/include/*    $(MINGW_RELEASE_DIR)/include
-	cp -R deps/mingw/lib/*        $(MINGW_RELEASE_DIR)/lib
-	cp -R deps/mingw/bin/*        $(MINGW_RELEASE_DIR)/bin
-	cp    deps/LICENSES.md        $(MINGW_RELEASE_DIR)
-	cp include/simple2d.h         $(MINGW_RELEASE_DIR)/include
-	cp build/libsimple2d.a        $(MINGW_RELEASE_DIR)/lib
-	cp build/simple2d             $(MINGW_RELEASE_DIR)/bin
-	cp bin/win-installer-mingw.sh $(MINGW_RELEASE_DIR)/install.sh
-	PowerShell -Command "& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::CreateFromDirectory('$(MINGW_RELEASE_DIR)', 'build\$(MINGW_RELEASE_FNAME)'); }"
+	mkdir -p build/$(MINGW_RELEASE)/include
+	mkdir -p build/$(MINGW_RELEASE)/lib
+	mkdir -p build/$(MINGW_RELEASE)/bin
+	cp -R deps/mingw/include/*    build/$(MINGW_RELEASE)/include
+	cp -R deps/mingw/lib/*        build/$(MINGW_RELEASE)/lib
+	cp -R deps/mingw/bin/*        build/$(MINGW_RELEASE)/bin
+	cp    deps/LICENSES.md        build/$(MINGW_RELEASE)
+	cp include/simple2d.h         build/$(MINGW_RELEASE)/include
+	cp build/libsimple2d.a        build/$(MINGW_RELEASE)/lib
+	cp build/simple2d             build/$(MINGW_RELEASE)/bin
+	cp bin/win-installer-mingw.sh build/$(MINGW_RELEASE)/install.sh
+	PowerShell -Command "& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::CreateFromDirectory('build/$(MINGW_RELEASE)', 'build/\$(MINGW_RELEASE).zip'); }"
 endif
 
 clean:
 	$(call task_msg,Cleaning)
 	rm -rf build/*
 ifeq ($(PLATFORM),mingw)
-	rm -rf $(MINGW_RELEASE_DIR)
 	rm -f test/auto.exe
 	rm -f test/triangle.exe
 	rm -f test/testcard.exe
