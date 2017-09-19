@@ -3,7 +3,7 @@
 @echo off
 
 :: The installed version
-set S2D_VERSION=0.6.0
+set S2D_VERSION=0.7.0
 
 :: Set flags used to build Simple 2D apps
 set S2D_FLAGS=/I %LOCALAPPDATA%\simple2d /link /LIBPATH %LOCALAPPDATA%\simple2d\simple2d.lib /SUBSYSTEM:CONSOLE
