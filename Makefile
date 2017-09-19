@@ -93,7 +93,7 @@ install:
 	cp build/simple2d      $(PREFIX)/bin/
 
 ifeq ($(PLATFORM),apple)
-frameworks:
+frameworks: all
 	$(call task_msg,Building iOS and tvOS frameworks)
 	xcodebuild -version
 ifneq ($(XCPRETTY_STATUS),0)
@@ -128,7 +128,7 @@ endif
 endif
 
 ifeq ($(PLATFORM),apple)
-install-frameworks:
+install-frameworks: install
 ifeq ($(shell test -d build/ios/Simple2D.framework && test -d build/tvos/Simple2D.framework; echo $$?),1)
 	$(error Frameworks missing. Run `frameworks` target first)
 endif
