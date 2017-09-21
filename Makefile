@@ -223,10 +223,11 @@ ifeq ($(shell test -d /usr/local/Frameworks/Simple2D/iOS/Simple2D.framework; ech
 	$(error Simple2D.framework missing for iOS. Run `frameworks` and `install-frameworks` targets first)
 endif
 	$(call task_msg,Running iOS test)
+	mkdir -p build/ios
 	cp -R deps/xcode/ios/* build/ios
 	cp test/triangle-ios-tvos.c build/ios/main.c
 	simple2d build --ios build/ios/MyApp.xcodeproj
-	simple2d simulator --open "iPhone 7"
+	simple2d simulator --open "iPhone 8"
 	simple2d simulator --install "build/ios/build/Release-iphonesimulator/MyApp.app"
 	simple2d simulator --launch "Simple2D.MyApp"
 endif
@@ -237,6 +238,7 @@ ifeq ($(shell test -d /usr/local/Frameworks/Simple2D/tvOS/Simple2D.framework; ec
 	$(error Simple2D.framework missing for tvOS. Run `frameworks` and `install-frameworks` targets first)
 endif
 	$(call task_msg,Running tvOS test)
+	mkdir -p build/tvos
 	cp -R deps/xcode/tvos/* build/tvos
 	cp test/triangle-ios-tvos.c build/tvos/main.c
 	simple2d build --tvos build/tvos/MyApp.xcodeproj
