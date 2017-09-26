@@ -36,6 +36,7 @@ S2D_Window *S2D_CreateWindow(const char *title, int width, int height,
   window->on_key          = NULL;
   window->on_mouse        = NULL;
   window->on_controller   = NULL;
+  window->on_touch        = NULL;
   window->vsync           = true;
   window->fps_cap         = 60;
   window->background.r    = 0.0;
@@ -198,6 +199,38 @@ int S2D_Show(S2D_Window *window) {
               .x = mx, .y = my, .delta_x = e.motion.xrel, .delta_y = e.motion.yrel
             };
             window->on_mouse(event);
+          }
+          break;
+
+        case SDL_FINGERMOTION:
+          if (window->on_touch) {
+            float fx,dx, fy, dy;
+            fx = e.tfinger.x  * window->width;  // TODO: Viewport in scaling
+            fy = e.tfinger.y  * window->height;
+            dx = e.tfinger.dx * window->width;
+            dy = e.tfinger.dy * window->height;
+            S2D_GetMouseOnViewport(window, (int)fx, (int)fy, &mx, &my);
+            S2D_Event event = {
+              .type = S2D_FINGER_MOTION,
+              .x = mx, .y = my, .delta_x = dx, .delta_y = dy, .finger_id = e.tfinger.fingerId,
+              .touch_id = e.tfinger.touchId
+            };
+            window->on_touch(event);
+          }
+          break;
+
+        case SDL_FINGERDOWN: case SDL_FINGERUP:
+          if (window->on_touch) {
+            float fx, fy;
+            fx = e.tfinger.x * window->width;  // TODO: Viewport in scaling
+            fy = e.tfinger.y * window->height;
+            S2D_GetMouseOnViewport(window, (int)fx, (int)fy, &mx, &my);
+            S2D_Event event = {
+              .x = mx, .y = my, .finger_id = e.tfinger.fingerId,
+              .touch_id = e.tfinger.touchId
+            };
+            event.type = e.type == SDL_FINGERUP ? S2D_FINGER_UP : S2D_FINGER_DOWN;
+            window->on_touch(event);
           }
           break;
 

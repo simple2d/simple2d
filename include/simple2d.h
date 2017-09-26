@@ -137,6 +137,11 @@ extern "C" {
 #define S2D_BUTTON_DOWN 2
 #define S2D_BUTTON_UP   3
 
+// Touch events
+#define S2D_FINGER_DOWN   1
+#define S2D_FINGER_UP     2
+#define S2D_FINGER_MOTION 3
+
 // Internal Shared Data ////////////////////////////////////////////////////////
 
 extern bool S2D_diagnostics;  // flag for whether to print diagnostics with S2D_Log
@@ -157,6 +162,8 @@ typedef struct {
   int direction;
   int axis;
   int value;
+  long long finger_id;
+  long long touch_id;
 } S2D_Event;
 
 typedef void (*S2D_Update)();
@@ -164,6 +171,7 @@ typedef void (*S2D_Render)();
 typedef void (*S2D_On_Key)(S2D_Event e);
 typedef void (*S2D_On_Mouse)(S2D_Event e);
 typedef void (*S2D_On_Controller)(S2D_Event e);
+typedef void (*S2D_On_Touch)(S2D_Event e);
 
 // S2D_Color
 typedef struct {
@@ -210,6 +218,7 @@ typedef struct {
   S2D_On_Key on_key;
   S2D_On_Mouse on_mouse;
   S2D_On_Controller on_controller;
+  S2D_On_Touch on_touch;
   bool vsync;
   int fps_cap;
   S2D_Color background;
