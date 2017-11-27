@@ -137,6 +137,35 @@ extern "C" {
 #define S2D_BUTTON_DOWN 2
 #define S2D_BUTTON_UP   3
 
+// Controller axis labels
+#define S2D_AXIS_INVALID      SDL_CONTROLLER_AXIS_INVALID
+#define S2D_AXIS_LEFTX        SDL_CONTROLLER_AXIS_LEFTX
+#define S2D_AXIS_LEFTY        SDL_CONTROLLER_AXIS_LEFTY
+#define S2D_AXIS_RIGHTX       SDL_CONTROLLER_AXIS_RIGHTX
+#define S2D_AXIS_RIGHTY       SDL_CONTROLLER_AXIS_RIGHTY
+#define S2D_AXIS_TRIGGERLEFT  SDL_CONTROLLER_AXIS_TRIGGERLEFT
+#define S2D_AXIS_TRIGGERRIGHT SDL_CONTROLLER_AXIS_TRIGGERRIGHT
+#define S2D_AXIS_MAX          SDL_CONTROLLER_AXIS_MAX
+
+// Controller button labels
+#define S2D_BUTTON_INVALID       SDL_CONTROLLER_BUTTON_INVALID
+#define S2D_BUTTON_A             SDL_CONTROLLER_BUTTON_A
+#define S2D_BUTTON_B             SDL_CONTROLLER_BUTTON_B
+#define S2D_BUTTON_X             SDL_CONTROLLER_BUTTON_X
+#define S2D_BUTTON_Y             SDL_CONTROLLER_BUTTON_Y
+#define S2D_BUTTON_BACK          SDL_CONTROLLER_BUTTON_BACK
+#define S2D_BUTTON_GUIDE         SDL_CONTROLLER_BUTTON_GUIDE
+#define S2D_BUTTON_START         SDL_CONTROLLER_BUTTON_START
+#define S2D_BUTTON_LEFTSTICK     SDL_CONTROLLER_BUTTON_LEFTSTICK
+#define S2D_BUTTON_RIGHTSTICK    SDL_CONTROLLER_BUTTON_RIGHTSTICK
+#define S2D_BUTTON_LEFTSHOULDER  SDL_CONTROLLER_BUTTON_LEFTSHOULDER
+#define S2D_BUTTON_RIGHTSHOULDER SDL_CONTROLLER_BUTTON_RIGHTSHOULDER
+#define S2D_BUTTON_DPAD_UP       SDL_CONTROLLER_BUTTON_DPAD_UP
+#define S2D_BUTTON_DPAD_DOWN     SDL_CONTROLLER_BUTTON_DPAD_DOWN
+#define S2D_BUTTON_DPAD_LEFT     SDL_CONTROLLER_BUTTON_DPAD_LEFT
+#define S2D_BUTTON_DPAD_RIGHT    SDL_CONTROLLER_BUTTON_DPAD_RIGHT
+#define S2D_BUTTON_MAX           SDL_CONTROLLER_BUTTON_MAX
+
 // Internal Shared Data ////////////////////////////////////////////////////////
 
 extern bool S2D_diagnostics;  // flag for whether to print diagnostics with S2D_Log
@@ -483,6 +512,11 @@ void S2D_GetMouseOnViewport(S2D_Window *window, int wx, int wy, int *x, int *y);
 void S2D_ShowCursor(bool toggle);
 
 // Controllers /////////////////////////////////////////////////////////////////
+
+/*
+ * Check if joystick is a controller
+ */
+bool S2D_IsController(SDL_JoystickID id);
 
 /*
  * Detect controllers and joysticks

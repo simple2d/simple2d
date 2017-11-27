@@ -44,9 +44,6 @@ S2D_Window *S2D_CreateWindow(const char *title, int width, int height,
   window->background.a    = 1.0;
   window->close           = true;
 
-  // Detect controllers and joysticks
-  S2D_DetectControllers();
-
   // Return the window structure
   return window;
 }
@@ -201,8 +198,18 @@ int S2D_Show(S2D_Window *window) {
           }
           break;
 
-        case SDL_JOYAXISMOTION:
+        case SDL_CONTROLLERAXISMOTION:
           if (window->on_controller) {
+            S2D_Event event = {
+              .which = e.caxis.which, .type = S2D_AXIS,
+              .axis = e.caxis.axis, .value = e.caxis.value
+            };
+            window->on_controller(event);
+          }
+          break;
+
+        case SDL_JOYAXISMOTION:
+          if (window->on_controller && !S2D_IsController(e.jbutton.which)) {
             S2D_Event event = {
               .which = e.jaxis.which, .type = S2D_AXIS,
               .axis = e.jaxis.axis, .value = e.jaxis.value
@@ -211,13 +218,42 @@ int S2D_Show(S2D_Window *window) {
           }
           break;
 
-        case SDL_JOYBUTTONDOWN: case SDL_JOYBUTTONUP:
+        case SDL_CONTROLLERBUTTONDOWN: case SDL_CONTROLLERBUTTONUP:
           if (window->on_controller) {
             S2D_Event event = {
-              .which = e.jaxis.which, .button = e.jbutton.button
+              .which = e.cbutton.which, .button = e.cbutton.button
+            };
+            event.type = e.type == SDL_CONTROLLERBUTTONDOWN ? S2D_BUTTON_DOWN : S2D_BUTTON_UP;
+            window->on_controller(event);
+          }
+          break;
+
+        case SDL_JOYBUTTONDOWN: case SDL_JOYBUTTONUP:
+          if (window->on_controller && !S2D_IsController(e.jbutton.which)) {
+            S2D_Event event = {
+              .which = e.jbutton.which, .button = e.jbutton.button
             };
             event.type = e.type == SDL_JOYBUTTONDOWN ? S2D_BUTTON_DOWN : S2D_BUTTON_UP;
             window->on_controller(event);
+          }
+          break;
+
+        case SDL_CONTROLLERDEVICEADDED:
+          if (SDL_IsGameController(e.cdevice.which)) S2D_DetectControllers();
+          break;
+
+        case SDL_JOYDEVICEADDED:
+          if (!SDL_IsGameController(e.jdevice.which)) S2D_DetectControllers();
+          break;
+
+        case SDL_CONTROLLERDEVICEREMOVED:
+          SDL_GameControllerClose(SDL_GameControllerFromInstanceID(e.cdevice.which));
+          S2D_Log(S2D_INFO, "Controller #%i removed", e.cdevice.which);
+          break;
+
+        case SDL_JOYDEVICEREMOVED:
+          if (!S2D_IsController(e.jdevice.which)) {
+            SDL_JoystickClose(SDL_JoystickFromInstanceID(e.jdevice.which));
           }
           break;
 

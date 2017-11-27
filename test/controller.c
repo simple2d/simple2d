@@ -1,32 +1,36 @@
 #include <simple2d.h>
 
 S2D_Window *window;
+S2D_Image *controller;
 
-double axis0 = 0;
-double axis1 = 0;
-double axis2 = 0;
-double axis3 = 0;
-double axis4 = 0;
-double axis5 = 0;
+double scale = 80;
+double axis_LEFTX = 0;
+double axis_LEFTY = 0;
+double axis_RIGHTX = 0;
+double axis_RIGHTY = 0;
+double axis_TRIGGERLEFT = 0;
+double axis_TRIGGERRIGHT = 0;
+double axis_MAX = 0;
 
-bool btn0  = false;
-bool btn1  = false;
-bool btn2  = false;
-bool btn3  = false;
-bool btn4  = false;
-bool btn5  = false;
-bool btn6  = false;
-bool btn7  = false;
-bool btn8  = false;
-bool btn9  = false;
-bool btn10 = false;
-bool btn11 = false;
-bool btn12 = false;
-bool btn13 = false;
-bool btn14 = false;
-bool btn15 = false;
+bool btn_A = false;
+bool btn_B = false;
+bool btn_X = false;
+bool btn_Y = false;
+bool btn_BACK = false;
+bool btn_GUIDE = false;
+bool btn_START = false;
+bool btn_LEFTSTICK = false;
+bool btn_RIGHTSTICK = false;
+bool btn_LEFTSHOULDER = false;
+bool btn_RIGHTSHOULDER = false;
+bool btn_DPAD_UP = false;
+bool btn_DPAD_DOWN = false;
+bool btn_DPAD_LEFT = false;
+bool btn_DPAD_RIGHT = false;
+bool btn_MAX = false;
 
 
+// Normalize axis values to 0.0...1.0
 double to_d(int val) {
   if (val > 0) {
     return val / 32767.0;
@@ -38,281 +42,161 @@ double to_d(int val) {
 
 void render() {
 
-  // Axises
+  S2D_DrawImage(controller);
+
+  // Axes
 
   S2D_DrawQuad(
-    300,          0, 0, 1, 0, 1,
-    300 + axis0,  0, 0, 1, 0, 1,
-    300 + axis0, 50, 0, 1, 0, 1,
-    300,         50, 0, 1, 0, 1
+    156,              130, 0, 1, 0, 1,
+    156 + axis_LEFTX, 130, 0, 1, 0, 1,
+    156 + axis_LEFTX, 159, 0, 1, 0, 1,
+    156,              159, 0, 1, 0, 1
   );
   S2D_DrawQuad(
-    300,          50, 0, 1, 0, 1,
-    300 + axis1,  50, 0, 1, 0, 1,
-    300 + axis1, 100, 0, 1, 0, 1,
-    300,         100, 0, 1, 0, 1
+    142, 145 + axis_LEFTY, 0, 1, 0, 1,
+    171, 145 + axis_LEFTY, 0, 1, 0, 1,
+    171, 145,              0, 1, 0, 1,
+    142, 145,              0, 1, 0, 1
   );
   S2D_DrawQuad(
-    300,         100, 0, 1, 0, 1,
-    300 + axis2, 100, 0, 1, 0, 1,
-    300 + axis2, 150, 0, 1, 0, 1,
-    300,         150, 0, 1, 0, 1
+    374,               215, 0, 1, 0, 1,
+    374 + axis_RIGHTX, 215, 0, 1, 0, 1,
+    374 + axis_RIGHTX, 244, 0, 1, 0, 1,
+    374,               244, 0, 1, 0, 1
   );
   S2D_DrawQuad(
-    300,         150, 0, 1, 0, 1,
-    300 + axis3, 150, 0, 1, 0, 1,
-    300 + axis3, 200, 0, 1, 0, 1,
-    300,         200, 0, 1, 0, 1
+    359, 229 + axis_RIGHTY, 0, 1, 0, 1,
+    388, 229 + axis_RIGHTY, 0, 1, 0, 1,
+    388, 229,               0, 1, 0, 1,
+    359, 229,               0, 1, 0, 1
   );
   S2D_DrawQuad(
-    300,         200, 0, 1, 0, 1,
-    300 + axis4, 200, 0, 1, 0, 1,
-    300 + axis4, 250, 0, 1, 0, 1,
-    300,         250, 0, 1, 0, 1
+     8, 71 - axis_TRIGGERLEFT * .84, 0, 1, 0, 1,
+    42, 71 - axis_TRIGGERLEFT * .84, 0, 1, 0, 1,
+    42, 71,                          0, 1, 0, 1,
+     8, 71,                          0, 1, 0, 1
   );
   S2D_DrawQuad(
-    300,         250, 0, 1, 0, 1,
-    300 + axis5, 250, 0, 1, 0, 1,
-    300 + axis5, 300, 0, 1, 0, 1,
-    300,         300, 0, 1, 0, 1
+     8+550, 71 - axis_TRIGGERRIGHT * .84, 0, 1, 0, 1,
+    42+550, 71 - axis_TRIGGERRIGHT * .84, 0, 1, 0, 1,
+    42+550, 71,                           0, 1, 0, 1,
+     8+550, 71,                           0, 1, 0, 1
   );
 
   // Buttons
 
-  // Cell 1,1
-  if (btn0)
+  if (btn_A)  // green
     S2D_DrawQuad(
-       0, 300, 0, 1, 0, 1,
-      50, 300, 0, 1, 0, 1,
-      50, 350, 0, 1, 0, 1,
-       0, 350, 0, 1, 0, 1
+      426,      167,      0, 1, 0, 1,
+      426 + 33, 167,      0, 1, 0, 1,
+      426 + 33, 167 + 33, 0, 1, 0, 1,
+      426,      167 + 33, 0, 1, 0, 1
     );
-  // Cell 1,2
-  if (btn1)
+  if (btn_B)  // red
     S2D_DrawQuad(
-       50, 300, 1, 0, 0, 1,
-      100, 300, 1, 0, 0, 1,
-      100, 350, 1, 0, 0, 1,
-       50, 350, 1, 0, 0, 1
+      464,      129,      1, 0, 0, 1,
+      464 + 33, 129,      1, 0, 0, 1,
+      464 + 33, 129 + 33, 1, 0, 0, 1,
+      464,      129 + 33, 1, 0, 0, 1
     );
-  // Cell 1,3
-  if (btn2)
+  if (btn_X)  // blue
     S2D_DrawQuad(
-      100, 300, 0, 0, 1, 1,
-      150, 300, 0, 0, 1, 1,
-      150, 350, 0, 0, 1, 1,
-      100, 350, 0, 0, 1, 1
+      388,      128,      0, .7, 1, 1,
+      388 + 33, 128,      0, .7, 1, 1,
+      388 + 33, 128 + 33, 0, .7, 1, 1,
+      388,      128 + 33, 0, .7, 1, 1
     );
-  // Cell 1,4
-  if (btn3)
+  if (btn_Y)  // yellow
     S2D_DrawQuad(
-      150, 300, 1, 1, 0, 1,
-      200, 300, 1, 1, 0, 1,
-      200, 350, 1, 1, 0, 1,
-      150, 350, 1, 1, 0, 1
+      426,      91,      1, 1, 0, 1,
+      426 + 33, 91,      1, 1, 0, 1,
+      426 + 33, 91 + 33, 1, 1, 0, 1,
+      426,      91 + 33, 1, 1, 0, 1
     );
-  // Cell 1,5
-  if (btn4)
+  if (btn_BACK)
     S2D_DrawQuad(
-      200, 300, 1, 0, 1, 1,
-      250, 300, 1, 0, 1, 1,
-      250, 350, 1, 0, 1, 1,
-      200, 350, 1, 0, 1, 1
+      248,      133,      1, .5, 0, 1,
+      248 + 23, 133,      1, .5, 0, 1,
+      248 + 23, 133 + 23, 1, .5, 0, 1,
+      248,      133 + 23, 1, .5, 0, 1
     );
-  // Cell 1,6
-  if (btn5)
+  if (btn_GUIDE)
     S2D_DrawQuad(
-      250, 300, 1, 0, 1, 1,
-      300, 300, 1, 0, 1, 1,
-      300, 350, 1, 0, 1, 1,
-      250, 350, 1, 0, 1, 1
+      281,      69,      .5, 1, .5, 1,
+      281 + 38, 69,      .5, 1, .5, 1,
+      281 + 38, 69 + 38, .5, 1, .5, 1,
+      281,      69 + 38, .5, 1, .5, 1
     );
-  // Cell 1,7
-  if (btn6)
+  if (btn_START)
     S2D_DrawQuad(
-      300, 300, 0, 1, 1, 1,
-      350, 300, 0, 1, 1, 1,
-      350, 350, 0, 1, 1, 1,
-      300, 350, 0, 1, 1, 1
+      331,      133,      1, .5, 0, 1,
+      331 + 23, 133,      1, .5, 0, 1,
+      331 + 23, 133 + 23, 1, .5, 0, 1,
+      331,      133 + 23, 1, .5, 0, 1
     );
-  // Cell 1,8
-  if (btn7)
+  if (btn_LEFTSTICK)
     S2D_DrawQuad(
-      350, 300, 0, 1, 1, 1,
-      400, 300, 0, 1, 1, 1,
-      400, 350, 0, 1, 1, 1,
-      350, 350, 0, 1, 1, 1
+      8,      4,      1, 0, 0, 1,
+      8 + 34, 4,      1, 0, 0, 1,
+      8 + 38, 4 + 67, 1, 0, 0, 1,
+      8 -  4, 4 + 67, 1, 0, 0, 1
     );
-  // Cell 1,9
-  if (btn8)
+  if (btn_RIGHTSTICK)
     S2D_DrawQuad(
-      400, 300, 1, 0.5, 0, 1,
-      450, 300, 1, 0.5, 0, 1,
-      450, 350, 1, 0.5, 0, 1,
-      400, 350, 1, 0.5, 0, 1
+      558,      4,      1, 0, 0, 1,
+      558 + 34, 4,      1, 0, 0, 1,
+      558 + 38, 4 + 67, 1, 0, 0, 1,
+      558 -  4, 4 + 67, 1, 0, 0, 1
     );
-  // Cell 1,10
-  if (btn9)
+  if (btn_LEFTSHOULDER)
     S2D_DrawQuad(
-      450, 300, 1, 0.5, 0, 1,
-      500, 300, 1, 0.5, 0, 1,
-      500, 350, 1, 0.5, 0, 1,
-      450, 350, 1, 0.5, 0, 1
+      111, 84, .5, 0, 1, 1,
+      117, 64, .5, 0, 1, 1,
+      198, 39, .5, 0, 1, 1,
+      225, 52, .5, 0, 1, 1
     );
-  // Cell 1,11
-  if (btn10)
+  if (btn_RIGHTSHOULDER)
     S2D_DrawQuad(
-      500, 300, 1, 0.5, 0, 1,
-      550, 300, 1, 0.5, 0, 1,
-      550, 350, 1, 0.5, 0, 1,
-      500, 350, 1, 0.5, 0, 1
+      494, 85, .5, 0, 1, 1,
+      484, 64, .5, 0, 1, 1,
+      401, 39, .5, 0, 1, 1,
+      378, 51, .5, 0, 1, 1
     );
-  // Cell 2,1
-  if (btn11)
+  if (btn_DPAD_UP)
     S2D_DrawQuad(
-       0, 350, 0, 0.5, 1, 1,
-      50, 350, 0, 0.5, 1, 1,
-      50, 400, 0, 0.5, 1, 1,
-       0, 400, 0, 0.5, 1, 1
+      216,      194,      1, 0, .5, 1,
+      216 + 23, 194,      1, 0, .5, 1,
+      216 + 23, 194 + 28, 1, 0, .5, 1,
+      216,      194 + 28, 1, 0, .5, 1
     );
-  // Cell 2,2
-  if (btn12)
+  if (btn_DPAD_DOWN)
     S2D_DrawQuad(
-       50, 350, 0, 0.5, 1, 1,
-      100, 350, 0, 0.5, 1, 1,
-      100, 400, 0, 0.5, 1, 1,
-       50, 400, 0, 0.5, 1, 1
+      216,      243,      1, 0, .5, 1,
+      216 + 23, 243,      1, 0, .5, 1,
+      216 + 23, 243 + 27, 1, 0, .5, 1,
+      216,      243 + 27, 1, 0, .5, 1
     );
-  // Cell 2,3
-  if (btn13)
+  if (btn_DPAD_LEFT)
     S2D_DrawQuad(
-      100, 350, 0, 0.5, 1, 1,
-      150, 350, 0, 0.5, 1, 1,
-      150, 400, 0, 0.5, 1, 1,
-      100, 400, 0, 0.5, 1, 1
+      189,      221,      1, 0, .5, 1,
+      189 + 28, 221,      1, 0, .5, 1,
+      189 + 28, 221 + 22, 1, 0, .5, 1,
+      189,      221 + 22, 1, 0, .5, 1
     );
-  // Cell 2,4
-  if (btn14)
+  if (btn_DPAD_RIGHT)
     S2D_DrawQuad(
-      150, 350, 0, 0.5, 1, 1,
-      200, 350, 0, 0.5, 1, 1,
-      200, 400, 0, 0.5, 1, 1,
-      150, 400, 0, 0.5, 1, 1
+      238,      221,      1, 0, .5, 1,
+      238 + 28, 221,      1, 0, .5, 1,
+      238 + 28, 221 + 22, 1, 0, .5, 1,
+      238,      221 + 22, 1, 0, .5, 1
     );
-
-  // Vertical axis line
-
-  S2D_DrawQuad(
-    300,   0, 1, 0, 0, 1,
-    301,   0, 1, 0, 0, 1,
-    301, 300, 1, 0, 0, 1,
-    300, 300, 1, 0, 0, 1
-  );
-
-  // Button grid
-
-  S2D_DrawQuad(
-      0, 300, 1, 1, 1, 1,
-    550, 300, 1, 1, 1, 1,
-    550, 301, 1, 1, 1, 1,
-      0, 301, 1, 1, 1, 1
-  );
-  S2D_DrawQuad(
-      0, 350, 1, 1, 1, 1,
-    550, 350, 1, 1, 1, 1,
-    550, 351, 1, 1, 1, 1,
-      0, 351, 1, 1, 1, 1
-  );
-  S2D_DrawQuad(
-      0, 399, 1, 1, 1, 1,
-    200, 399, 1, 1, 1, 1,
-    200, 400, 1, 1, 1, 1,
-      0, 400, 1, 1, 1, 1
-  );
-  S2D_DrawQuad(
-    0, 300, 1, 1, 1, 1,
-    0, 400, 1, 1, 1, 1,
-    1, 400, 1, 1, 1, 1,
-    1, 300, 1, 1, 1, 1
-  );
-  S2D_DrawQuad(
-    50, 300, 1, 1, 1, 1,
-    50, 400, 1, 1, 1, 1,
-    51, 400, 1, 1, 1, 1,
-    51, 300, 1, 1, 1, 1
-  );
-  S2D_DrawQuad(
-    100, 300, 1, 1, 1, 1,
-    100, 400, 1, 1, 1, 1,
-    101, 400, 1, 1, 1, 1,
-    101, 300, 1, 1, 1, 1
-  );
-  S2D_DrawQuad(
-    150, 300, 1, 1, 1, 1,
-    150, 400, 1, 1, 1, 1,
-    151, 400, 1, 1, 1, 1,
-    151, 300, 1, 1, 1, 1
-  );
-  S2D_DrawQuad(
-    200, 300, 1, 1, 1, 1,
-    200, 400, 1, 1, 1, 1,
-    201, 400, 1, 1, 1, 1,
-    201, 300, 1, 1, 1, 1
-  );
-  S2D_DrawQuad(
-    250, 300, 1, 1, 1, 1,
-    250, 350, 1, 1, 1, 1,
-    251, 350, 1, 1, 1, 1,
-    251, 300, 1, 1, 1, 1
-  );
-  S2D_DrawQuad(
-    300, 300, 1, 1, 1, 1,
-    300, 350, 1, 1, 1, 1,
-    301, 350, 1, 1, 1, 1,
-    301, 300, 1, 1, 1, 1
-  );
-  S2D_DrawQuad(
-    350, 300, 1, 1, 1, 1,
-    350, 350, 1, 1, 1, 1,
-    351, 350, 1, 1, 1, 1,
-    351, 300, 1, 1, 1, 1
-  );
-  S2D_DrawQuad(
-    400, 300, 1, 1, 1, 1,
-    400, 350, 1, 1, 1, 1,
-    401, 350, 1, 1, 1, 1,
-    401, 300, 1, 1, 1, 1
-  );
-  S2D_DrawQuad(
-    450, 300, 1, 1, 1, 1,
-    450, 350, 1, 1, 1, 1,
-    451, 350, 1, 1, 1, 1,
-    451, 300, 1, 1, 1, 1
-  );
-  S2D_DrawQuad(
-    500, 300, 1, 1, 1, 1,
-    500, 350, 1, 1, 1, 1,
-    501, 350, 1, 1, 1, 1,
-    501, 300, 1, 1, 1, 1
-  );
-  S2D_DrawQuad(
-    550, 300, 1, 1, 1, 1,
-    550, 350, 1, 1, 1, 1,
-    551, 350, 1, 1, 1, 1,
-    551, 300, 1, 1, 1, 1
-  );
 }
 
 
 void on_key(S2D_Event e) {
   if (e.type != S2D_KEY_DOWN) return;
-
   if (strcmp(e.key, "Escape") == 0) {
     S2D_Close(window);
-  }
-
-  if (strcmp(e.key, "D") == 0) {
-    S2D_DetectControllers();
   }
 }
 
@@ -321,97 +205,121 @@ void on_controller(S2D_Event e) {
   puts("=== Controller Event ===");
   printf("Controller #%i\n", e.which);
 
-  switch (e.type) {
-    case S2D_AXIS:
-      printf("Axis: %i\n", e.axis);
-      printf("Value: %i\n", e.value);
-      break;
-    case S2D_BUTTON_DOWN:
-      printf("Button #%i down\n", e.button);
-      break;
-    case S2D_BUTTON_UP:
-      printf("Button #%i up\n", e.button);
-      break;
-  }
-
-  double scale = window->viewport.width / 2.0;
-
+  // Axes
   if (e.type == S2D_AXIS) {
+    printf("Axis movement: #%i ", e.axis);
     switch (e.axis) {
-      case 0:
-        axis0 = to_d(e.value) * scale;
+      case S2D_AXIS_INVALID:
+        S2D_Error("Controller", "Invalid axis!");
         break;
-      case 1:
-        axis1 = to_d(e.value) * scale;
+      case S2D_AXIS_LEFTX:
+        puts("(LEFTX)");
+        axis_LEFTX = to_d(e.value) * scale;
         break;
-      case 2:
-        axis2 = to_d(e.value) * scale;
+      case S2D_AXIS_LEFTY:
+        puts("(LEFTY)");
+        axis_LEFTY = to_d(e.value) * scale;
         break;
-      case 3:
-        axis3 = to_d(e.value) * scale;
+      case S2D_AXIS_RIGHTX:
+        puts("(RIGHTX)");
+        axis_RIGHTX = to_d(e.value) * scale;
         break;
-      case 4:
-        axis4 = to_d(e.value) * scale;
+      case S2D_AXIS_RIGHTY:
+        puts("(RIGHTY)");
+        axis_RIGHTY = to_d(e.value) * scale;
         break;
-      case 5:
-        axis5 = to_d(e.value) * scale;
+      case S2D_AXIS_TRIGGERLEFT:
+        puts("(TRIGGERLEFT)");
+        axis_TRIGGERLEFT = to_d(e.value) * scale;
         break;
-      default:
-        puts("No axis match");
+      case S2D_AXIS_TRIGGERRIGHT:
+        puts("(TRIGGERRIGHT)");
+        axis_TRIGGERRIGHT = to_d(e.value) * scale;
+        break;
+      case S2D_AXIS_MAX:
+        puts("(MAX)");
+        break;
     }
+    printf("Value: %i\n", e.value);
+
+  // Buttons
   } else {
+    switch (e.type) {
+      case S2D_BUTTON_DOWN:
+        printf("Button down: #%i ", e.button);
+        break;
+      case S2D_BUTTON_UP:
+        printf("Button up: #%i ", e.button);
+        break;
+    }
     bool pressed = e.type == S2D_BUTTON_DOWN ? true : false;
     switch (e.button) {
-      case 0:
-        btn0 = pressed;
+      case S2D_BUTTON_INVALID:
+        S2D_Error("Controller", "Invalid button!");
+      case S2D_BUTTON_A:
+        puts("(A)");
+        btn_A = pressed;
         break;
-      case 1:
-        btn1 = pressed;
+      case S2D_BUTTON_B:
+        puts("(B)");
+        btn_B = pressed;
         break;
-      case 2:
-        btn2 = pressed;
+      case S2D_BUTTON_X:
+        puts("(X)");
+        btn_X = pressed;
         break;
-      case 3:
-        btn3 = pressed;
+      case S2D_BUTTON_Y:
+        puts("(Y)");
+        btn_Y = pressed;
         break;
-      case 4:
-        btn4 = pressed;
+      case S2D_BUTTON_BACK:
+        puts("(BACK)");
+        btn_BACK = pressed;
         break;
-      case 5:
-        btn5 = pressed;
+      case S2D_BUTTON_GUIDE:
+        puts("(GUIDE)");
+        btn_GUIDE = pressed;
         break;
-      case 6:
-        btn6 = pressed;
+      case S2D_BUTTON_START:
+        puts("(START)");
+        btn_START = pressed;
         break;
-      case 7:
-        btn7 = pressed;
+      case S2D_BUTTON_LEFTSTICK:
+        puts("(LEFTSTICK)");
+        btn_LEFTSTICK = pressed;
         break;
-      case 8:
-        btn8 = pressed;
+      case S2D_BUTTON_RIGHTSTICK:
+        puts("(RIGHTSTICK)");
+        btn_RIGHTSTICK = pressed;
         break;
-      case 9:
-        btn9 = pressed;
+      case S2D_BUTTON_LEFTSHOULDER:
+        puts("(LEFTSHOULDER)");
+        btn_LEFTSHOULDER = pressed;
         break;
-      case 10:
-        btn10 = pressed;
+      case S2D_BUTTON_RIGHTSHOULDER:
+        puts("(RIGHTSHOULDER)");
+        btn_RIGHTSHOULDER = pressed;
         break;
-      case 11:
-        btn11 = pressed;
+      case S2D_BUTTON_DPAD_UP:
+        puts("(DPAD_UP)");
+        btn_DPAD_UP = pressed;
         break;
-      case 12:
-        btn12 = pressed;
+      case S2D_BUTTON_DPAD_DOWN:
+        puts("(DPAD_DOWN)");
+        btn_DPAD_DOWN = pressed;
         break;
-      case 13:
-        btn13 = pressed;
+      case S2D_BUTTON_DPAD_LEFT:
+        puts("(DPAD_LEFT)");
+        btn_DPAD_LEFT = pressed;
         break;
-      case 14:
-        btn14 = pressed;
+      case S2D_BUTTON_DPAD_RIGHT:
+        puts("(DPAD_RIGHT)");
+        btn_DPAD_RIGHT = pressed;
         break;
-      case 15:
-        btn15 = pressed;
+      case S2D_BUTTON_MAX:
+        puts("(MAX)");
+        btn_MAX = pressed;
         break;
-      default:
-        puts("No button match");
     }
   }
 }
@@ -422,13 +330,13 @@ int main() {
   S2D_Diagnostics(true);
 
   window = S2D_CreateWindow(
-    "Simple 2D — Controller", 600, 400, NULL, render, 0
+    "Simple 2D — Controller", 600, 425, NULL, render, 0
   );
 
   window->on_key        = on_key;
   window->on_controller = on_controller;
 
-  puts("Press `D` to detect controllers.");
+  controller = S2D_CreateImage("media/controller.png");
 
   S2D_Show(window);
   S2D_FreeWindow(window);

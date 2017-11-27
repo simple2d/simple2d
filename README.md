@@ -90,7 +90,7 @@ Simple 2D has a few test programs to make sure everything is working as it shoul
 - [`triangle.c`](test/triangle.c) — The "Hello Triangle" example in this README.
 - [`testcard.c`](test/testcard.c) — A graphical card, similar to [TV test cards](https://en.wikipedia.org/wiki/Test_card), with the goal of ensuring visuals and inputs are working properly.
 - [`audio.c`](test/audio.c) — Tests audio functions with various file formats interpreted as sound samples and music.
-- [`controller.c`](test/controller.c) — Provides visual and numeric feedback of controller input.
+- [`controller.c`](test/controller.c) — Provides visual and numeric feedback of game controller input.
 - [`triangle-ios-tvos.c`](test/triangle-ios-tvos.c) — A modified `triangle.c` designed for iOS and tvOS devices.
 
 ### Building and running tests
@@ -611,11 +611,11 @@ S2D_ShowCursor(true);
 S2D_ShowCursor(false);
 ```
 
-### Game controllers and joysticks
+### Game controllers
 
-There are two types of controller or joystick events captured by the window: axis motion and button presses. When a button is pressed or a joystick moved, the window calls its `on_controller` function.
+All game controllers are automatically detected, added, and removed. There are two types of events captured by the window: axis motion and button presses. When a button is pressed or a joystick moved, the window calls its `on_controller` function. Buttons and axes are mapped to a generic Xbox controller layout.
 
-To capture game controller or joystick input, first define the `on_controller` function and read the event details from the `S2D_Event` structure, for example:
+To capture controller input, first define the `on_controller` function and read the event details from the `S2D_Event` structure, for example:
 
 ```c
 void on_controller(S2D_Event e) {
@@ -624,17 +624,30 @@ void on_controller(S2D_Event e) {
   switch (e.type) {
     case S2D_AXIS:
       // Controller axis was moved
-      // Use `e.axis` to get the numbered axis
+      // Use `e.axis` to get the axis, either:
+      //   S2D_AXIS_LEFTX, S2D_AXIS_LEFTY,
+      //   S2D_AXIS_RIGHTX, S2D_AXIS_RIGHTY,
+      //   S2D_AXIS_TRIGGERLEFT, S2D_AXIS_TRIGGERRIGHT,
+      //   or S2D_AXIS_INVALID
       // Use `e.value` to get the value of the axis
       break;
 
+    // For the following button events, use `e.button`
+    // to get the button pressed or released, which can be:
+    //   S2D_BUTTON_A, S2D_BUTTON_B, S2D_BUTTON_X, S2D_BUTTON_Y,
+    //   S2D_BUTTON_BACK, S2D_BUTTON_GUIDE, S2D_BUTTON_START,
+    //   S2D_BUTTON_LEFTSTICK, S2D_BUTTON_RIGHTSTICK,
+    //   S2D_BUTTON_LEFTSHOULDER, S2D_BUTTON_RIGHTSHOULDER,
+    //   S2D_BUTTON_DPAD_UP, S2D_BUTTON_DPAD_DOWN,
+    //   S2D_BUTTON_DPAD_LEFT, S2D_BUTTON_DPAD_RIGHT,
+    //   or S2D_BUTTON_INVALID
+
     case S2D_BUTTON_DOWN:
       // Controller button was pressed
-      // Use `e.button` to get the button pressed
       break;
 
     case S2D_BUTTON_UP:
-      // Use `e.button` to get the button pressed
+      // Controller button was released
       break;
   }
 }
@@ -646,9 +659,7 @@ Then, attach the callback to the window:
 window->on_controller = on_controller;
 ```
 
-Controllers are detected when the window is created, but you can also look for new controllers at any time by calling `S2D_DetectControllers()`.
-
-A [community-sourced database](https://github.com/gabomdq/SDL_GameControllerDB) of game controller mappings can be used to map numeric button and axis identifiers to named buttons and axes.
+See the [`controller.c`](test/controller.c) test for an exhaustive example of how to interact with game controllers.
 
 # Contributing
 
