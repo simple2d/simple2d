@@ -20,16 +20,13 @@ SCRIPT_URL="https://raw.githubusercontent.com/simple2d/simple2d/master/bin/simpl
 # SDL download paths
 libsdl_url="https://www.libsdl.org"
 
-sdl_fname="SDL2-2.0.5"
+sdl_fname="SDL2-2.0.7"
 sdl_url="${libsdl_url}/release/${sdl_fname}.tar.gz"
 
-image_fname="SDL2_image-2.0.1"
+image_fname="SDL2_image-2.0.2"
 image_url="${libsdl_url}/projects/SDL_image/release/${image_fname}.tar.gz"
 
-smpeg_fname="smpeg2-2.0.0"  # An SDL_mixer dependency, no package available
-smpeg_url="${libsdl_url}/projects/smpeg/release/${smpeg_fname}.tar.gz"
-
-mixer_fname="SDL2_mixer-2.0.1"
+mixer_fname="SDL2_mixer-2.0.2"
 mixer_url="${libsdl_url}/projects/SDL_mixer/release/${mixer_fname}.tar.gz"
 
 ttf_fname="SDL2_ttf-2.0.14"
@@ -348,9 +345,10 @@ install_sdl_source() {
 
     # SDL2_image
     libjpeg9-dev
-    libpng12-dev
+    libpng-dev
 
     # SDL2_mixer
+    libmpg123-dev
     libvorbis-dev
     libflac-dev
 
@@ -403,8 +401,6 @@ install_sdl_source() {
   fi
 
   if [[ $have_mixer_lib == 'false' ]]; then
-    echo; print_task "Downloading SMPEG2" "\n\n"
-    install_sdl_lib $smpeg_url $smpeg_fname
     echo; print_task "Downloading SDL2_mixer" "\n\n"
     install_sdl_lib $mixer_url $mixer_fname
   fi
@@ -600,7 +596,6 @@ uninstall_sdl_source() {
   uninstall_sdl_lib $image_url $image_fname
 
   echo; print_task "Uninstalling SDL2_mixer" "\n\n"
-  uninstall_sdl_lib $smpeg_url $smpeg_fname
   uninstall_sdl_lib $mixer_url $mixer_fname
 
   echo; print_task "Uninstalling SDL2_ttf" "\n\n"
@@ -1102,7 +1097,12 @@ case $1 in
     elif [[ $platform == 'linux' ]]; then
       FLAGS='-lGL -lm'
     elif [[ $platform == 'arm' ]]; then
-      FLAGS='-lm -I/opt/vc/include/ -L/opt/vc/lib -lGLESv2 -lsmpeg2'
+      FLAGS='-lm -I/opt/vc/include/ -L/opt/vc/lib'
+      if $platform_rpi; then
+        FLAGS+=' -lbrcmGLESv2'
+      else
+        FLAGS+=' -lGLESv2'
+      fi
     fi
     if [[ $platform == 'mingw' ]]; then
       echo "-I/usr/local/include/ -L/usr/local/lib -lmingw32 -lsimple2d -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf -lopengl32 -lglew32"
