@@ -82,6 +82,18 @@ void S2D_Windows_EnableTerminalColors() {
 
 
 /*
+ * Gets the primary display's dimentions
+ */
+void S2D_GetDisplayDimensions(int *w, int *h) {
+  S2D_Init();
+  SDL_DisplayMode dm;
+  SDL_GetCurrentDisplayMode(0, &dm);
+  *w = dm.w;
+  *h = dm.h;
+}
+
+
+/*
  * Initialize Simple 2D subsystems
  */
 bool S2D_Init() {
