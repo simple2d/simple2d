@@ -49,7 +49,7 @@ int main() {
   S2D_Image *img3 = S2D_CreateImage("media/image.png");
   end_test(img1 != NULL && img2 != NULL && img3 != NULL);
 
-  start_test("(S2D_CreateImage) bad image file path");
+  start_test("(S2D_CreateImage) bad image file path (expect errors)");
   S2D_Image *img4 = S2D_CreateImage("image.bmp");
   S2D_Image *img5 = S2D_CreateImage("");
   S2D_Image *img6 = S2D_CreateImage(NULL);
@@ -72,7 +72,7 @@ int main() {
   S2D_Sprite *spr3 = S2D_CreateSprite("media/image.png");
   end_test(spr1 != NULL && spr2 != NULL && spr3 != NULL);
 
-  start_test("(S2D_CreateSprite) bad sprite image file path");
+  start_test("(S2D_CreateSprite) bad sprite image file path (expect errors)");
   S2D_Sprite *spr4 = S2D_CreateSprite("image.bmp");
   S2D_Sprite *spr5 = S2D_CreateSprite("");
   S2D_Sprite *spr6 = S2D_CreateSprite(NULL);
@@ -100,7 +100,7 @@ int main() {
   S2D_Text *txt2 = S2D_CreateText("media/bitstream_vera/vera.ttf", "Hello World", 20);
   end_test(txt1 != NULL && txt2 != NULL);
 
-  start_test("(S2D_CreateText) bad font file path");
+  start_test("(S2D_CreateText) bad font file path (expect errors)");
   S2D_Text *txt3 = S2D_CreateText("font.ttf", "Hello World", 20);
   S2D_Text *txt4 = S2D_CreateText("", "Hello World", 20);
   S2D_Text *txt5 = S2D_CreateText(NULL, "Hello World", 20);
@@ -135,7 +135,7 @@ int main() {
   S2D_Sound *snd3 = S2D_CreateSound("media/sound.ogg");
   end_test(snd1 != NULL && snd2 != NULL && snd3 != NULL);
 
-  start_test("(S2D_CreateSound) bad sound file path");
+  start_test("(S2D_CreateSound) bad sound file path (expect errors)");
   S2D_Sound *snd4 = S2D_CreateSound("sound.wav");
   S2D_Sound *snd5 = S2D_CreateSound("");
   S2D_Sound *snd6 = S2D_CreateSound(NULL);
@@ -159,7 +159,7 @@ int main() {
   S2D_Music *mus4 = S2D_CreateMusic("media/music.flac");
   end_test(mus1 != NULL && mus2 != NULL && mus3 != NULL && mus4 != NULL);
 
-  start_test("(S2D_CreateMusic) bad music file path");
+  start_test("(S2D_CreateMusic) bad music file path (expect errors)");
   S2D_Music *mus5 = S2D_CreateMusic("music.wav");
   S2D_Music *mus6 = S2D_CreateMusic("");
   S2D_Music *mus7 = S2D_CreateMusic(NULL);
@@ -189,7 +189,7 @@ int main() {
   S2D_FreeWindow(win1); S2D_FreeWindow(win2);
   end_test(PASS);
 
-  start_test("(S2D_Show) show a bad window pointer");
+  start_test("(S2D_Show) show a bad window pointer (expect error)");
   S2D_Show(NULL);
   end_test(PASS);
 
