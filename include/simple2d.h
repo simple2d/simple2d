@@ -111,8 +111,9 @@ extern "C" {
 
 // Viewport scaling modes
 #define S2D_FIXED   1
-#define S2D_SCALE   2
-#define S2D_STRETCH 3
+#define S2D_EXPAND  2
+#define S2D_SCALE   3
+#define S2D_STRETCH 4
 
 // Keyboard events
 #define S2D_KEY_DOWN 1  // key is pressed

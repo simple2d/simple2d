@@ -181,6 +181,11 @@ void S2D_GL_SetViewport(S2D_Window *window) {
       y = window->height - h;
       break;
 
+    case S2D_EXPAND:
+      ortho_w = w;
+      ortho_h = h;
+      break;
+
     case S2D_SCALE:
       S2D_GL_GetViewportScale(window, &w, &h, NULL);
       // Center the viewport

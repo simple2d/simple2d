@@ -340,6 +340,11 @@ int main() {
   window->on_mouse      = on_mouse;
   window->on_controller = on_controller;
 
+  // window->viewport.mode = S2D_FIXED;
+  // window->viewport.mode = S2D_EXPAND;
+  // window->viewport.mode = S2D_SCALE;  // Default
+  // window->viewport.mode = S2D_STRETCH;
+
   img_png = S2D_CreateImage("media/image.png");
   img_png->x = 300;
   img_png->y = 0;

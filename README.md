@@ -207,7 +207,7 @@ window->viewport.width  = 400;
 window->viewport.height = 300;
 ```
 
-The viewport has various scaling modes, such as `S2D_FIXED` (viewport stays the same size as window size changes), `S2D_SCALE` (the default, where the viewport scales proportionately and is centered in the window), or `S2D_STRETCH` (viewport stretches to fill the entire window). Set the mode like so:
+The viewport has various scaling modes, such as `S2D_FIXED` (viewport stays the same size as window size changes), `S2D_EXPAND` (viewport expands to fill the window when resized), `S2D_SCALE` (the default, where the viewport scales proportionately and is centered in the window), or `S2D_STRETCH` (viewport stretches to fill the entire window). Set the mode like so:
 
 ```c
 window->viewport.mode = S2D_FIXED;
