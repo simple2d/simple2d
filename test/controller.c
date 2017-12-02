@@ -32,11 +32,7 @@ bool btn_MAX = false;
 
 // Normalize axis values to 0.0...1.0
 double to_d(int val) {
-  if (val > 0) {
-    return val / 32767.0;
-  } else {
-    return val / 32768.0;
-  }
+  return val > 0 ? val / 32767.0 : val / 32768.0;
 }
 
 
