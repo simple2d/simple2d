@@ -83,8 +83,6 @@ int S2D_Show(S2D_Window *window) {
     window->height = actual_height;
     window->orig_width  = actual_width;
     window->orig_height = actual_height;
-    window->viewport.width  = actual_width;
-    window->viewport.height = actual_height;
   }
 
   // Set Up OpenGL /////////////////////////////////////////////////////////////
