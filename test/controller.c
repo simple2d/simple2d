@@ -73,10 +73,10 @@ void render() {
      8, 71,                          0, 1, 0, 1
   );
   S2D_DrawQuad(
-     8+550, 71 - axis_TRIGGERRIGHT * .84, 0, 1, 0, 1,
-    42+550, 71 - axis_TRIGGERRIGHT * .84, 0, 1, 0, 1,
-    42+550, 71,                           0, 1, 0, 1,
-     8+550, 71,                           0, 1, 0, 1
+     8 + 550, 71 - axis_TRIGGERRIGHT * .84, 0, 1, 0, 1,
+    42 + 550, 71 - axis_TRIGGERRIGHT * .84, 0, 1, 0, 1,
+    42 + 550, 71,                           0, 1, 0, 1,
+     8 + 550, 71,                           0, 1, 0, 1
   );
 
   // Buttons
