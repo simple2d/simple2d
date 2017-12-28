@@ -325,6 +325,8 @@ int main() {
 
   S2D_Diagnostics(true);
 
+  S2D_LoadControllerMappingsFromFile("media/controllerdb.txt");
+
   window = S2D_CreateWindow(
     "Simple 2D — Controller", 600, 425, NULL, render, 0
   );

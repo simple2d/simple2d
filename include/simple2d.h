@@ -520,6 +520,11 @@ void S2D_ShowCursor(bool toggle);
 // Controllers /////////////////////////////////////////////////////////////////
 
 /*
+ * Load controller mappings from the specified file
+ */
+void S2D_LoadControllerMappingsFromFile(const char *path);
+
+/*
  * Check if joystick is a controller
  */
 bool S2D_IsController(SDL_JoystickID id);

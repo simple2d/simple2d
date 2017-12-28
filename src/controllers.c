@@ -4,6 +4,23 @@
 
 
 /*
+ * Load controller mappings from the specified file
+ */
+void S2D_LoadControllerMappingsFromFile(const char *path) {
+  if (!S2D_FileExists(path)) {
+    S2D_Log(S2D_ERROR, "Controller mappings file not found: %s", path);
+    return;
+  }
+  int mappings_added = SDL_GameControllerAddMappingsFromFile(path);
+  if (mappings_added == -1) {
+    S2D_Error("S2D_LoadControllerMappingsFromFile", SDL_GetError());
+  } else {
+    S2D_Log(S2D_INFO, "Loaded %i controller mappings.", mappings_added);
+  }
+}
+
+
+/*
  * Check if joystick is a controller
  */
 bool S2D_IsController(SDL_JoystickID id) {
