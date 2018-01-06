@@ -17,6 +17,10 @@ VERSION='0.8.0'
 # URL to this script in the repo
 SCRIPT_URL="https://raw.githubusercontent.com/simple2d/simple2d/master/bin/simple2d.sh"
 
+# MinGW Simple 2D installer
+s2d_mingw_installer_fname="simple2d-windows-mingw-${VERSION}.zip"
+s2d_mingw_installer_url="https://github.com/simple2d/simple2d/releases/download/v${VERSION}/${s2d_mingw_installer_fname}"
+
 # SDL download paths
 libsdl_url="https://www.libsdl.org"
 
@@ -483,6 +487,19 @@ install_s2d() {
 }
 
 
+# Installs Simple 2D for MinGW environments
+install_s2d_mingw() {
+  tmp_dir="/tmp/simple2d"
+  mkdir $tmp_dir
+  print_and_run "wget -NP $tmp_dir $s2d_mingw_installer_url"
+  print_and_run "pacman -S unzip --needed"
+  print_and_run "unzip -q $tmp_dir/$s2d_mingw_installer_fname -d $tmp_dir"
+  print_and_run "cd $tmp_dir"
+  print_and_run "bash install.sh"
+  print_and_run "rm -rf $tmp_dir"
+}
+
+
 # Main entry point to install Simple 2D and SDL
 # params:
 #   $1  String  Flags used, e.g. `--sdl`
@@ -491,11 +508,6 @@ install() {
   # If macOS, print message and quit
   if [[ $platform == 'macos' ]]; then
     macos_homebrew_message $1
-  fi
-
-  # If MinGW, print message and quit
-  if [[ $platform == 'mingw' ]]; then
-    mingw_not_implemented_message
   fi
 
   # If SDL flag, install only SDL and quit
@@ -514,6 +526,13 @@ install() {
   echo -e "${BLUE}---------------------${NORMAL}\n"
 
   echo -e "Platform detected: ${BOLD}${platform_display}${NORMAL}\n"
+
+  # If MinGW, install Simple 2D release and quit
+  if [[ $platform == 'mingw' ]]; then
+    prompt_to_continue "Continue to install?"
+    install_s2d_mingw
+    exit
+  fi
 
   if have_lib? 'simple2d' > /dev/null; then
     warning_msg "Simple 2D is already installed. Proceeding will reinstall."
