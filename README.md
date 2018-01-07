@@ -29,6 +29,8 @@ The Homebrew formula above will also install the iOS and tvOS frameworks to `/us
 
 [Download the Windows installer](https://github.com/simple2d/simple2d/releases/latest) for Visual C++ or MinGW.
 
+For MinGW, we recommend using an [MSYS2](http://www.msys2.org) environment (also available on [Chocolatey](https://chocolatey.org/packages/msys2)). Simple 2D can also be installed on MinGW using the Linux instructions below.
+
 ### ...on Linux
 
 Run the [`simple2d.sh`](bin/simple2d.sh) Bash script. Everything will be explained along the way and you'll be prompted before any action is taken. To run the script from the web, paste this snippet in your terminal:
