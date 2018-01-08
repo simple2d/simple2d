@@ -441,7 +441,7 @@ install_s2d_mingw() {
   tmp_dir="/tmp/simple2d"
   mkdir -p $tmp_dir
   print_and_run "wget -NP $tmp_dir $s2d_mingw_installer_url"
-  print_and_run "pacman -S unzip --needed"
+  print_and_run "pacman -S unzip --needed --noconfirm"
   print_and_run "unzip -q $tmp_dir/$s2d_mingw_installer_fname -d $tmp_dir"
   print_and_run "cd $tmp_dir"
   print_and_run "bash install.sh -y"
