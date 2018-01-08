@@ -59,6 +59,7 @@ platform='unknown'
 platform_display='unknown'
 platform_rpi=false
 ret=''  # for storing function return values
+confirmed=false # to skip confirmation prompts
 
 # Use xcpretty for nicer output: gem install xcpretty
 if xcpretty -v &>/dev/null; then
@@ -91,13 +92,15 @@ success_msg() {
 # params:
 #   $1  String  Message before y/n prompt
 prompt_to_continue() {
-  printf "${BOLD}$1${NORMAL} "
-  read -p "(y/n) " ans
-  if [[ $ans != "y" ]]; then
-    echo -e "\nQuitting...\n"
-    exit
+  if ! $confirmed; then
+    printf "${BOLD}$1${NORMAL} "
+    read -p "(y/n) " ans
+    if [[ $ans != "y" ]]; then
+      echo -e "\nQuitting...\n"
+      exit
+    fi
+    echo
   fi
-  echo
 }
 
 
@@ -433,6 +436,19 @@ install_sdl() {
 }
 
 
+# Installs Simple 2D for MinGW environments
+install_s2d_mingw() {
+  tmp_dir="/tmp/simple2d"
+  mkdir -p $tmp_dir
+  print_and_run "wget -NP $tmp_dir $s2d_mingw_installer_url"
+  print_and_run "pacman -S unzip --needed"
+  print_and_run "unzip -q $tmp_dir/$s2d_mingw_installer_fname -d $tmp_dir"
+  print_and_run "cd $tmp_dir"
+  print_and_run "bash install.sh -y"
+  print_and_run "rm -rf $tmp_dir"
+}
+
+
 # Installs Simple 2D
 # params:
 #   $1  String  Version to install, either 'master' or $VERSION
@@ -484,19 +500,6 @@ install_s2d() {
     echo; error_msg "Simple 2D did not install correctly"; exit 1
   fi
   echo
-}
-
-
-# Installs Simple 2D for MinGW environments
-install_s2d_mingw() {
-  tmp_dir="/tmp/simple2d"
-  mkdir $tmp_dir
-  print_and_run "wget -NP $tmp_dir $s2d_mingw_installer_url"
-  print_and_run "pacman -S unzip --needed"
-  print_and_run "unzip -q $tmp_dir/$s2d_mingw_installer_fname -d $tmp_dir"
-  print_and_run "cd $tmp_dir"
-  print_and_run "bash install.sh"
-  print_and_run "rm -rf $tmp_dir"
 }
 
 
@@ -1060,6 +1063,9 @@ case $1 in
   install)
     case $2 in
       '')
+        install;;
+      -y)
+        confirmed=true
         install;;
       --HEAD)
         install '--HEAD';;

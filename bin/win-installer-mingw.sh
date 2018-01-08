@@ -5,17 +5,25 @@ BOLD='\033[1;39m'     # default bold
 SUCCESS='\033[1;32m'  # green   bold
 NORMAL='\033[0m'      # reset
 
+confirmed=false # to bypass confirmations
+
+if [[ $1 == '-y' ]]; then
+  confirmed=true
+fi
+
 # Prompts to continue, or exits
 # params:
 #   $1  String  Message before y/n prompt
 prompt_to_continue() {
-  printf "${BOLD}$1${NORMAL} "
-  read -p "(y/n) " ans
-  if [[ $ans != "y" ]]; then
-    echo -e "\nQuitting...\n"
-    exit
+  if ! $confirmed; then
+    printf "${BOLD}$1${NORMAL} "
+    read -p "(y/n) " ans
+    if [[ $ans != "y" ]]; then
+      echo -e "\nQuitting...\n"
+      exit
+    fi
+    echo
   fi
-  echo
 }
 
 # Prints and runs a command
