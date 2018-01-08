@@ -21,6 +21,9 @@ SCRIPT_URL="https://raw.githubusercontent.com/simple2d/simple2d/master/bin/simpl
 s2d_mingw_installer_fname="simple2d-windows-mingw-${VERSION}.zip"
 s2d_mingw_installer_url="https://github.com/simple2d/simple2d/releases/download/v${VERSION}/${s2d_mingw_installer_fname}"
 
+# SDL minimum version
+SDL_MIN_VERSION='2.0.4'
+
 # SDL download paths
 libsdl_url="https://www.libsdl.org"
 
@@ -268,8 +271,28 @@ build() {
 # Installation #################################################################
 
 
-# Checks if SDL2 libraries are installed
-have_sdl2_libs?() {
+# Checks installed versions of SDL
+check_sdl_versions() {
+
+  print_task "Checking SDL2 version... "
+
+  # Check SDL version installed
+  SDL_INSTALLED_VERSION=$(sdl2-config --version)
+  compare_versions $SDL_MIN_VERSION $SDL_INSTALLED_VERSION
+
+  if [[ $? == 1 ]]; then
+    echo $SDL_INSTALLED_VERSION
+    error_msg "Installed version of SDL2 is too old (must be at least $SDL_MIN_VERSION)"
+    return 1
+  else
+    echo "$SDL_INSTALLED_VERSION"
+    return 0
+  fi
+}
+
+
+# Checks if SDL libraries are installed
+have_sdl_libs?() {
 
   have_all_libs=true
   have_sdl2_lib=true
@@ -280,6 +303,11 @@ have_sdl2_libs?() {
   if ! have_lib? 'SDL2'; then
     have_sdl2_lib=false
     have_all_libs=false
+  else
+    if ! check_sdl_versions; then
+      have_sdl2_lib=false
+      have_all_libs=false
+    fi
   fi
 
   if ! have_lib? 'SDL2_image'; then
@@ -322,7 +350,7 @@ install_sdl_linux() {
   print_and_run "sudo apt install -y libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev"
   echo
 
-  if ! have_sdl2_libs?; then
+  if ! have_sdl_libs?; then
     echo; error_msg "SDL libraries did not install correctly"; exit 1
   else
     echo; info_msg "SDL was installed successfully"
@@ -386,7 +414,7 @@ install_sdl_source() {
     rm -rf /tmp/$2
   }
 
-  # Note that `$have_*_lib` variables are set by `have_sdl2_libs?()`
+  # Note that `$have_*_lib` variables are set by `have_sdl_libs?()`
 
   if [[ $have_sdl2_lib == 'false' ]]; then
     echo; print_task "Downloading SDL2" "\n\n"
@@ -418,7 +446,7 @@ install_sdl_source() {
   fi
 
   echo
-  if ! have_sdl2_libs?; then
+  if ! have_sdl_libs?; then
     error_msg "SDL libraries did not install correctly"; exit 1
   else
     echo; info_msg "SDL was installed successfully"
@@ -516,7 +544,7 @@ install() {
   # If SDL flag, install only SDL and quit
   if [[ $1 == '--sdl' ]]; then
     echo
-    if have_sdl2_libs?; then
+    if have_sdl_libs?; then
       echo; info_msg "SDL is already installed"
     else
       echo; install_sdl
@@ -553,7 +581,7 @@ install() {
 
   prompt_to_continue "Continue?"
 
-  if have_sdl2_libs?; then
+  if have_sdl_libs?; then
     echo
   else
     echo; install_sdl
@@ -587,7 +615,7 @@ uninstall_sdl_linux() {
   print_and_run "sudo apt remove -y --purge libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev"
   echo
 
-  if have_sdl2_libs?; then
+  if have_sdl_libs?; then
     echo; error_msg "SDL libraries did not uninstall correctly"
   else
     echo; info_msg "SDL was uninstalled successfully"
@@ -631,7 +659,7 @@ uninstall_sdl_source() {
   fi
 
   echo
-  if have_sdl2_libs?; then
+  if have_sdl_libs?; then
     echo; error_msg "SDL libraries did not uninstall correctly"; exit 1
   else
     echo; info_msg "SDL was uninstalled successfully"
@@ -642,7 +670,7 @@ uninstall_sdl_source() {
 # Uninstalls SDL
 uninstall_sdl() {
 
-  if have_sdl2_libs?; then
+  if have_sdl_libs?; then
     echo
   else
     echo; info_msg "SDL appears to be already uninstalled"
@@ -727,7 +755,7 @@ update() {
 
   # Check if SDL is installed
   update_check_sdl() {
-    if have_sdl2_libs?; then
+    if have_sdl_libs?; then
       echo
     else
       echo; error_msg "SDL libraries missing"
@@ -769,7 +797,7 @@ doctor() {
 
   errors=false
 
-  if ! have_sdl2_libs?; then
+  if ! have_sdl_libs?; then
     errors=true
     echo; error_msg "SDL libraries missing"
   fi
