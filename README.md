@@ -663,6 +663,8 @@ window->on_controller = on_controller;
 
 See the [`controller.c`](test/controller.c) test for an exhaustive example of how to interact with game controllers.
 
+You're certain to find controllers that don't yet have button mappings, especially if they're brand new. See the [community-sourced database](https://github.com/gabomdq/SDL_GameControllerDB) of controller mappings for examples of how to generate mappings strings. Once you have the mapping string, you can add it using the `S2D_AddControllerMapping` function, or add a file containing mapping strings using `S2D_LoadControllerMappingsFromFile` and passing the file path.
+
 # Contributing
 
 > "Simple can be harder than complex: You have to work hard to get your thinking clean to make it simple. But it's worth it in the end because once you get there, you can move mountains." — [Steve Jobs](https://en.wikiquote.org/wiki/Steve_Jobs)

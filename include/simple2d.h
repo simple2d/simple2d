@@ -520,6 +520,11 @@ void S2D_ShowCursor(bool toggle);
 // Controllers /////////////////////////////////////////////////////////////////
 
 /*
+ * Add controller mapping from string
+ */
+void S2D_AddControllerMapping(const char *map);
+
+/*
  * Load controller mappings from the specified file
  */
 void S2D_LoadControllerMappingsFromFile(const char *path);
