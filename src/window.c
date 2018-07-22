@@ -245,21 +245,17 @@ int S2D_Show(S2D_Window *window) {
           }
           break;
 
-        case SDL_CONTROLLERDEVICEADDED:
-          if (SDL_IsGameController(e.cdevice.which)) S2D_DetectControllers();
-          break;
-
         case SDL_JOYDEVICEADDED:
-          if (!SDL_IsGameController(e.jdevice.which)) S2D_DetectControllers();
-          break;
-
-        case SDL_CONTROLLERDEVICEREMOVED:
-          SDL_GameControllerClose(SDL_GameControllerFromInstanceID(e.cdevice.which));
-          S2D_Log(S2D_INFO, "Controller #%i removed", e.cdevice.which);
+          S2D_Log(S2D_INFO, "Controller connected (%i total)", SDL_NumJoysticks());
+          S2D_OpenControllers();
           break;
 
         case SDL_JOYDEVICEREMOVED:
-          if (!S2D_IsController(e.jdevice.which)) {
+          if (S2D_IsController(e.jdevice.which)) {
+            S2D_Log(S2D_INFO, "Controller #%i: %s removed (%i remaining)", e.jdevice.which, SDL_GameControllerName(SDL_GameControllerFromInstanceID(e.jdevice.which)), SDL_NumJoysticks());
+            SDL_GameControllerClose(SDL_GameControllerFromInstanceID(e.jdevice.which));
+          } else {
+            S2D_Log(S2D_INFO, "Controller #%i: %s removed (%i remaining)", e.jdevice.which, SDL_JoystickName(SDL_JoystickFromInstanceID(e.jdevice.which)), SDL_NumJoysticks());
             SDL_JoystickClose(SDL_JoystickFromInstanceID(e.jdevice.which));
           }
           break;
