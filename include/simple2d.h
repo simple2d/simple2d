@@ -527,7 +527,7 @@ void S2D_AddControllerMapping(const char *map);
 /*
  * Load controller mappings from the specified file
  */
-void S2D_LoadControllerMappingsFromFile(const char *path);
+void S2D_AddControllerMappingsFromFile(const char *path);
 
 /*
  * Check if joystick is a controller
@@ -535,9 +535,9 @@ void S2D_LoadControllerMappingsFromFile(const char *path);
 bool S2D_IsController(SDL_JoystickID id);
 
 /*
- * Detect controllers and joysticks
+ * Open controllers and joysticks
  */
-void S2D_DetectControllers();
+void S2D_OpenControllers();
 
 // Window //////////////////////////////////////////////////////////////////////
 

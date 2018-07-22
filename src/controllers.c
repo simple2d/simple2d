@@ -2,6 +2,10 @@
 
 #include "../include/simple2d.h"
 
+// Stores the last joystick instance ID seen by the system. These instance IDs
+// are unique and increment with each new joystick connected.
+static int last_intance_id = -1;
+
 
 /*
  * Add controller mapping from string
@@ -27,9 +31,9 @@ void S2D_AddControllerMapping(const char *map) {
 
 
 /*
- * Load controller mappings from the specified file
+ * Add controller mappings from the specified file
  */
-void S2D_LoadControllerMappingsFromFile(const char *path) {
+void S2D_AddControllerMappingsFromFile(const char *path) {
   if (!S2D_FileExists(path)) {
     S2D_Log(S2D_WARN, "Controller mappings file not found: %s", path);
     return;
@@ -39,7 +43,7 @@ void S2D_LoadControllerMappingsFromFile(const char *path) {
   if (mappings_added == -1) {
     S2D_Error("SDL_GameControllerAddMappingsFromFile", SDL_GetError());
   } else {
-    S2D_Log(S2D_INFO, "Loaded %i controller mappings.", mappings_added);
+    S2D_Log(S2D_INFO, "Added %i controller mapping(s)", mappings_added);
   }
 }
 
@@ -53,54 +57,54 @@ bool S2D_IsController(SDL_JoystickID id) {
 
 
 /*
- * Detect controllers and joysticks
+ * Open controllers and joysticks
  */
-void S2D_DetectControllers() {
+void S2D_OpenControllers() {
 
   SDL_JoystickGUID guid;
   char guid_str[33];
 
-  if (SDL_NumJoysticks() > 0) {
-    S2D_Log(S2D_INFO, "Controllers detected: %i", SDL_NumJoysticks());
-  }
-
   // Enumerate joysticks
-  for (int i = 0; i < SDL_NumJoysticks(); ++i) {
+  for (int device_index = 0; device_index < SDL_NumJoysticks(); ++device_index) {
 
-    // Check to see if joystick supports SDL's game controller interface
-    if (SDL_IsGameController(i)) {
-      SDL_GameController *controller = SDL_GameControllerOpen(i);
-      SDL_JoystickID id = SDL_JoystickInstanceID(SDL_GameControllerGetJoystick(controller));
+    // Check if joystick supports SDL's game controller interface (a mapping is available)
+    if (SDL_IsGameController(device_index)) {
+      SDL_GameController *controller = SDL_GameControllerOpen(device_index);
+      SDL_JoystickID intance_id = SDL_JoystickInstanceID(SDL_GameControllerGetJoystick(controller));
 
       SDL_JoystickGetGUIDString(
         SDL_JoystickGetGUID(SDL_GameControllerGetJoystick(controller)),
         guid_str, 33
       );
 
-      if (controller) {
-        S2D_Log(S2D_INFO, "Controller #%i: %s\n      GUID: %s", id, SDL_GameControllerName(controller), guid_str);
-      } else {
-        S2D_Log(S2D_ERROR, "Could not open controller #%i: %s", id, SDL_GetError());
+      if (intance_id > last_intance_id) {
+        if (controller) {
+          S2D_Log(S2D_INFO, "Controller #%i: %s\n      GUID: %s", intance_id, SDL_GameControllerName(controller), guid_str);
+        } else {
+          S2D_Log(S2D_ERROR, "Could not open controller #%i: %s", intance_id, SDL_GetError());
+        }
+        last_intance_id = intance_id;
       }
 
     // Controller interface not supported, try to open as joystick
     } else {
-      SDL_Joystick *joy = SDL_JoystickOpen(i);
-      SDL_JoystickID id = SDL_JoystickInstanceID(joy);
+      SDL_Joystick *joy = SDL_JoystickOpen(device_index);
+      SDL_JoystickID intance_id = SDL_JoystickInstanceID(joy);
 
-      if (joy) {
+      if (!joy) {
+        S2D_Log(S2D_ERROR, "Could not open controller");
+      } else if(intance_id > last_intance_id) {
         SDL_JoystickGetGUIDString(
           SDL_JoystickGetGUID(joy),
           guid_str, 33
         );
         S2D_Log(S2D_INFO,
           "Controller #%i: %s\n      GUID: %s\n      Axes: %d\n      Buttons: %d\n      Balls: %d",
-          id, SDL_JoystickName(joy), guid_str, SDL_JoystickNumAxes(joy),
+          intance_id, SDL_JoystickName(joy), guid_str, SDL_JoystickNumAxes(joy),
           SDL_JoystickNumButtons(joy), SDL_JoystickNumBalls(joy)
         );
-        S2D_Log(S2D_WARN, "Controller #%i does not have a mapping available", id);
-      } else {
-        S2D_Log(S2D_ERROR, "Could not open controller #%i", id);
+        S2D_Log(S2D_WARN, "Controller #%i does not have a mapping available", intance_id);
+        last_intance_id = intance_id;
       }
     }
   }
