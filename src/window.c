@@ -93,16 +93,16 @@ int S2D_Show(S2D_Window *window) {
 
   const Uint8 *key_state;
 
-  Uint32 frames = 0;           // Total frames since start
+  Uint32 frames = 0;           // Stores frames in the last second
   Uint32 start_ms = SDL_GetTicks();  // Elapsed time since start
+  Uint32 last_second_ms = SDL_GetTicks();
   Uint32 begin_ms = start_ms;  // Time at beginning of loop
   Uint32 end_ms;               // Time at end of loop
   Uint32 elapsed_ms;           // Total elapsed time
   Uint32 loop_ms;              // Elapsed time of loop
   int delay_ms;                // Amount of delay to achieve desired frame rate
-  double new_fps = 0.0;        // The actual frame rate, set to zero to prevent inf in initial average calculation
-  const double ALPHA = 0.9;    // Determines how fast an average decays over time
-  double fps = 1.0;            // Moving average of actual fps, initial value a guess
+  const double ALPHA = 0.7;    // Determines how fast an average decays over time
+  double fps = 60.0;           // Moving average of actual fps, initial value a guess
 
   // Enable VSync
   if (window->vsync) {
@@ -127,12 +127,12 @@ int S2D_Show(S2D_Window *window) {
     end_ms = SDL_GetTicks();
 
     elapsed_ms = end_ms - start_ms;
-    new_fps = frames / (elapsed_ms / 1000.0);
 
-    if(!isfinite(new_fps)) // the first elapsed_ms will be 0, giving us a divide by 0
-      new_fps = 1.0;
-    
-    fps = ALPHA * fps + (1.0 - ALPHA) * new_fps;
+    if(last_second_ms + 1000 < end_ms) {
+      fps = ALPHA * fps + (1.0 - ALPHA) * frames;
+      frames = 0;
+      last_second_ms = SDL_GetTicks();
+    }
 
     loop_ms = end_ms - begin_ms;
     delay_ms = (1000 / window->fps_cap) - loop_ms;
