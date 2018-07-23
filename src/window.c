@@ -95,7 +95,7 @@ int S2D_Show(S2D_Window *window) {
 
   Uint32 frames = 0;           // Stores frames in the last second
   Uint32 start_ms = SDL_GetTicks();  // Elapsed time since start
-  Uint32 last_second_ms = SDL_GetTicks();
+  Uint32 last_second_ms = SDL_GetTicks(); // Time since flast frame count
   Uint32 begin_ms = start_ms;  // Time at beginning of loop
   Uint32 end_ms;               // Time at end of loop
   Uint32 elapsed_ms;           // Total elapsed time
