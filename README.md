@@ -497,6 +497,9 @@ You can also change the text message at any time. Use `S2D_SetText` and provide 
 
 ```c
 S2D_SetText(txt, "A different message!");
+
+// Format text like with `printf`
+S2D_SetText(txt, "Welcome %s!", player);
 ```
 
 Since the text was allocated dynamically, you'll eventually need to free it using:
