@@ -291,7 +291,7 @@ typedef struct {
   GLuint texture_id;
   TTF_Font *font;
   S2D_Color color;
-  const char *msg;
+  char *msg;
   int x;
   int y;
   int width;
@@ -439,7 +439,7 @@ S2D_Text *S2D_CreateText(const char *font, const char *msg, int size);
 /*
 * Sets the text message
 */
-void S2D_SetText(S2D_Text *txt, const char *msg);
+void S2D_SetText(S2D_Text *txt, const char *msg, ...);
 
 /*
  * Draw text

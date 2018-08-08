@@ -16,7 +16,6 @@ S2D_Text   *txt_clr_b;
 S2D_Text   *fps;
 S2D_Text   *fps_val;
 
-char fps_str[7];
 const char *font = "media/bitstream_vera/vera.ttf";
 int font_size = 20;
 
@@ -309,8 +308,7 @@ void render() {
   // Window stats
 
   S2D_DrawText(fps);
-  snprintf(fps_str, 7, "%f", window->fps);
-  if (window->frames % 20 == 0) S2D_SetText(fps_val, fps_str);
+  if (window->frames % 20 == 0) S2D_SetText(fps_val, "%f", window->fps);
   S2D_DrawText(fps_val);
 
   // Mouse positions
@@ -424,11 +422,11 @@ int main() {
   txt_clr_b->color.a = 1.0;
 
   fps = S2D_CreateText(font, "FPS:", font_size);
-  fps->x = 460;
+  fps->x = 430;
   fps->y = 470;
 
   fps_val = S2D_CreateText(font, "", font_size);
-  fps_val->x = 515;
+  fps_val->x = 480;
   fps_val->y = 470;
 
   S2D_Show(window);

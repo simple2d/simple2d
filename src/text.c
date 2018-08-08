@@ -26,7 +26,8 @@ S2D_Text *S2D_CreateText(const char *font, const char *msg, int size) {
   }
 
   // Set default values
-  txt->msg = msg;
+  txt->msg = (char *) malloc(strlen(msg) + 1 * sizeof(char));
+  strcpy(txt->msg, msg);
   txt->x = 0;
   txt->y = 0;
   txt->color.r = 1.f;
@@ -53,14 +54,20 @@ S2D_Text *S2D_CreateText(const char *font, const char *msg, int size) {
 /*
  * Sets the text message
  */
-void S2D_SetText(S2D_Text *txt, const char *msg) {
+void S2D_SetText(S2D_Text *txt, const char *msg, ...) {
   if (!txt) return;
 
   // `msg` cannot be an empty string or NULL for TTF_SizeText
   if (msg == NULL || strlen(msg) == 0) msg = " ";
 
-  txt->msg = msg;
+  // Format and store new text string
+  va_list args;
+  va_start(args, msg);
+  free(txt->msg);
+  vasprintf(&txt->msg, msg, args);
+  va_end(args);
 
+  // Save the width and height of the text
   TTF_SizeText(txt->font, txt->msg, &txt->width, &txt->height);
 
   // Delete the current texture so a new one can be generated
@@ -92,6 +99,7 @@ void S2D_DrawText(S2D_Text *txt) {
  */
 void S2D_FreeText(S2D_Text *txt) {
   if (!txt) return;
+  free(txt->msg);
   S2D_GL_FreeTexture(&txt->texture_id);
   TTF_CloseFont(txt->font);
   free(txt);
