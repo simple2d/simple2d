@@ -1,4 +1,4 @@
-// simple2d.c
+// Simple 2D Shared functions and data
 
 #include "../include/simple2d.h"
 
@@ -82,18 +82,6 @@ void S2D_Windows_EnableTerminalColors() {
 
 
 /*
- * Gets the primary display's dimentions
- */
-void S2D_GetDisplayDimensions(int *w, int *h) {
-  S2D_Init();
-  SDL_DisplayMode dm;
-  SDL_GetCurrentDisplayMode(0, &dm);
-  *w = dm.w;
-  *h = dm.h;
-}
-
-
-/*
  * Initialize Simple 2D subsystems
  */
 bool S2D_Init() {
@@ -137,6 +125,18 @@ bool S2D_Init() {
   // All subsystems initted
   initted = true;
   return true;
+}
+
+
+/*
+ * Gets the primary display's dimentions
+ */
+void S2D_GetDisplayDimensions(int *w, int *h) {
+  S2D_Init();
+  SDL_DisplayMode dm;
+  SDL_GetCurrentDisplayMode(0, &dm);
+  *w = dm.w;
+  *h = dm.h;
 }
 
 

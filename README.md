@@ -340,6 +340,22 @@ img->width  = 256;
 img->height = 512;
 ```
 
+Rotate the image like so:
+
+```c
+// Angle should be in degrees
+// The last parameter is the point the image should rotate around, either:
+//   S2D_CENTER, S2D_TOP_LEFT, S2D_TOP_RIGHT, S2D_BOTTOM_LEFT, or S2D_BOTTOM_RIGHT
+S2D_RotateImage(img, angle, S2D_CENTER);
+
+// Or, set a custom point to rotate around
+img->rx = 50;
+img->ry = 75;
+
+// Set the rotation angle directly
+img->rotate = 90;
+```
+
 You can also adjust the color of the image like this:
 
 ```c
@@ -392,6 +408,22 @@ spr->width  = 100;
 spr->height = 100;
 ```
 
+Rotate the sprite like so:
+
+```c
+// Angle should be in degrees
+// The last parameter is the point the sprite should rotate around, either:
+//   S2D_CENTER, S2D_TOP_LEFT, S2D_TOP_RIGHT, S2D_BOTTOM_LEFT, or S2D_BOTTOM_RIGHT
+S2D_RotateSprite(spr, angle, S2D_CENTER);
+
+// Or, set a custom point to rotate around
+spr->rx = 50;
+spr->ry = 75;
+
+// Set the rotation angle directly
+spr->rotate = 90;
+```
+
 You can also adjust the color of the sprite image like this:
 
 ```c
@@ -427,6 +459,22 @@ You can then change the `x, y` position of the text, for example:
 ```c
 txt->x = 127;
 txt->y = 740;
+```
+
+Rotate the text like so:
+
+```c
+// Angle should be in degrees
+// The last parameter is the point the text should rotate around, either:
+//   S2D_CENTER, S2D_TOP_LEFT, S2D_TOP_RIGHT, S2D_BOTTOM_LEFT, or S2D_BOTTOM_RIGHT
+S2D_RotateText(txt, angle, S2D_CENTER);
+
+// Or, set a custom point to rotate around
+txt->rx = 50;
+txt->ry = 75;
+
+// Set the rotation angle directly
+txt->rotate = 90;
 ```
 
 Change the color of the text like this:
