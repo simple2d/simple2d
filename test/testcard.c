@@ -29,6 +29,7 @@ Point pointer;
 Point click_pointer;
 
 bool mouse_click = false;
+bool rotate = false;
 
 
 void on_key(S2D_Event e) {
@@ -36,6 +37,7 @@ void on_key(S2D_Event e) {
     case S2D_KEY_DOWN:
       printf("Key down: %s\n", e.key);
       if (strcmp(e.key, "Escape") == 0) S2D_Close(window);
+      if (strcmp(e.key, "R") == 0) rotate = rotate ? false : true;
       break;
 
     case S2D_KEY_HELD:
@@ -133,6 +135,28 @@ void on_controller(S2D_Event e) {
 void update() {
   pointer.x = window->mouse.x;
   pointer.y = window->mouse.y;
+
+  if (rotate) {
+    img_png->x = window->mouse.x;
+    img_png->y = window->mouse.y;
+
+    GLfloat angle = (GLfloat)window->frames;
+
+    S2D_RotateImage(img_png,   angle, S2D_CENTER);
+    S2D_RotateImage(img_jpg,   angle, S2D_TOP_LEFT);
+    S2D_RotateImage(img_bmp,   angle, S2D_BOTTOM_RIGHT);
+    S2D_RotateImage(img_clr_r, angle, S2D_CENTER);
+    S2D_RotateImage(img_clr_g, angle, S2D_CENTER);
+    S2D_RotateImage(img_clr_b, angle, S2D_CENTER);
+
+    S2D_RotateSprite(spr,      angle, S2D_CENTER);
+
+    S2D_RotateText(txt_clr_r,  angle, S2D_CENTER);
+    S2D_RotateText(txt_clr_g,  angle, S2D_CENTER);
+    S2D_RotateText(txt_clr_b,  angle, S2D_CENTER);
+    S2D_RotateText(fps,        angle, S2D_CENTER);
+    S2D_RotateText(fps_val,    angle, S2D_CENTER);
+  }
 }
 
 
@@ -340,10 +364,11 @@ int main() {
   window->on_mouse      = on_mouse;
   window->on_controller = on_controller;
 
-  // window->viewport.mode = S2D_FIXED;
-  // window->viewport.mode = S2D_EXPAND;
-  // window->viewport.mode = S2D_SCALE;  // Default
-  // window->viewport.mode = S2D_STRETCH;
+  // Change viewport scaling modes:
+  //   window->viewport.mode = S2D_FIXED;
+  //   window->viewport.mode = S2D_EXPAND;
+  //   window->viewport.mode = S2D_SCALE;  // Default
+  //   window->viewport.mode = S2D_STRETCH;
 
   img_png = S2D_CreateImage("media/image.png");
   img_png->x = 300;
@@ -390,10 +415,10 @@ int main() {
   spr = S2D_CreateSprite("media/sprite_sheet.png");
   spr->x = 450;
   spr->y = 200;
-  // Change size of sprite
+  // Change size of sprite:
   //   spr->width  = 100;
   //   spr->height = 100;
-  // Change color of sprite
+  // Change color of sprite:
   //   spr->color.r = 1.0;
   //   spr->color.g = 1.0;
   //   spr->color.b = 1.0;
@@ -430,6 +455,8 @@ int main() {
   fps_val = S2D_CreateText(font, "", font_size);
   fps_val->x = 515;
   fps_val->y = 470;
+
+  puts("Press `R` key to rotate textures.");
 
   S2D_Show(window);
 

@@ -4,6 +4,73 @@
 
 
 /*
+ * Rotate a point around a given point
+ * Params:
+ *   p      The point to rotate
+ *   angle  The angle in degrees
+ *   rx     The x coordinate to rotate around
+ *   ry     The y coordinate to rotate around
+ */
+S2D_GL_Point S2D_RotatePoint(S2D_GL_Point p, GLfloat angle, GLfloat rx, GLfloat ry) {
+
+  // Convert from degrees to radians
+  angle = angle * M_PI / 180.0;
+
+  // Get the sine and cosine of the angle
+  GLfloat sa = sin(angle);
+  GLfloat ca = cos(angle);
+
+  // Translate point to origin
+  p.x -= rx;
+  p.y -= ry;
+
+  // Rotate point
+  GLfloat xnew = p.x * ca - p.y * sa;
+  GLfloat ynew = p.x * sa + p.y * ca;
+
+  // Translate point back
+  p.x = xnew + rx;
+  p.y = ynew + ry;
+
+  return p;
+}
+
+
+/*
+ * Get the point to be rotated around given a position in a rectangle
+ */
+S2D_GL_Point S2D_GetRectRotationPoint(int x, int y, int w, int h, int position) {
+
+  S2D_GL_Point p;
+
+  switch (position) {
+    case S2D_CENTER:
+      p.x = x + (w / 2.0);
+      p.y = y + (h / 2.0);
+      break;
+    case S2D_TOP_LEFT:
+      p.x = x;
+      p.y = y;
+      break;
+    case S2D_TOP_RIGHT:
+      p.x = x + w;
+      p.y = y;
+      break;
+    case S2D_BOTTOM_LEFT:
+      p.x = x;
+      p.y = y + h;
+      break;
+    case S2D_BOTTOM_RIGHT:
+      p.x = x + w;
+      p.y = y + h;
+      break;
+  }
+
+  return p;
+}
+
+
+/*
  * Draw a triangle
  */
 void S2D_DrawTriangle(GLfloat x1, GLfloat y1,

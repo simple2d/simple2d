@@ -27,7 +27,9 @@ S2D_Sprite *S2D_CreateSprite(const char *path) {
   spr->height = spr->img->height;
   spr->clip_width  = spr->img->width;
   spr->clip_height = spr->img->height;
-
+  spr->rotate = 0;
+  spr->rx = 0;
+  spr->ry = 0;
   spr->tx1 = 0.f;
   spr->ty1 = 0.f;
   spr->tx2 = 1.f;
@@ -86,6 +88,21 @@ void S2D_ClipSprite(S2D_Sprite *spr, int x, int y, int w, int h) {
   spr->height = (spr->height / (double)spr->clip_height) * h;
   spr->clip_width  = w;
   spr->clip_height = h;
+}
+
+
+/*
+ * Rotate a sprite
+ */
+void S2D_RotateSprite(S2D_Sprite *spr, GLfloat angle, int position) {
+
+  S2D_GL_Point p = S2D_GetRectRotationPoint(
+    spr->x, spr->y, spr->width, spr->height, position
+  );
+
+  spr->rotate = angle;
+  spr->rx = p.x;
+  spr->ry = p.y;
 }
 
 

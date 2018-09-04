@@ -115,6 +115,13 @@ extern "C" {
 #define S2D_SCALE   3
 #define S2D_STRETCH 4
 
+// Positions
+#define S2D_CENTER       1
+#define S2D_TOP_LEFT     2
+#define S2D_TOP_RIGHT    3
+#define S2D_BOTTOM_LEFT  4
+#define S2D_BOTTOM_RIGHT 5
+
 // Keyboard events
 #define S2D_KEY_DOWN 1  // key is pressed
 #define S2D_KEY_HELD 2  // key is held down
@@ -195,6 +202,12 @@ typedef void (*S2D_On_Key)(S2D_Event e);
 typedef void (*S2D_On_Mouse)(S2D_Event e);
 typedef void (*S2D_On_Controller)(S2D_Event e);
 
+// S2D_GL_Point, for graphics calculations
+typedef struct {
+  GLfloat x;
+  GLfloat y;
+} S2D_GL_Point;
+
 // S2D_Color
 typedef struct {
   GLfloat r;
@@ -263,6 +276,9 @@ typedef struct {
   int height;
   int orig_width;
   int orig_height;
+  GLfloat rotate;  // Rotation angle in degrees
+  GLfloat rx;      // X coordinate to be rotated around
+  GLfloat ry;      // Y coordinate to be rotated around
 } S2D_Image;
 
 // S2D_Sprite
@@ -275,6 +291,9 @@ typedef struct {
   int height;
   int clip_width;
   int clip_height;
+  GLfloat rotate;  // Rotation angle in degrees
+  GLfloat rx;      // X coordinate to be rotated around
+  GLfloat ry;      // Y coordinate to be rotated around
   GLfloat tx1;
   GLfloat ty1;
   GLfloat tx2;
@@ -296,6 +315,9 @@ typedef struct {
   int y;
   int width;
   int height;
+  GLfloat rotate;  // Rotation angle in degrees
+  GLfloat rx;      // X coordinate to be rotated around
+  GLfloat ry;      // Y coordinate to be rotated around
 } S2D_Text;
 
 // S2D_Sound
@@ -336,14 +358,14 @@ void S2D_Diagnostics(bool status);
 void S2D_Windows_EnableTerminalColors();
 
 /*
+* Initialize Simple 2D subsystems
+*/
+bool S2D_Init();
+
+/*
  * Gets the primary display's dimentions
  */
 void S2D_GetDisplayDimensions(int *w, int *h);
-
-/*
- * Initialize Simple 2D subsystems
- */
-bool S2D_Init();
 
 /*
  * Quits Simple 2D subsystems
@@ -351,6 +373,21 @@ bool S2D_Init();
 void S2D_Quit(void);
 
 // Shapes //////////////////////////////////////////////////////////////////////
+
+/*
+ * Rotate a point around a given point
+ * Params:
+ *   p      The point to rotate
+ *   angle  The angle in degrees
+ *   rx     The x coordinate to rotate around
+ *   ry     The y coordinate to rotate around
+ */
+S2D_GL_Point S2D_RotatePoint(S2D_GL_Point p, GLfloat angle, GLfloat rx, GLfloat ry);
+
+/*
+ * Get the point to be rotated around given a position in a rectangle
+ */
+S2D_GL_Point S2D_GetRectRotationPoint(int x, int y, int w, int h, int position);
 
 /*
  * Draw a triangle
@@ -398,6 +435,11 @@ void S2D_DrawLine(
 S2D_Image *S2D_CreateImage(const char *path);
 
 /*
+ * Rotate an image
+ */
+void S2D_RotateImage(S2D_Image *img, GLfloat angle, int position);
+
+/*
  * Draw an image
  */
 void S2D_DrawImage(S2D_Image *img);
@@ -420,6 +462,11 @@ S2D_Sprite *S2D_CreateSprite(const char *path);
 void S2D_ClipSprite(S2D_Sprite *spr, int x, int y, int w, int h);
 
 /*
+ * Rotate a sprite
+ */
+void S2D_RotateSprite(S2D_Sprite *spr, GLfloat angle, int position);
+
+/*
  * Draw a sprite
  */
 void S2D_DrawSprite(S2D_Sprite *spr);
@@ -437,9 +484,14 @@ void S2D_FreeSprite(S2D_Sprite *spr);
 S2D_Text *S2D_CreateText(const char *font, const char *msg, int size);
 
 /*
-* Sets the text message
+* Set the text message
 */
 void S2D_SetText(S2D_Text *txt, const char *msg);
+
+/*
+ * Rotate text
+ */
+void S2D_RotateText(S2D_Text *txt, GLfloat angle, int position);
 
 /*
  * Draw text
@@ -491,7 +543,7 @@ void S2D_PauseMusic();
 void S2D_ResumeMusic();
 
 /*
- * Stops the playing music; interrupts fader effects
+ * Stop the playing music; interrupts fader effects
  */
 void S2D_StopMusic();
 

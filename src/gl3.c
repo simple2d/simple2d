@@ -195,17 +195,31 @@ void S2D_GL3_DrawTriangle(GLfloat x1, GLfloat y1,
  * Draw a texture
  */
 static void S2D_GL3_DrawTexture(int x, int y, int w, int h,
+                                GLfloat angle, GLfloat rx, GLfloat ry,
                                 GLfloat r, GLfloat g, GLfloat b, GLfloat a,
                                 GLfloat tx1, GLfloat ty1, GLfloat tx2, GLfloat ty2,
                                 GLfloat tx3, GLfloat ty3, GLfloat tx4, GLfloat ty4,
                                 GLuint texture_id) {
 
+  S2D_GL_Point v1 = { .x = x,     .y = y     };
+  S2D_GL_Point v2 = { .x = x + w, .y = y     };
+  S2D_GL_Point v3 = { .x = x + w, .y = y + h };
+  S2D_GL_Point v4 = { .x = x,     .y = y + h };
+
+  // Rotate vertices
+  if (angle != 0) {
+    v1 = S2D_RotatePoint(v1, angle, rx, ry);
+    v2 = S2D_RotatePoint(v2, angle, rx, ry);
+    v3 = S2D_RotatePoint(v3, angle, rx, ry);
+    v4 = S2D_RotatePoint(v4, angle, rx, ry);
+  }
+
   GLfloat vertices[] =
-  //  x, y coords | colors    | x, y texture coords
-    { x    , y    , r, g, b, a, tx1, ty1,    // Top-left
-      x + w, y    , r, g, b, a, tx2, ty2,    // Top-right
-      x + w, y + h, r, g, b, a, tx3, ty3,    // Bottom-right
-      x    , y + h, r, g, b, a, tx4, ty4 };  // Bottom-left
+  //  vertex coords | colors      | x, y texture coords
+    { v1.x, v1.y,     r, g, b, a,   tx1, ty1,    // Top-left
+      v2.x, v2.y,     r, g, b, a,   tx2, ty2,    // Top-right
+      v3.x, v3.y,     r, g, b, a,   tx3, ty3,    // Bottom-right
+      v4.x, v4.y,     r, g, b, a,   tx4, ty4 };  // Bottom-left
 
   glUseProgram(texShaderProgram);
   glBindTexture(GL_TEXTURE_2D, texture_id);
@@ -223,6 +237,7 @@ static void S2D_GL3_DrawTexture(int x, int y, int w, int h,
 void S2D_GL3_DrawImage(S2D_Image *img) {
   S2D_GL3_DrawTexture(
     img->x, img->y, img->width, img->height,
+    img->rotate, img->rx, img->ry,
     img->color.r, img->color.g, img->color.b, img->color.a,
     0.f, 0.f, 1.f, 0.f, 1.f, 1.f, 0.f, 1.f,
     img->texture_id
@@ -236,6 +251,7 @@ void S2D_GL3_DrawImage(S2D_Image *img) {
 void S2D_GL3_DrawSprite(S2D_Sprite *spr) {
   S2D_GL3_DrawTexture(
     spr->x, spr->y, spr->width, spr->height,
+    spr->rotate, spr->rx, spr->ry,
     spr->color.r, spr->color.g, spr->color.b, spr->color.a,
     spr->tx1, spr->ty1, spr->tx2, spr->ty2, spr->tx3, spr->ty3, spr->tx4, spr->ty4,
     spr->img->texture_id
@@ -249,6 +265,7 @@ void S2D_GL3_DrawSprite(S2D_Sprite *spr) {
 void S2D_GL3_DrawText(S2D_Text *txt) {
   S2D_GL3_DrawTexture(
     txt->x, txt->y, txt->width, txt->height,
+    txt->rotate, txt->rx, txt->ry,
     txt->color.r, txt->color.g, txt->color.b, txt->color.a,
     0.f, 0.f, 1.f, 0.f, 1.f, 1.f, 0.f, 1.f,
     txt->texture_id

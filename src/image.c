@@ -40,6 +40,9 @@ S2D_Image *S2D_CreateImage(const char *path) {
   img->orig_height = img->surface->h;
   img->width  = img->orig_width;
   img->height = img->orig_height;
+  img->rotate = 0;
+  img->rx = 0;
+  img->ry = 0;
   img->texture_id = 0;
 
   // Detect image mode
@@ -80,6 +83,21 @@ S2D_Image *S2D_CreateImage(const char *path) {
   }
 
   return img;
+}
+
+
+/*
+ * Rotate an image
+ */
+void S2D_RotateImage(S2D_Image *img, GLfloat angle, int position) {
+
+  S2D_GL_Point p = S2D_GetRectRotationPoint(
+    img->x, img->y, img->width, img->height, position
+  );
+
+  img->rotate = angle;
+  img->rx = p.x;
+  img->ry = p.y;
 }
 
 

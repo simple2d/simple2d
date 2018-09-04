@@ -33,6 +33,9 @@ S2D_Text *S2D_CreateText(const char *font, const char *msg, int size) {
   txt->color.g = 1.f;
   txt->color.b = 1.f;
   txt->color.a = 1.f;
+  txt->rotate = 0;
+  txt->rx = 0;
+  txt->ry = 0;
   txt->texture_id = 0;
 
   // Open the font
@@ -51,7 +54,7 @@ S2D_Text *S2D_CreateText(const char *font, const char *msg, int size) {
 
 
 /*
- * Sets the text message
+ * Set the text message
  */
 void S2D_SetText(S2D_Text *txt, const char *msg) {
   if (!txt) return;
@@ -65,6 +68,21 @@ void S2D_SetText(S2D_Text *txt, const char *msg) {
 
   // Delete the current texture so a new one can be generated
   S2D_GL_FreeTexture(&txt->texture_id);
+}
+
+
+/*
+ * Rotate text
+ */
+void S2D_RotateText(S2D_Text *txt, GLfloat angle, int position) {
+
+  S2D_GL_Point p = S2D_GetRectRotationPoint(
+    txt->x, txt->y, txt->width, txt->height, position
+  );
+
+  txt->rotate = angle;
+  txt->rx = p.x;
+  txt->ry = p.y;
 }
 
 
