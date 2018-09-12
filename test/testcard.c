@@ -5,14 +5,14 @@ S2D_Window *window;
 S2D_Image  *img_bmp;
 S2D_Image  *img_jpg;
 S2D_Image  *img_png;
-S2D_Image  *img_clr_r;
-S2D_Image  *img_clr_g;
-S2D_Image  *img_clr_b;
+S2D_Image  *img_r;
+S2D_Image  *img_g;
+S2D_Image  *img_b;
 S2D_Sprite *spr;
 int sprite_step = 0;
-S2D_Text   *txt_clr_r;
-S2D_Text   *txt_clr_g;
-S2D_Text   *txt_clr_b;
+S2D_Text   *txt_r;
+S2D_Text   *txt_g;
+S2D_Text   *txt_b;
 S2D_Text   *fps;
 S2D_Text   *fps_val;
 
@@ -144,15 +144,15 @@ void update() {
     S2D_RotateImage(img_png,   angle, S2D_CENTER);
     S2D_RotateImage(img_jpg,   angle, S2D_TOP_LEFT);
     S2D_RotateImage(img_bmp,   angle, S2D_BOTTOM_RIGHT);
-    S2D_RotateImage(img_clr_r, angle, S2D_CENTER);
-    S2D_RotateImage(img_clr_g, angle, S2D_CENTER);
-    S2D_RotateImage(img_clr_b, angle, S2D_CENTER);
+    S2D_RotateImage(img_r, angle, S2D_CENTER);
+    S2D_RotateImage(img_g, angle, S2D_CENTER);
+    S2D_RotateImage(img_b, angle, S2D_CENTER);
 
     S2D_RotateSprite(spr,      angle, S2D_CENTER);
 
-    S2D_RotateText(txt_clr_r,  angle, S2D_CENTER);
-    S2D_RotateText(txt_clr_g,  angle, S2D_CENTER);
-    S2D_RotateText(txt_clr_b,  angle, S2D_CENTER);
+    S2D_RotateText(txt_r,  angle, S2D_CENTER);
+    S2D_RotateText(txt_g,  angle, S2D_CENTER);
+    S2D_RotateText(txt_b,  angle, S2D_CENTER);
     S2D_RotateText(fps,        angle, S2D_CENTER);
     S2D_RotateText(fps_val,    angle, S2D_CENTER);
   }
@@ -299,9 +299,9 @@ void render() {
   S2D_DrawImage(img_png);
   S2D_DrawImage(img_jpg);
   S2D_DrawImage(img_bmp);
-  S2D_DrawImage(img_clr_r);
-  S2D_DrawImage(img_clr_g);
-  S2D_DrawImage(img_clr_b);
+  S2D_DrawImage(img_r);
+  S2D_DrawImage(img_g);
+  S2D_DrawImage(img_b);
 
   // Sprites
 
@@ -325,9 +325,9 @@ void render() {
 
   // Text
 
-  S2D_DrawText(txt_clr_r);
-  S2D_DrawText(txt_clr_g);
-  S2D_DrawText(txt_clr_b);
+  S2D_DrawText(txt_r);
+  S2D_DrawText(txt_g);
+  S2D_DrawText(txt_b);
 
   // Window stats
 
@@ -380,35 +380,35 @@ int main() {
   img_bmp->x = 500;
   img_bmp->y = 0;
 
-  img_clr_r = S2D_CreateImage("media/colors.png");
-  img_clr_r->x = 400;
-  img_clr_r->y = 200;
-  img_clr_r->width  = 50;
-  img_clr_r->height = 25;
-  img_clr_r->color.r = 1.0;
-  img_clr_r->color.g = 0.3;
-  img_clr_r->color.b = 0.3;
-  img_clr_r->color.a = 1.0;
+  img_r = S2D_CreateImage("media/colors.png");
+  img_r->x = 400;
+  img_r->y = 200;
+  img_r->width  = 50;
+  img_r->height = 25;
+  img_r->color.r = 1.0;
+  img_r->color.g = 0.3;
+  img_r->color.b = 0.3;
+  img_r->color.a = 1.0;
 
-  img_clr_g = S2D_CreateImage("media/colors.png");
-  img_clr_g->x = 400;
-  img_clr_g->y = 225;
-  img_clr_g->width  = 25;
-  img_clr_g->height = 25;
-  img_clr_g->color.r = 0.3;
-  img_clr_g->color.g = 1.0;
-  img_clr_g->color.b = 0.3;
-  img_clr_g->color.a = 1.0;
+  img_g = S2D_CreateImage("media/colors.png");
+  img_g->x = 400;
+  img_g->y = 225;
+  img_g->width  = 25;
+  img_g->height = 25;
+  img_g->color.r = 0.3;
+  img_g->color.g = 1.0;
+  img_g->color.b = 0.3;
+  img_g->color.a = 1.0;
 
-  img_clr_b = S2D_CreateImage("media/colors.png");
-  img_clr_b->x = 425;
-  img_clr_b->y = 225;
-  img_clr_b->width  = 25;
-  img_clr_b->height = 25;
-  img_clr_b->color.r = 0.3;
-  img_clr_b->color.g = 0.3;
-  img_clr_b->color.b = 1.0;
-  img_clr_b->color.a = 1.0;
+  img_b = S2D_CreateImage("media/colors.png");
+  img_b->x = 425;
+  img_b->y = 225;
+  img_b->width  = 25;
+  img_b->height = 25;
+  img_b->color.r = 0.3;
+  img_b->color.g = 0.3;
+  img_b->color.b = 1.0;
+  img_b->color.a = 1.0;
 
   spr = S2D_CreateSprite("media/sprite_sheet.png");
   spr->x = 450;
@@ -422,29 +422,29 @@ int main() {
   //   spr->color.b = 1.0;
   //   spr->color.a = 1.0;
 
-  txt_clr_r = S2D_CreateText(font, "R", font_size);
-  txt_clr_r->x = 44;
-  txt_clr_r->y = 202;
-  txt_clr_r->color.r = 1.0;
-  txt_clr_r->color.g = 0.0;
-  txt_clr_r->color.b = 0.0;
-  txt_clr_r->color.a = 1.0;
+  txt_r = S2D_CreateText(font, "R", font_size);
+  txt_r->x = 44;
+  txt_r->y = 202;
+  txt_r->color.r = 1.0;
+  txt_r->color.g = 0.0;
+  txt_r->color.b = 0.0;
+  txt_r->color.a = 1.0;
 
-  txt_clr_g = S2D_CreateText(font, "G", font_size);
-  txt_clr_g->x = 92;
-  txt_clr_g->y = 202;
-  txt_clr_g->color.r = 0.0;
-  txt_clr_g->color.g = 1.0;
-  txt_clr_g->color.b = 0.0;
-  txt_clr_g->color.a = 1.0;
+  txt_g = S2D_CreateText(font, "G", font_size);
+  txt_g->x = 92;
+  txt_g->y = 202;
+  txt_g->color.r = 0.0;
+  txt_g->color.g = 1.0;
+  txt_g->color.b = 0.0;
+  txt_g->color.a = 1.0;
 
-  txt_clr_b = S2D_CreateText(font, "B", font_size);
-  txt_clr_b->x = 144;
-  txt_clr_b->y = 202;
-  txt_clr_b->color.r = 0.0;
-  txt_clr_b->color.g = 0.0;
-  txt_clr_b->color.b = 1.0;
-  txt_clr_b->color.a = 1.0;
+  txt_b = S2D_CreateText(font, "B", font_size);
+  txt_b->x = 144;
+  txt_b->y = 202;
+  txt_b->color.r = 0.0;
+  txt_b->color.g = 0.0;
+  txt_b->color.b = 1.0;
+  txt_b->color.a = 1.0;
 
   fps = S2D_CreateText(font, "FPS:", font_size);
   fps->x = 430;

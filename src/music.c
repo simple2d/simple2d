@@ -68,7 +68,7 @@ void S2D_ResumeMusic() {
 
 
 /*
- * Stops the playing music; interrupts fader effects
+ * Stop the playing music; interrupts fader effects
  */
 void S2D_StopMusic() {
   Mix_HaltMusic();

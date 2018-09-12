@@ -146,7 +146,7 @@ int S2D_Show(S2D_Window *window) {
     SDL_Delay(delay_ms);
     begin_ms = SDL_GetTicks();
 
-    // Handle Input ////////////////////////////////////////////////////////////
+    // Handle Input and Window Events //////////////////////////////////////////
 
     int mx, my;  // mouse x, y coordinates
 

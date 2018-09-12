@@ -61,7 +61,6 @@ bool S2D_IsController(SDL_JoystickID id) {
  */
 void S2D_OpenControllers() {
 
-  SDL_JoystickGUID guid;
   char guid_str[33];
 
   // Enumerate joysticks
