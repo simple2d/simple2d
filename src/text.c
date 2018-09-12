@@ -95,6 +95,10 @@ void S2D_DrawText(S2D_Text *txt) {
   if (txt->texture_id == 0) {
     SDL_Color color = { 255, 255, 255 };
     txt->surface = TTF_RenderText_Blended(txt->font, txt->msg, color);
+    if (!txt->surface) {
+      S2D_Error("TTF_RenderText_Blended", TTF_GetError());
+      return;
+    }
     S2D_GL_CreateTexture(&txt->texture_id, GL_RGBA,
                          txt->width, txt->height,
                          txt->surface->pixels, GL_NEAREST);
