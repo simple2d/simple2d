@@ -144,7 +144,7 @@ have_lib?() {
 # params:
 #   $1  String  URL of the resource
 get_remote_str() {
-  which curl > /dev/null && cmd='curl -fsSL' || cmd='wget -qO -';
+  which curl &>/dev/null && cmd='curl -fsSL' || cmd='wget -qO -';
   ret=$($cmd $1)
 }
 
@@ -337,17 +337,36 @@ have_sdl_libs?() {
 install_sdl_linux() {
 
   echo "The following packages will be installed:"
-  echo "  libsdl2-dev"
-  echo "  libsdl2-image-dev"
-  echo "  libsdl2-mixer-dev"
-  echo "  libsdl2-ttf-dev"; echo
+  if which apt &>/dev/null; then
+    echo "  libsdl2-dev"
+    echo "  libsdl2-image-dev"
+    echo "  libsdl2-mixer-dev"
+    echo "  libsdl2-ttf-dev"
+  else
+    echo "  SDL2-devel"
+    echo "  SDL2_image-devel"
+    echo "  SDL2_mixer-devel"
+    echo "  SDL2_ttf-devel"
+  fi
+  echo
 
   prompt_to_continue "Install SDL now?"
 
   print_task "Updating packages" "\n\n"
-  print_and_run "sudo apt update"
+
+  if which apt &>/dev/null; then
+    print_and_run "sudo apt update"
+  else
+    print_and_run "yum check-update"
+  fi
+
   echo; print_task "Installing packages" "\n\n"
-  print_and_run "sudo apt install -y libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev"
+
+  if which apt &>/dev/null; then
+    print_and_run "sudo apt install -y libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev"
+  else
+    print_and_run "sudo yum install -y SDL2-devel SDL2_image-devel SDL2_mixer-devel SDL2_ttf-devel"
+  fi
   echo
 
   if ! have_sdl_libs?; then
@@ -496,7 +515,7 @@ install_s2d() {
 
   print_task "Downloading Simple 2D" "\n\n"
   # Linux and Raspberry Pi may not have curl installed by default
-  if which curl > /dev/null; then
+  if which curl &>/dev/null; then
     print_and_run "curl -L $url -o $tmp_dir/$f_name.zip"
   else
     print_and_run "wget -NP $tmp_dir $url"
@@ -604,15 +623,28 @@ install() {
 uninstall_sdl_linux() {
 
   echo -e "The following packages will be removed:"
-  echo "  libsdl2-dev"
-  echo "  libsdl2-image-dev"
-  echo "  libsdl2-mixer-dev"
-  echo "  libsdl2-ttf-dev"; echo
+  if which apt &>/dev/null; then
+    echo "  libsdl2-dev"
+    echo "  libsdl2-image-dev"
+    echo "  libsdl2-mixer-dev"
+    echo "  libsdl2-ttf-dev"
+  else
+    echo "  SDL2-devel"
+    echo "  SDL2_image-devel"
+    echo "  SDL2_mixer-devel"
+    echo "  SDL2_ttf-devel"
+  fi
+  echo
 
   prompt_to_continue "Uninstall SDL now?"
 
   print_task "Uninstalling packages" "\n\n"
-  print_and_run "sudo apt remove -y --purge libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev"
+
+  if which apt &>/dev/null; then
+    print_and_run "sudo apt remove -y --purge libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev"
+  else
+    print_and_run "sudo yum remove -y SDL2-devel SDL2_image-devel SDL2_mixer-devel SDL2_ttf-devel"
+  fi
   echo
 
   if have_sdl_libs?; then
@@ -997,6 +1029,7 @@ elif [[ $(uname -m) =~ 'arm' && $unamestr == 'Linux' ]]; then
   platform_display='ARM / Linux'
   platform='arm'
 
+  # Raspberry Pi
   if [[ $(cat /etc/os-release | grep -i raspbian) ]]; then
     platform_display='ARM / Linux (Raspberry Pi)'
     platform_rpi=true
