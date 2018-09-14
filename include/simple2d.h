@@ -39,6 +39,9 @@ extern "C" {
 
 // Includes ////////////////////////////////////////////////////////////////////
 
+// Define to get GNU extension functions and types, like `vasprintf()` and M_PI
+#define _GNU_SOURCE
+
 #if WINDOWS && !MINGW
   #include <io.h>
   #define  F_OK 0  // For testing file existence
