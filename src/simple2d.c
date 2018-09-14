@@ -10,6 +10,24 @@ static bool initted = false;
 
 
 /*
+ * Provide a `vasprintf()` implementation for Windows
+ */
+#if WINDOWS && !MINGW
+int vasprintf(char **strp, const char *fmt, va_list ap) {
+  int r = -1, size = _vscprintf(fmt, ap);
+  if ((size >= 0) && (size < INT_MAX)) {
+    *strp = (char *)malloc(size + 1);
+    if (*strp) {
+      r = vsnprintf(*strp, size + 1, fmt, ap);
+      if (r == -1) free(*strp);
+    }
+  } else { *strp = 0; }
+  return(r);
+}
+#endif
+
+
+/*
  * Checks if a file exists and can be accessed
  */
 bool S2D_FileExists(const char *path) {
