@@ -227,7 +227,7 @@ endif
 	cp -R deps/xcode/ios/* build/ios
 	cp test/triangle-ios-tvos.c build/ios/main.c
 	simple2d build --ios build/ios/MyApp.xcodeproj
-	simple2d simulator --open "iPhone 8"
+	simple2d simulator --open "iPhone XR"
 	simple2d simulator --install "build/ios/build/Release-iphonesimulator/MyApp.app"
 	simple2d simulator --launch "Simple2D.MyApp"
 endif
@@ -242,7 +242,7 @@ endif
 	cp -R deps/xcode/tvos/* build/tvos
 	cp test/triangle-ios-tvos.c build/tvos/main.c
 	simple2d build --tvos build/tvos/MyApp.xcodeproj
-	simple2d simulator --open "Apple TV"
+	simple2d simulator --open "Apple TV 4K"
 	simple2d simulator --install "build/tvos/build/Release-appletvsimulator/MyApp.app"
 	simple2d simulator --launch "Simple2D.MyApp"
 endif
