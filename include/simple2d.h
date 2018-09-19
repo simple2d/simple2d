@@ -10,7 +10,9 @@ extern "C" {
 
 // Apple
 #ifdef __APPLE__
+  #ifndef __TARGETCONDITIONALS__
   #include "TargetConditionals.h"
+  #endif
   #if TARGET_OS_OSX
     #define MACOS true
   #elif TARGET_OS_IOS
@@ -40,7 +42,9 @@ extern "C" {
 // Includes ////////////////////////////////////////////////////////////////////
 
 // Define to get GNU extension functions and types, like `vasprintf()` and M_PI
-#define _GNU_SOURCE
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE 1
+#endif
 
 #if WINDOWS && !MINGW
   #include <io.h>
