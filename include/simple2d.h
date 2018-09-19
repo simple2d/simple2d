@@ -263,6 +263,7 @@ typedef struct {
   bool vsync;
   int fps_cap;
   S2D_Color background;
+  const char *icon;
   Uint32 frames;
   Uint32 elapsed_ms;
   Uint32 loop_ms;
@@ -616,6 +617,11 @@ S2D_Window *S2D_CreateWindow(
  * Show the window
  */
 int S2D_Show(S2D_Window *window);
+
+/*
+ * Set the icon for the window
+ */
+void S2D_SetIcon(S2D_Window *window, const char *icon);
 
 /*
  * Close the window

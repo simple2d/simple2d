@@ -215,10 +215,11 @@ The viewport has various scaling modes, such as `S2D_FIXED` (viewport stays the 
 window->viewport.mode = S2D_FIXED;
 ```
 
-Before showing the window, this attribute can be set:
+Before showing the window, these attributes can be set:
 
 ```c
 window->vsync = false;  // set the vertical sync, true by default
+window->icon = "app.png";  // set the icon for the window
 ```
 
 Once your window is ready to go, show it using:
@@ -238,6 +239,12 @@ window->background.r = 1.0;
 window->background.g = 0.5;
 window->background.b = 0.8;
 window->background.a = 1.0;
+```
+
+The window icon can be changed using:
+
+```c
+S2D_SetIcon(window, "new_icon.png");
 ```
 
 Callback functions can also be changed any time — more on that below. Many values can also be read from the `Window` structure, see the [`simple2d.h`](include/simple2d.h) header file for details.

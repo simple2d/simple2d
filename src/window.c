@@ -42,6 +42,7 @@ S2D_Window *S2D_CreateWindow(const char *title, int width, int height,
   window->background.g    = 0.0;
   window->background.b    = 0.0;
   window->background.a    = 1.0;
+  window->icon            = NULL;
   window->close           = true;
 
   // Return the window structure
@@ -68,6 +69,7 @@ int S2D_Show(S2D_Window *window) {
   );
 
   if (!window->sdl) S2D_Error("SDL_CreateWindow", SDL_GetError());
+  if (window->icon) S2D_SetIcon(window, window->icon);
 
   // The window created by SDL might not actually be the requested size.
   // If it's not the same, retrieve and store the actual window size.
@@ -315,6 +317,21 @@ int S2D_Show(S2D_Window *window) {
   }
 
   return 0;
+}
+
+
+/*
+ * Set the icon for the window
+ */
+void S2D_SetIcon(S2D_Window *window, const char *icon) {
+  S2D_Image *img = S2D_CreateImage(icon);
+  if (img) {
+    window->icon = icon;
+    SDL_SetWindowIcon(window->sdl, img->surface);
+    S2D_FreeImage(img);
+  } else {
+    S2D_Log(S2D_WARN, "Could not set window icon");
+  }
 }
 
 

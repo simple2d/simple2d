@@ -358,6 +358,7 @@ int main() {
 
   window = S2D_CreateWindow("Simple 2D — Test Card", 600, 500, update, render, S2D_RESIZABLE);
 
+  window->icon          = "media/s2d_icon.png";
   window->on_key        = on_key;
   window->on_mouse      = on_mouse;
   window->on_controller = on_controller;
