@@ -294,6 +294,12 @@ void render() {
     1, 0, 1, 0.5
   );
 
+  // Circles
+
+  S2D_DrawCircle(525, 225, 25, 20, 1.0, 0.2, 0.2,   1);
+  S2D_DrawCircle(575, 225, 25,  8, 0.2, 1.0, 0.2,   1);
+  S2D_DrawCircle(575, 225, 17, 16,   0,   0,   0, 0.6);
+
   // Images
 
   S2D_DrawImage(img_png);

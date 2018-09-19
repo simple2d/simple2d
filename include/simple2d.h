@@ -440,6 +440,14 @@ void S2D_DrawLine(
   GLfloat r4, GLfloat g4, GLfloat b4, GLfloat a4
 );
 
+/*
+ * Draw a circle from triangles
+ */
+void S2D_DrawCircle(
+  GLfloat x, GLfloat y, GLfloat radius, int sectors,
+  GLfloat r, GLfloat g, GLfloat b, GLfloat a
+);
+
 // Image ///////////////////////////////////////////////////////////////////////
 
 /*

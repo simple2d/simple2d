@@ -323,6 +323,12 @@ S2D_DrawLine(x1, y1, x2, y2,
              r4, g4, b4, a4);
 ```
 
+To draw a circle, use:
+
+```c
+S2D_DrawCircle(x, y, radius, sectors, r, g, b, a);
+```
+
 ### Images
 
 Images in many popular formats, like JPEG, PNG, and BMP can be drawn in the window. Unlike shapes, images need to be read from files and stored in memory. Simply declare a pointer to an `S2D_Image` structure and initialize it using `S2D_CreateImage` providing the file path to the image.
