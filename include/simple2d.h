@@ -315,9 +315,10 @@ typedef struct {
 
 // S2D_Text
 typedef struct {
+  const char *font;
   SDL_Surface *surface;
   GLuint texture_id;
-  TTF_Font *font;
+  TTF_Font *font_data;
   S2D_Color color;
   char *msg;
   int x;

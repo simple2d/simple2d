@@ -25,7 +25,16 @@ S2D_Text *S2D_CreateText(const char *font, const char *msg, int size) {
     return NULL;
   }
 
-  // Set default values
+  // Open the font
+  txt->font_data = TTF_OpenFont(font, size);
+  if (!txt->font_data) {
+    S2D_Error("TTF_OpenFont", TTF_GetError());
+    free(txt);
+    return NULL;
+  }
+
+  // Initialize values
+  txt->font = font;
   txt->msg = (char *) malloc(strlen(msg) + 1 * sizeof(char));
   strcpy(txt->msg, msg);
   txt->x = 0;
@@ -39,16 +48,8 @@ S2D_Text *S2D_CreateText(const char *font, const char *msg, int size) {
   txt->ry = 0;
   txt->texture_id = 0;
 
-  // Open the font
-  txt->font = TTF_OpenFont(font, size);
-  if (!txt->font) {
-    S2D_Error("TTF_OpenFont", TTF_GetError());
-    free(txt);
-    return NULL;
-  }
-
   // Save the width and height of the text
-  TTF_SizeText(txt->font, txt->msg, &txt->width, &txt->height);
+  TTF_SizeText(txt->font_data, txt->msg, &txt->width, &txt->height);
 
   return txt;
 }
@@ -71,7 +72,7 @@ void S2D_SetText(S2D_Text *txt, const char *msg, ...) {
   va_end(args);
 
   // Save the width and height of the text
-  TTF_SizeText(txt->font, txt->msg, &txt->width, &txt->height);
+  TTF_SizeText(txt->font_data, txt->msg, &txt->width, &txt->height);
 
   // Delete the current texture so a new one can be generated
   S2D_GL_FreeTexture(&txt->texture_id);
@@ -101,7 +102,7 @@ void S2D_DrawText(S2D_Text *txt) {
 
   if (txt->texture_id == 0) {
     SDL_Color color = { 255, 255, 255 };
-    txt->surface = TTF_RenderText_Blended(txt->font, txt->msg, color);
+    txt->surface = TTF_RenderText_Blended(txt->font_data, txt->msg, color);
     if (!txt->surface) {
       S2D_Error("TTF_RenderText_Blended", TTF_GetError());
       return;
@@ -123,6 +124,6 @@ void S2D_FreeText(S2D_Text *txt) {
   if (!txt) return;
   free(txt->msg);
   S2D_GL_FreeTexture(&txt->texture_id);
-  TTF_CloseFont(txt->font);
+  TTF_CloseFont(txt->font_data);
   free(txt);
 }
