@@ -72,8 +72,14 @@ void S2D_Log(int type, const char *msg, ...) {
 /*
  * Logs Simple 2D errors to the console, with caller and message body
  */
-void S2D_Error(const char *caller, const char *msg) {
-  S2D_Log(S2D_ERROR, "(%s) %s", caller, msg);
+void S2D_Error(const char *caller, const char *msg, ...) {
+  va_list args;
+  va_start(args, msg);
+  char *fmsg;
+  vasprintf(&fmsg, msg, args);
+  S2D_Log(S2D_ERROR, "(%s) %s", caller, fmsg);
+  free(fmsg);
+  va_end(args);
 }
 
 

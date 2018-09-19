@@ -357,7 +357,7 @@ void S2D_Log(int type, const char *msg, ...);
 /*
  * Logs Simple 2D errors to the console, with caller and message body
  */
-void S2D_Error(const char *caller, const char *msg);
+void S2D_Error(const char *caller, const char *msg, ...);
 
 /*
  * Enable/disable logging of diagnostics
