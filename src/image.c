@@ -11,7 +11,7 @@ S2D_Image *S2D_CreateImage(const char *path) {
 
   // Check if image file exists
   if (!S2D_FileExists(path)) {
-    S2D_Error("S2D_CreateImage", "Image file not found");
+    S2D_Error("S2D_CreateImage", "Image file `%s` not found", path);
     return NULL;
   }
 

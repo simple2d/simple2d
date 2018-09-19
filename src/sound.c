@@ -11,7 +11,7 @@ S2D_Sound *S2D_CreateSound(const char *path) {
 
   // Check if sound file exists
   if (!S2D_FileExists(path)) {
-    S2D_Error("S2D_CreateSound", "Sound file not found");
+    S2D_Error("S2D_CreateSound", "Sound file `%s` not found", path);
     return NULL;
   }
 

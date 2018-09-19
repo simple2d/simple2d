@@ -11,7 +11,7 @@ S2D_Music *S2D_CreateMusic(const char *path) {
 
   // Check if music file exists
   if (!S2D_FileExists(path)) {
-    S2D_Error("S2D_CreateMusic", "Music file not found");
+    S2D_Error("S2D_CreateMusic", "Music file `%s` not found", path);
     return NULL;
   }
 

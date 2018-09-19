@@ -11,7 +11,7 @@ S2D_Text *S2D_CreateText(const char *font, const char *msg, int size) {
 
   // Check if font file exists
   if (!S2D_FileExists(font)) {
-    S2D_Error("S2D_CreateText", "Font file not found");
+    S2D_Error("S2D_CreateText", "Font file `%s` not found", font);
     return NULL;
   }
 

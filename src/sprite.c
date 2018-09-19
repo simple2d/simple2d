@@ -10,7 +10,7 @@ S2D_Sprite *S2D_CreateSprite(const char *path) {
 
   // Check if image file exists
   if (!S2D_FileExists(path)) {
-    S2D_Error("S2D_CreateSprite", "Sprite image file not found");
+    S2D_Error("S2D_CreateSprite", "Sprite image file `%s` not found", path);
     return NULL;
   }
 
