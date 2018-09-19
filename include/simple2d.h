@@ -520,12 +520,12 @@ S2D_Sound *S2D_CreateSound(const char *path);
 /*
  * Play the sound
  */
-void S2D_PlaySound(S2D_Sound *sound);
+void S2D_PlaySound(S2D_Sound *snd);
 
 /*
  * Free the sound
  */
-void S2D_FreeSound(S2D_Sound *sound);
+void S2D_FreeSound(S2D_Sound *snd);
 
 // Music ///////////////////////////////////////////////////////////////////////
 
@@ -537,7 +537,7 @@ S2D_Music *S2D_CreateMusic(const char *path);
 /*
  * Play the music
  */
-void S2D_PlayMusic(S2D_Music *music, bool loop);
+void S2D_PlayMusic(S2D_Music *mus, bool loop);
 
 /*
  * Pause the playing music
@@ -562,7 +562,7 @@ void S2D_FadeOutMusic(int ms);
 /*
  * Free the music
  */
-void S2D_FreeMusic(S2D_Music *music);
+void S2D_FreeMusic(S2D_Music *mus);
 
 // Input ///////////////////////////////////////////////////////////////////////
 

@@ -16,35 +16,35 @@ S2D_Music *S2D_CreateMusic(const char *path) {
   }
 
   // Allocate the music structure
-  S2D_Music *music = (S2D_Music *) malloc(sizeof(S2D_Music));
-  if (!music) {
+  S2D_Music *mus = (S2D_Music *) malloc(sizeof(S2D_Music));
+  if (!mus) {
     S2D_Error("S2D_CreateMusic", "Out of memory!");
     return NULL;
   }
 
   // Load the music data from file
-  music->data = Mix_LoadMUS(path);
-  if (!music->data) {
+  mus->data = Mix_LoadMUS(path);
+  if (!mus->data) {
     S2D_Error("Mix_LoadMUS", Mix_GetError());
-    free(music);
+    free(mus);
     return NULL;
   }
 
-  return music;
+  return mus;
 }
 
 
 /*
  * Play the music
  */
-void S2D_PlayMusic(S2D_Music *music, bool loop) {
-  if (!music) return;
+void S2D_PlayMusic(S2D_Music *mus, bool loop) {
+  if (!mus) return;
 
   // If looping, set to -1 times; else 0
   int times = loop ? -1 : 0;
 
   // times: 0 == once, -1 == forever
-  if (Mix_PlayMusic(music->data, times) == -1) {
+  if (Mix_PlayMusic(mus->data, times) == -1) {
     // No music for you
     S2D_Error("S2D_PlayMusic", Mix_GetError());
   }
@@ -86,8 +86,8 @@ void S2D_FadeOutMusic(int ms) {
 /*
  * Free the music
  */
-void S2D_FreeMusic(S2D_Music *music) {
-  if (!music) return;
-  Mix_FreeMusic(music->data);
-  free(music);
+void S2D_FreeMusic(S2D_Music *mus) {
+  if (!mus) return;
+  Mix_FreeMusic(mus->data);
+  free(mus);
 }
