@@ -30,6 +30,7 @@ S2D_Image *S2D_CreateImage(const char *path) {
   }
 
   // Initialize values
+  img->path = path;
   img->x = 0;
   img->y = 0;
   img->color.r = 1.f;

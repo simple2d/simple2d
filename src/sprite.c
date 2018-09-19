@@ -14,9 +14,12 @@ S2D_Sprite *S2D_CreateSprite(const char *path) {
     return NULL;
   }
 
+  // Allocate the sprite structure and create the image
   S2D_Sprite *spr = (S2D_Sprite *) malloc(sizeof(S2D_Sprite));
   spr->img = S2D_CreateImage(path);
 
+  // Initialize values
+  spr->path = path;
   spr->x = 0;
   spr->y = 0;
   spr->color.r = 1.f;

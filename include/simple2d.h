@@ -273,6 +273,7 @@ typedef struct {
 
 // S2D_Image
 typedef struct {
+  const char *path;
   SDL_Surface *surface;
   int format;
   GLuint texture_id;
@@ -290,6 +291,7 @@ typedef struct {
 
 // S2D_Sprite
 typedef struct {
+  const char *path;
   S2D_Image *img;
   S2D_Color color;
   int x;
@@ -329,11 +331,13 @@ typedef struct {
 
 // S2D_Sound
 typedef struct {
+  const char *path;
   Mix_Chunk *data;
 } S2D_Sound;
 
 // S2D_Music
 typedef struct {
+  const char *path;
   Mix_Music *data;
 } S2D_Music;
 

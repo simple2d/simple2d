@@ -30,6 +30,9 @@ S2D_Music *S2D_CreateMusic(const char *path) {
     return NULL;
   }
 
+  // Initialize values
+  mus->path = path;
+
   return mus;
 }
 

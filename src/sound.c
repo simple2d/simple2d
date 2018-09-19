@@ -26,6 +26,9 @@ S2D_Sound *S2D_CreateSound(const char *path) {
     return NULL;
   }
 
+  // Initialize values
+  snd->path = path;
+
   return snd;
 }
 
