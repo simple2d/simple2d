@@ -15,6 +15,5 @@ int main() {
   );
 
   S2D_Show(window);
-  S2D_FreeWindow(window);
   return 0;
 }
