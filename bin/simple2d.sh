@@ -197,10 +197,14 @@ compare_versions() {
 # Builds a Simple 2D program
 # If directory contains an Xcode project, it will call `xcodebuild`.
 # If $1 is a C or C++ source file, it will attempt to compile using `gcc`.
+# If $1 is `--wasm`, build for WebAssembly
 build() {
 
   # If no input, print build usage
   if [[ $1 == '' ]]; then print_usage_build; exit; fi
+
+  # If `--wasm`, build for WebAssembly
+  if [[ $1 == '--wasm' ]]; then build_wasm; exit; fi
 
   # If C or C++ source file given, e.g.:
   #   build app.c; build app.cpp
@@ -265,6 +269,12 @@ build() {
   fi
 
   build_with_xcodebuild $1
+}
+
+
+# Build for WebAssembly
+build_wasm() {
+  echo "TODO: build_wasm()"
 }
 
 
@@ -1063,6 +1073,7 @@ Usage: simple2d [--libs] [-v|--version]
 
 Summary of commands and options:
   build         Build a C/C++ source file or Xcode project; run for options
+    --wasm        Build for WebAssembly
   install       Installs the latest release
     --HEAD        Installs from the development branch
     --sdl         Installs SDL only
