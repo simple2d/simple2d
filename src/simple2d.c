@@ -131,13 +131,9 @@ bool S2D_Init() {
   // Initialize SDL_mixer
   int mix_flags = MIX_INIT_FLAC | MIX_INIT_OGG | MIX_INIT_MP3;
   int mix_initted = Mix_Init(mix_flags);
-  // Bug in SDL2_mixer 2.0.2:
-  //   Mix_Init should return OR'ed flags if successful, but now returning 0.
-  //   Should be fixed in: https://hg.libsdl.org/SDL_mixer/rev/7fa15b556953
-  //   Uncomment this error check when it's fix:
-  //     if ((mix_initted&mix_flags) != mix_flags) {
-  //       S2D_Error("Mix_Init", Mix_GetError());
-  //     }
+  if ((mix_initted&mix_flags) != mix_flags) {
+    S2D_Error("Mix_Init", Mix_GetError());
+  }
   if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096) != 0) {
     S2D_Error("Mix_OpenAudio", Mix_GetError());
     return false;
