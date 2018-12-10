@@ -337,16 +337,32 @@ have_sdl_libs?() {
 install_sdl_linux() {
 
   echo "The following packages will be installed:"
+  # Ubuntu, Debian, and Mint
   if which apt &>/dev/null; then
     echo "  libsdl2-dev"
     echo "  libsdl2-image-dev"
     echo "  libsdl2-mixer-dev"
     echo "  libsdl2-ttf-dev"
-  else
+  # CentOS and Fedora (or `dnf` on Fedora)
+  elif which yum &>/dev/null; then
     echo "  SDL2-devel"
     echo "  SDL2_image-devel"
     echo "  SDL2_mixer-devel"
     echo "  SDL2_ttf-devel"
+  # openSUSE
+  elif which zypper &>/dev/null; then
+    echo "  libSDL2-devel"
+    echo "  libSDL2_image-devel"
+    echo "  libSDL2_mixer-devel"
+    echo "  libSDL2_ttf-devel"
+  # Arch
+  elif which pacman &>/dev/null; then
+    echo "  sdl2"
+    echo "  sdl2_image"
+    echo "  sdl2_mixer"
+    echo "  sdl2_ttf"
+  else
+    error_msg "Could not find a package manager to install SDL"; exit 1
   fi
   echo
 
@@ -356,16 +372,24 @@ install_sdl_linux() {
 
   if which apt &>/dev/null; then
     print_and_run "sudo apt update"
-  else
+  elif which yum &>/dev/null; then
     print_and_run "yum check-update"
+  elif which zypper &>/dev/null; then
+    print_and_run "zypper refresh"
+  elif which pacman &>/dev/null; then
+    print_and_run "pacman -Syy"
   fi
 
   echo; print_task "Installing packages" "\n\n"
 
   if which apt &>/dev/null; then
     print_and_run "sudo apt install -y libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev"
-  else
+  elif which yum &>/dev/null; then
     print_and_run "sudo yum install -y SDL2-devel SDL2_image-devel SDL2_mixer-devel SDL2_ttf-devel"
+  elif which zypper &>/dev/null; then
+    print_and_run "sudo zypper install -y libSDL2-devel libSDL2_image-devel libSDL2_mixer-devel libSDL2_ttf-devel"
+  elif which pacman &>/dev/null; then
+    print_and_run "sudo pacman -S -y sdl2 sdl2_image sdl2_mixer sdl2_ttf"
   fi
   echo
 
@@ -623,16 +647,32 @@ install() {
 uninstall_sdl_linux() {
 
   echo -e "The following packages will be removed:"
+  # Ubuntu, Debian, and Mint
   if which apt &>/dev/null; then
     echo "  libsdl2-dev"
     echo "  libsdl2-image-dev"
     echo "  libsdl2-mixer-dev"
     echo "  libsdl2-ttf-dev"
-  else
+  # CentOS and Fedora (or `dnf` on Fedora)
+  elif which yum &>/dev/null; then
     echo "  SDL2-devel"
     echo "  SDL2_image-devel"
     echo "  SDL2_mixer-devel"
     echo "  SDL2_ttf-devel"
+  # openSUSE
+  elif which zypper &>/dev/null; then
+    echo "  libSDL2-devel"
+    echo "  libSDL2_image-devel"
+    echo "  libSDL2_mixer-devel"
+    echo "  libSDL2_ttf-devel"
+  # Arch
+  elif which pacman &>/dev/null; then
+    echo "  sdl2"
+    echo "  sdl2_image"
+    echo "  sdl2_mixer"
+    echo "  sdl2_ttf"
+  else
+    error_msg "Could not find a package manager to uninstall SDL"; exit 1
   fi
   echo
 
@@ -642,8 +682,12 @@ uninstall_sdl_linux() {
 
   if which apt &>/dev/null; then
     print_and_run "sudo apt remove -y --purge libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev"
-  else
+  elif which yum &>/dev/null; then
     print_and_run "sudo yum remove -y SDL2-devel SDL2_image-devel SDL2_mixer-devel SDL2_ttf-devel"
+  elif which zypper &>/dev/null; then
+    print_and_run "sudo zypper remove -y libSDL2-devel libSDL2_image-devel libSDL2_mixer-devel libSDL2_ttf-devel"
+  elif which pacman &>/dev/null; then
+    print_and_run "sudo pacman -Rs -y sdl2 sdl2_image sdl2_mixer sdl2_ttf"
   fi
   echo
 
