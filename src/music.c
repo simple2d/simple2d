@@ -79,6 +79,24 @@ void S2D_StopMusic() {
 
 
 /*
+ * Get the music volume
+ */
+int S2D_GetMusicVolume() {
+  // Get music volume as percentage of maximum mix volume
+  return ceil(Mix_VolumeMusic(-1) * (100.0 / MIX_MAX_VOLUME));
+}
+
+
+/*
+ * Set the music volume a given percentage
+ */
+void S2D_SetMusicVolume(int volume) {
+  // Set volume to be a percentage of the maximum mix volume
+  Mix_VolumeMusic((volume / 100.0) * MIX_MAX_VOLUME);
+}
+
+
+/*
  * Fade out the playing music
  */
 void S2D_FadeOutMusic(int ms) {
