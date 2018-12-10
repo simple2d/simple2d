@@ -569,6 +569,16 @@ void S2D_ResumeMusic();
 void S2D_StopMusic();
 
 /*
+ * Get the music volume
+ */
+int S2D_GetMusicVolume();
+
+/*
+ * Set the music volume a given percentage
+ */
+void S2D_SetMusicVolume(int volume);
+
+/*
  * Fade out the playing music
  */
 void S2D_FadeOutMusic(int ms);
