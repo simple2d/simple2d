@@ -7,3 +7,4 @@ test/testcard
 test/audio
 test/controller
 test/*.exe
+test/screenshot.png

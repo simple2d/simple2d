@@ -642,6 +642,11 @@ int S2D_Show(S2D_Window *window);
 void S2D_SetIcon(S2D_Window *window, const char *icon);
 
 /*
+ * Take a screenshot of the window
+ */
+void S2D_Screenshot(S2D_Window *window, const char *path);
+
+/*
  * Close the window
  */
 int S2D_Close(S2D_Window *window);
