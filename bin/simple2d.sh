@@ -377,7 +377,7 @@ install_sdl_linux() {
   elif which zypper &>/dev/null; then
     print_and_run "zypper refresh"
   elif which pacman &>/dev/null; then
-    print_and_run "pacman -Syy"
+    print_and_run "sudo pacman -Syy"
   fi
 
   echo; print_task "Installing packages" "\n\n"
@@ -389,7 +389,7 @@ install_sdl_linux() {
   elif which zypper &>/dev/null; then
     print_and_run "sudo zypper install -y libSDL2-devel libSDL2_image-devel libSDL2_mixer-devel libSDL2_ttf-devel"
   elif which pacman &>/dev/null; then
-    print_and_run "sudo pacman -S -y sdl2 sdl2_image sdl2_mixer sdl2_ttf"
+    print_and_run "sudo pacman -S --noconfirm sdl2 sdl2_image sdl2_mixer sdl2_ttf"
   fi
   echo
 
@@ -687,7 +687,7 @@ uninstall_sdl_linux() {
   elif which zypper &>/dev/null; then
     print_and_run "sudo zypper remove -y libSDL2-devel libSDL2_image-devel libSDL2_mixer-devel libSDL2_ttf-devel"
   elif which pacman &>/dev/null; then
-    print_and_run "sudo pacman -Rs -y sdl2 sdl2_image sdl2_mixer sdl2_ttf"
+    print_and_run "sudo pacman -Rs --noconfirm sdl2 sdl2_image sdl2_mixer sdl2_ttf"
   fi
   echo
 
