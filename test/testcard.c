@@ -37,6 +37,7 @@ void on_key(S2D_Event e) {
       printf("Key down: %s\n", e.key);
       if (strcmp(e.key, "Escape") == 0) S2D_Close(window);
       if (strcmp(e.key, "R") == 0) rotate = rotate ? false : true;
+      if (strcmp(e.key, "S") == 0) S2D_Screenshot(window, "./screenshot.png");
       break;
 
     case S2D_KEY_HELD:

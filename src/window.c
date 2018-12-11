@@ -336,6 +336,46 @@ void S2D_SetIcon(S2D_Window *window, const char *icon) {
 
 
 /*
+ * Take a screenshot of the window
+ */
+void S2D_Screenshot(S2D_Window *window, const char *path) {
+
+  // Create a surface the size of the window
+  SDL_Surface *surface = SDL_CreateRGBSurface(
+    SDL_SWSURFACE, window->width, window->height, 24,
+    0x000000FF, 0x0000FF00, 0x00FF0000, 0
+  );
+
+  // Grab the pixels from the front buffer, save to surface
+  glReadBuffer(GL_FRONT);
+  glReadPixels(0, 0, window->width, window->height, GL_RGB, GL_UNSIGNED_BYTE, surface->pixels);
+
+  // Flip image vertically
+
+  void *temp_row = (void *)malloc(surface->pitch);
+  if (!temp_row) {
+    S2D_Error("S2D_Screenshot", "Out of memory!");
+    SDL_FreeSurface(surface);
+    return;
+  }
+
+  int height_div_2 = (int) (surface->h * 0.5);
+
+  for (int index = 0; index < height_div_2; index++) {
+    memcpy((Uint8 *)temp_row,(Uint8 *)(surface->pixels) + surface->pitch * index, surface->pitch);
+    memcpy((Uint8 *)(surface->pixels) + surface->pitch * index, (Uint8 *)(surface->pixels) + surface->pitch * (surface->h - index-1), surface->pitch);
+    memcpy((Uint8 *)(surface->pixels) + surface->pitch * (surface->h - index-1), temp_row, surface->pitch);
+  }
+
+  free(temp_row);
+
+  // Save image to disk
+  IMG_SavePNG(surface, path);
+  SDL_FreeSurface(surface);
+}
+
+
+/*
  * Close the window
  */
 int S2D_Close(S2D_Window *window) {
