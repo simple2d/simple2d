@@ -27,13 +27,13 @@ SDL_MIN_VERSION='2.0.4'
 # SDL download paths
 libsdl_url="https://www.libsdl.org"
 
-sdl_fname="SDL2-2.0.8"
+sdl_fname="SDL2-2.0.9"
 sdl_url="${libsdl_url}/release/${sdl_fname}.tar.gz"
 
-image_fname="SDL2_image-2.0.3"
+image_fname="SDL2_image-2.0.4"
 image_url="${libsdl_url}/projects/SDL_image/release/${image_fname}.tar.gz"
 
-mixer_fname="SDL2_mixer-2.0.2"
+mixer_fname="SDL2_mixer-2.0.4"
 mixer_url="${libsdl_url}/projects/SDL_mixer/release/${mixer_fname}.tar.gz"
 
 ttf_fname="SDL2_ttf-2.0.14"
