@@ -29,6 +29,14 @@ S2D_Image *S2D_CreateImage(const char *path) {
     return NULL;
   }
 
+  int bits_per_color = img->surface->format->Amask == 0 ?
+    img->surface->format->BitsPerPixel / 3 :
+    img->surface->format->BitsPerPixel / 4;
+
+  if (bits_per_color < 8) {
+    S2D_Log(S2D_WARN, "`%s` has less than 8 bits per color and will likely not render correctly", path, bits_per_color);
+  }
+
   // Initialize values
   img->path = path;
   img->x = 0;
