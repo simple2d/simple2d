@@ -596,9 +596,14 @@ void S2D_FreeMusic(S2D_Music *mus);
 void S2D_GetMouseOnViewport(S2D_Window *window, int wx, int wy, int *x, int *y);
 
 /*
- * Show or hide the cursor over the window
+ * Show the cursor over the window
  */
-void S2D_ShowCursor(bool toggle);
+void S2D_ShowCursor();
+
+/*
+ * Hide the cursor over the window
+ */
+void S2D_HideCursor();
 
 // Controllers /////////////////////////////////////////////////////////////////
 
