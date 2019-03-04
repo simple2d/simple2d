@@ -17,6 +17,10 @@ S2D_Sound *S2D_CreateSound(const char *path) {
 
   // Allocate the sound structure
   S2D_Sound *snd = (S2D_Sound *) malloc(sizeof(S2D_Sound));
+  if (!snd) {
+    S2D_Error("S2D_CreateSound", "Out of memory!");
+    return NULL;
+  }
 
   // Load the sound data from file
   snd->data = Mix_LoadWAV(path);

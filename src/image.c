@@ -18,7 +18,7 @@ S2D_Image *S2D_CreateImage(const char *path) {
   // Allocate the image structure
   S2D_Image *img = (S2D_Image *) malloc(sizeof(S2D_Image));
   if (!img) {
-    S2D_Error("IMG_Load", "Out of memory!");
+    S2D_Error("S2D_CreateImage", "Out of memory!");
     return NULL;
   }
 
@@ -26,6 +26,7 @@ S2D_Image *S2D_CreateImage(const char *path) {
   img->surface = IMG_Load(path);
   if (!img->surface) {
     S2D_Error("IMG_Load", IMG_GetError());
+    free(img);
     return NULL;
   }
 

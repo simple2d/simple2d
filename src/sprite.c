@@ -14,9 +14,20 @@ S2D_Sprite *S2D_CreateSprite(const char *path) {
     return NULL;
   }
 
-  // Allocate the sprite structure and create the image
+  // Allocate the sprite structure
   S2D_Sprite *spr = (S2D_Sprite *) malloc(sizeof(S2D_Sprite));
+  if (!spr) {
+    S2D_Error("S2D_CreateSprite", "Out of memory!");
+    return NULL;
+  }
+
+  // Load the sprite image file
   spr->img = S2D_CreateImage(path);
+  if (!spr->img) {
+    S2D_Error("S2D_CreateSprite", "Cannot create sprite image `%s`", path);
+    free(spr);
+    return NULL;
+  }
 
   // Initialize values
   spr->path = path;
