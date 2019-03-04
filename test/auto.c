@@ -41,6 +41,15 @@ int main() {
   S2D_Windows_EnableTerminalColors();
   start_test_suite();
 
+  // Logging ///////////////////////////////////////////////////////////////////
+
+  start_test("(S2D_Log) log info, warning, and error messages");
+  S2D_Log(S2D_INFO, "(S2D_Log) %s", "An `S2D_INFO` message");
+  S2D_Log(S2D_WARN, "(S2D_Log) %s", "An `S2D_WARN` message");
+  S2D_Log(S2D_ERROR, "(S2D_Log) %s", "An `S2D_ERROR` message");
+  S2D_Error("S2D_Error", "An error message");
+  end_test(true);
+
   // Images ////////////////////////////////////////////////////////////////////
 
   start_test("(S2D_CreateImage) create images with supported formats");

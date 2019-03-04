@@ -45,7 +45,9 @@ bool S2D_FileExists(const char *path) {
  * Logs standard messages to the console
  */
 void S2D_Log(int type, const char *msg, ...) {
-  if (S2D_diagnostics) {
+
+  // Always log if diagnostics set, or if a warning or error message
+  if (S2D_diagnostics || type != S2D_INFO) {
 
     va_list args;
     va_start(args, msg);
