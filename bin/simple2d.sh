@@ -919,7 +919,7 @@ simulator_list() {
 
 
 # Open an iOS or tvOS simulator
-#   $1  The device name, e.g. iPhone XR
+#   $1  The device name, e.g. iPhone X
 # See `simulator_list` function for available names
 simulator_open() {
   device=$1

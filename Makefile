@@ -227,7 +227,7 @@ endif
 	cp -R deps/xcode/ios/* build/ios
 	cp test/triangle-ios-tvos.c build/ios/main.c
 	simple2d build --ios build/ios/MyApp.xcodeproj
-	simple2d simulator --open "iPhone XR"
+	simple2d simulator --open "iPhone X"
 	simple2d simulator --install "build/ios/build/Release-iphonesimulator/MyApp.app"
 	simple2d simulator --launch "Simple2D.MyApp"
 endif
