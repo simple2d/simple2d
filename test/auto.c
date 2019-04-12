@@ -142,17 +142,19 @@ int main() {
   S2D_Sound *snd1 = S2D_CreateSound("media/sound.wav");
   S2D_Sound *snd2 = S2D_CreateSound("media/sound.mp3");
   S2D_Sound *snd3 = S2D_CreateSound("media/sound.ogg");
-  end_test(snd1 != NULL && snd2 != NULL && snd3 != NULL);
+  S2D_Sound *snd4 = S2D_CreateSound("media/sound.flac");
+  end_test(snd1 != NULL && snd2 != NULL && snd3 != NULL && snd4 != NULL);
 
   start_test("(S2D_CreateSound) bad sound file path (expect errors)");
-  S2D_Sound *snd4 = S2D_CreateSound("sound.wav");
-  S2D_Sound *snd5 = S2D_CreateSound("");
-  S2D_Sound *snd6 = S2D_CreateSound(NULL);
-  end_test(snd4 == NULL && snd5 == NULL && snd6 == NULL);
+  S2D_Sound *snd5 = S2D_CreateSound("sound.wav");
+  S2D_Sound *snd6 = S2D_CreateSound("");
+  S2D_Sound *snd7 = S2D_CreateSound(NULL);
+  end_test(snd5 == NULL && snd6 == NULL && snd7 == NULL);
 
   start_test("(S2D_FreeSound) free sound");
   S2D_FreeSound(snd1); S2D_FreeSound(snd2); S2D_FreeSound(snd3);
   S2D_FreeSound(snd4); S2D_FreeSound(snd5); S2D_FreeSound(snd6);
+  S2D_FreeSound(snd7);
   end_test(PASS);
 
   start_test("(S2D_FreeSound) free bad sound pointer");
