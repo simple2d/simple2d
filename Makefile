@@ -26,11 +26,11 @@ ifeq ($(shell uname),Linux)
 	CFLAGS+=-fPIC
 endif
 
-# BSD 
+# BSD
 ifneq (,$(findstring BSD,$(shell uname)))
-        CC=cc
-        INCLUDES=-I/usr/local/include/
-        CFLAGS+=-fPIC
+	CC=cc
+	INCLUDES=-I/usr/local/include/
+	CFLAGS+=-fPIC
 endif
 
 # MinGW

@@ -332,31 +332,23 @@ have_sdl_libs?() {
   fi
 }
 
+
 # Installs SDL on BSD
 install_sdl_bsd() {
-  echo "The following packages will be installed"
 
-  # FreeBSD Install
-  if which pkg &>/dev/null; then
-    echo "  sdl2"
-    echo "  sdl2_image"
-    echo "  sdl2_mixer"
-    echo "  sdl2_ttf"
-  fi
-  
+  echo "The following packages will be installed:"
+  echo "  sdl2"
+  echo "  sdl2_image"
+  echo "  sdl2_mixer"
+  echo "  sdl2_ttf"
+
   prompt_to_continue "Install SDL now?"
 
   print_task "Updating packages" "\n\n"
-
-  if which pkg &>/dev/null; then
-    print_and_run "sudo pkg update"
-  fi
+  print_and_run "sudo pkg update"
 
   echo; print_task "Installing packages" "\n\n"
-
-  if which pkg &>/dev/null; then
-    print_and_run "sudo pkg install sdl2 sdl2_image sdl2_mixer sdl2_ttf"
-  fi
+  print_and_run "sudo pkg install sdl2 sdl2_image sdl2_mixer sdl2_ttf"
   echo
 
   if ! have_sdl_libs?; then
@@ -365,6 +357,7 @@ install_sdl_bsd() {
     echo; info_msg "SDL was installed successfully"
   fi
 }
+
 
 # Installs SDL on Linux
 install_sdl_linux() {
@@ -597,11 +590,11 @@ install_s2d() {
   print_and_run "cd $tmp_dir/simple2d-$1"
 
   if [[ $platform == 'bsd' ]]; then
-      echo; print_and_run "gmake"
-      echo; print_and_run "sudo gmake install"
+    echo; print_and_run "gmake"
+    echo; print_and_run "sudo gmake install"
   else
-      echo; print_and_run "make"
-      echo; print_and_run "sudo make install"
+    echo; print_and_run "make"
+    echo; print_and_run "sudo make install"
   fi
 
   echo; print_task "Cleaning up" "\n"; echo
@@ -683,25 +676,20 @@ install() {
 
 # Uninstall ####################################################################
 
+
 # Uninstalls SDL on BSD
 uninstall_sdl_bsd() {
-  echo "The following packages will be removed:"
 
-  # FreeBSD
-  if which pkg &>/dev/null; then
-    echo "  sdl2"
-    echo "  sdl2_image"
-    echo "  sdl2_mixer"
-    echo "  sdl2_ttf"
-  fi
-  
+  echo "The following packages will be removed:"
+  echo "  sdl2"
+  echo "  sdl2_image"
+  echo "  sdl2_mixer"
+  echo "  sdl2_ttf"
+
   prompt_to_continue "Uninstall SDL now?"
 
   echo; print_task "Uninstalling packages" "\n\n"
-
-  if which pkg &>/dev/null; then
-    print_and_run "sudo pkg remove sdl2 sdl2_image sdl2_mixer sdl2_ttf"
-  fi
+  print_and_run "sudo pkg remove sdl2 sdl2_image sdl2_mixer sdl2_ttf"
   echo
 
   if have_sdl_libs?; then
@@ -710,6 +698,7 @@ uninstall_sdl_bsd() {
     echo; info_msg "SDL was uninstalled successfully"
   fi
 }
+
 
 # Uninstalls SDL on Linux
 uninstall_sdl_linux() {
