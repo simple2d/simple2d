@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # ------------------------------------------------------------------------------
 # The Simple 2D Command-Line Utility for Unix-like Systems
@@ -333,6 +333,32 @@ have_sdl_libs?() {
 }
 
 
+# Installs SDL on BSD
+install_sdl_bsd() {
+
+  echo "The following packages will be installed:"
+  echo "  sdl2"
+  echo "  sdl2_image"
+  echo "  sdl2_mixer"
+  echo "  sdl2_ttf"
+
+  prompt_to_continue "Install SDL now?"
+
+  print_task "Updating packages" "\n\n"
+  print_and_run "sudo pkg update"
+
+  echo; print_task "Installing packages" "\n\n"
+  print_and_run "sudo pkg install sdl2 sdl2_image sdl2_mixer sdl2_ttf"
+  echo
+
+  if ! have_sdl_libs?; then
+    echo; error_msg "SDL libraries did not install correctly"; exit 1
+  else
+    echo; info_msg "SDL was installed successfully"
+  fi
+}
+
+
 # Installs SDL on Linux
 install_sdl_linux() {
 
@@ -502,6 +528,8 @@ install_sdl_source() {
 install_sdl() {
   if [[ $platform == 'linux' ]]; then
     install_sdl_linux
+  elif [[ $platform == 'bsd' ]]; then
+    install_sdl_bsd
   elif [[ $platform == 'arm' ]]; then
     install_sdl_source
   fi
@@ -552,7 +580,7 @@ install_s2d() {
   fi
 
   echo; print_task "Unpacking" "\n\n"
-  print_and_run "unzip -q $tmp_dir/$f_name -d $tmp_dir"
+  print_and_run "unzip -q $tmp_dir/$f_name.zip -d $tmp_dir"
 
   # Check if archive was unpacked properly
   if [[ $? != 0 ]]; then
@@ -561,8 +589,13 @@ install_s2d() {
 
   print_and_run "cd $tmp_dir/simple2d-$1"
 
-  echo; print_and_run "make"
-  echo; print_and_run "sudo make install"
+  if [[ $platform == 'bsd' ]]; then
+    echo; print_and_run "gmake"
+    echo; print_and_run "sudo gmake install"
+  else
+    echo; print_and_run "make"
+    echo; print_and_run "sudo make install"
+  fi
 
   echo; print_task "Cleaning up" "\n"; echo
   print_and_run "rm -rf $tmp_dir"; echo
@@ -642,6 +675,29 @@ install() {
 
 
 # Uninstall ####################################################################
+
+
+# Uninstalls SDL on BSD
+uninstall_sdl_bsd() {
+
+  echo "The following packages will be removed:"
+  echo "  sdl2"
+  echo "  sdl2_image"
+  echo "  sdl2_mixer"
+  echo "  sdl2_ttf"
+
+  prompt_to_continue "Uninstall SDL now?"
+
+  echo; print_task "Uninstalling packages" "\n\n"
+  print_and_run "sudo pkg remove sdl2 sdl2_image sdl2_mixer sdl2_ttf"
+  echo
+
+  if have_sdl_libs?; then
+    echo; error_msg "SDL libraries did not uninstall correctly"
+  else
+    echo; info_msg "SDL was uninstalled successfully"
+  fi
+}
 
 
 # Uninstalls SDL on Linux
@@ -757,6 +813,8 @@ uninstall_sdl() {
 
   if [[ $platform == 'linux' ]]; then
     uninstall_sdl_linux
+  elif [[ $platform == 'bsd' ]]; then
+    uninstall_sdl_bsd
   elif [[ $platform == 'arm' ]]; then
     uninstall_sdl_source
   fi
@@ -1090,6 +1148,11 @@ elif [[ $unamestr == 'Linux' ]]; then
 elif [[ $unamestr =~ 'MINGW' ]]; then
   platform_display='Windows / MinGW'
   platform='mingw'
+
+# BSD
+elif [[ $unamestr =~ 'BSD' ]]; then
+  platform_display='BSD'
+  platform='bsd'
 fi
 
 # Unsupported platform
@@ -1226,7 +1289,7 @@ case $1 in
   --libs)
     if [[ $platform == 'macos' ]]; then
       FLAGS='-Wl,-framework,OpenGL'
-    elif [[ $platform == 'linux' ]]; then
+    elif [[ $platform == 'linux' || $platform == 'bsd' ]]; then
       FLAGS='-lGL -lm'
     elif [[ $platform == 'arm' ]]; then
       FLAGS='-lm -I/opt/vc/include/ -L/opt/vc/lib'

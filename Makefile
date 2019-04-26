@@ -26,6 +26,13 @@ ifeq ($(shell uname),Linux)
 	CFLAGS+=-fPIC
 endif
 
+# BSD
+ifneq (,$(findstring BSD,$(shell uname)))
+	CC=cc
+	INCLUDES=-I/usr/local/include/
+	CFLAGS+=-fPIC
+endif
+
 # MinGW
 ifneq (,$(findstring MINGW,$(shell uname -s)))
 	PLATFORM=mingw
