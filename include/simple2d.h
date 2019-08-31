@@ -537,9 +537,30 @@ S2D_Sound *S2D_CreateSound(const char *path);
 void S2D_PlaySound(S2D_Sound *snd);
 
 /*
+ * Get the sound's volume
+ */
+int S2D_GetSoundVolume(S2D_Sound *snd);
+
+/*
+ * Set the sound's volume a given percentage
+ */
+void S2D_SetSoundVolume(S2D_Sound *snd, int volume);
+
+/*
  * Free the sound
  */
 void S2D_FreeSound(S2D_Sound *snd);
+
+/*
+ * Get the sound mixer volume
+ */
+int S2D_GetSoundMixVolume();
+
+/*
+ * Set the sound mixer volume a given percentage
+ */
+void S2D_SetSoundMixVolume(int volume);
+
 
 // Music ///////////////////////////////////////////////////////////////////////
 
