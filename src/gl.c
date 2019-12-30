@@ -409,6 +409,19 @@ void S2D_GL_DrawText(S2D_Text *txt) {
 
 
 /*
+ * Render and flush OpenGL buffers
+ */
+void S2D_GL_FlushBuffers() {
+  // Only implemented in our OpenGL 3.3+ and ES 2.0 renderers
+  #if GLES
+    // TODO: S2D_GLES_FlushBuffers();
+  #else
+    if (!S2D_GL2) S2D_GL3_FlushBuffers();
+  #endif
+}
+
+
+/*
  * Clear buffers to given color values
  */
 void S2D_GL_Clear(S2D_Color clr) {

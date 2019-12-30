@@ -5,9 +5,15 @@
 // Skip this file if OpenGL ES
 #if !GLES
 
-static GLuint shaderProgram;
-static GLuint texShaderProgram;
-static GLuint indices[] =
+static GLuint vbo;  // our primary vertex buffer object (VBO)
+static GLuint vboSize;  // size of the VBO in bytes
+static GLfloat *vboData;  // pointer to the VBO data
+static GLfloat *vboDataCurrent;  // pointer to the data for the current vertices
+static GLuint vboDataIndex = 0;  // index of the current object being rendered
+static GLuint vboObjCapacity = 2500;  // number of objects the VBO can store
+static GLuint shaderProgram;  // triangle shader program
+static GLuint texShaderProgram;  // texture shader program
+static GLuint indices[] =  // indices for rendering textured quads
   { 0, 1, 2,
     2, 3, 0 };
 
@@ -97,10 +103,12 @@ int S2D_GL3_Init() {
   glGenVertexArrays(1, &vao);
   glBindVertexArray(vao);
 
-  // Create a vertex buffer object
-  GLuint vbo;
+  // Create a vertex buffer object and allocate data
   glGenBuffers(1, &vbo);
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
+  vboSize = vboObjCapacity * sizeof(GLfloat) * 24;
+  vboData = (GLfloat *) malloc(vboSize);
+  vboDataCurrent = vboData;
 
   // Create an element buffer object
   GLuint ebo;
@@ -196,6 +204,28 @@ int S2D_GL3_Init() {
 
 
 /*
+ * Render the vertex buffer and reset it
+ */
+void S2D_GL3_FlushBuffers() {
+
+  // Use the triangle shader program
+  glUseProgram(shaderProgram);
+
+  // Bind to the vertex buffer object and update its data
+  glBindBuffer(GL_ARRAY_BUFFER, vbo);
+  glBufferData(GL_ARRAY_BUFFER, vboSize, NULL, GL_DYNAMIC_DRAW);
+  glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLfloat) * vboDataIndex * 24, vboData);
+
+  // Render all the triangles in the buffer
+  glDrawArrays(GL_TRIANGLES, 0, (GLsizei)(vboDataIndex * 3));
+
+  // Reset the buffer object index and data pointer
+  vboDataIndex = 0;
+  vboDataCurrent = vboData;
+}
+
+
+/*
  * Draw triangle
  */
 void S2D_GL3_DrawTriangle(GLfloat x1, GLfloat y1,
@@ -205,15 +235,21 @@ void S2D_GL3_DrawTriangle(GLfloat x1, GLfloat y1,
                           GLfloat x3, GLfloat y3,
                           GLfloat r3, GLfloat g3, GLfloat b3, GLfloat a3) {
 
+  // If buffer is full, flush it
+  if (vboDataIndex >= vboObjCapacity) S2D_GL3_FlushBuffers();
+
   // Set the triangle data into a formatted array
   GLfloat vertices[] =
     { x1, y1, r1, g1, b1, a1, 0, 0,
       x2, y2, r2, g2, b2, a2, 0, 0,
       x3, y3, r3, g3, b3, a3, 0, 0 };
 
-  glUseProgram(shaderProgram);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-  glDrawArrays(GL_TRIANGLES, 0, 3);
+  // Copy the vertex data into the current position of the buffer
+  memcpy(vboDataCurrent, vertices, sizeof(vertices));
+
+  // Increment the buffer object index and the vertex data pointer for next use
+  vboDataIndex++;
+  vboDataCurrent = (GLfloat *)((char *)vboDataCurrent + (sizeof(GLfloat) * 24));
 }
 
 
@@ -226,6 +262,10 @@ static void S2D_GL3_DrawTexture(int x, int y, int w, int h,
                                 GLfloat tx1, GLfloat ty1, GLfloat tx2, GLfloat ty2,
                                 GLfloat tx3, GLfloat ty3, GLfloat tx4, GLfloat ty4,
                                 GLuint texture_id) {
+
+  // Currently, textures are not buffered, so we have to flush all buffers so
+  // textures get rendered in the correct Z order
+  S2D_GL3_FlushBuffers();
 
   // Set up the vertex points
   S2D_GL_Point v1 = { .x = x,     .y = y     };
