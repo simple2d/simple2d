@@ -202,11 +202,17 @@ build() {
   # If no input, print build usage
   if [[ $1 == '' ]]; then print_usage_build; exit; fi
 
-  # If C or C++ source file given, e.g.:
-  #   build app.c; build app.cpp
-  if [[ ${1: -2} == '.c' || ${1: -4} == '.cpp' ]]; then
+  # If C source file given, e.g.: build app.c
+  if [[ ${1: -2} == '.c' ]]; then
     # Compile
     gcc -std=c11 $1 `simple2d --libs` -o ${1%.*}
+    exit
+  fi
+
+  # If C++ source file given, e.g.: build app.cpp
+  if [[ ${1: -4} == '.cpp' ]]; then
+    # Compile
+    g++ -std=c++11 $1 `simple2d --libs` -o ${1%.*}
     exit
   fi
 
