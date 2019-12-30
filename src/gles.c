@@ -4,19 +4,26 @@
 
 #if GLES
 
+static GLuint vbo;  // our primary vertex buffer object (VBO)
+static GLuint vboSize;  // size of the VBO in bytes
+static GLfloat *vboData;  // pointer to the VBO data
+static GLfloat *vboDataCurrent;  // pointer to the data for the current vertices
+static GLuint vboDataIndex = 0;  // index of the current object being rendered
+static GLuint vboObjSize = 1000;  // number of objects the VBO can store
+
 // Triangle shader
-static GLuint shaderProgram;
+static GLuint shaderProgram;  // triangle shader program
 static GLuint positionLocation;
 static GLuint colorLocation;
 
 // Texture shader
-static GLuint texShaderProgram;
+static GLuint texShaderProgram;  // texture shader program
 static GLuint texPositionLocation;
 static GLuint texColorLocation;
 static GLuint texCoordLocation;
-static GLuint samplerLocation;
+static GLuint texSamplerLocation;
 
-static GLushort indices[] =
+static GLushort indices[] =  // indices for rendering textured quads
   { 0, 1, 2,
     2, 3, 0 };
 
@@ -55,48 +62,64 @@ int S2D_GLES_Init() {
 
   // Vertex shader source string
   GLchar vertexSource[] =
-    // uniforms used by the vertex shader
-    "uniform mat4 u_mvpMatrix;"   // projection matrix
+    // Uniforms used by the vertex shader
+    "uniform mat4 u_mvpMatrix;"  // projection matrix
 
-    // attributes input to the vertex shader
+    // Input attributes to the vertex shader
     "attribute vec4 a_position;"  // position value
-    "attribute vec4 a_color;"     // input vertex color
-    "attribute vec2 a_texcoord;"  // input texture
+    "attribute vec4 a_color;"     // vertex color
+    "attribute vec2 a_texcoord;"  // texture coordinates
 
-    // varying variables, input to the fragment shader
-    "varying vec4 v_color;"       // output vertex color
-    "varying vec2 v_texcoord;"    // output texture
+    // Varying variables, output to the fragment shader
+    "varying vec4 v_color;"     // vertex color
+    "varying vec2 v_texcoord;"  // texture coordinates
 
-    "void main()"
-    "{"
+    "void main() {"
+    // Send the color and texture coordinates right through to the fragment shader
     "  v_color = a_color;"
     "  v_texcoord = a_texcoord;"
+    // Transform the vertex position using the projection matrix
     "  gl_Position = u_mvpMatrix * a_position;"
     "}";
 
   // Fragment shader source string
   GLchar fragmentSource[] =
+    // GPU float calculation precision, medium
     "precision mediump float;"
-    // input vertex color from vertex shader
+
+    // Input color from vertex shader
     "varying vec4 v_color;"
 
-    "void main()"
-    "{"
-    "  gl_FragColor = v_color;"
+    "void main() {"
+    "  gl_FragColor = v_color;"  // pass the color right through
     "}";
 
   // Fragment shader source string for textures
   GLchar texFragmentSource[] =
+    // GPU float calculation precision, medium
     "precision mediump float;"
-    // input vertex color from vertex shader
-    "varying vec4 v_color;"
-    "varying vec2 v_texcoord;"
-    "uniform sampler2D s_texture;"
 
-    "void main()"
-    "{"
+    // Input vertex color from vertex shader
+    "varying vec4 v_color;"         // input color from vertex shader
+    "varying vec2 v_texcoord;"      // input texture coordinates
+    "uniform sampler2D s_texture;"  // 2D texture unit
+
+    "void main() {"
+    // Apply the texture unit, texture coordinates, and color
     "  gl_FragColor = texture2D(s_texture, v_texcoord) * v_color;"
     "}";
+
+  // Create a vertex array object
+  GLuint vao;
+  glGenVertexArraysOES(1, &vao);
+  glBindVertexArrayOES(vao);
+
+  // Create a vertex buffer object and allocate data
+  glGenBuffers(1, &vbo);
+  glBindBuffer(GL_ARRAY_BUFFER, vbo);
+  vboSize = vboObjSize * sizeof(GLfloat) * 24;
+  vboData = (GLfloat *) malloc(vboSize);
+  vboDataCurrent = vboData;
 
   // Load the vertex and fragment shaders
   GLuint vertexShader      = S2D_GL_LoadShader(  GL_VERTEX_SHADER,      vertexSource, "GLES Vertex");
@@ -124,9 +147,15 @@ int S2D_GLES_Init() {
   // Check if linked
   S2D_GL_CheckLinked(shaderProgram, "GLES shader");
 
-  // Get the attribute locations
-  positionLocation = glGetAttribLocation(shaderProgram, "a_position");
-  colorLocation    = glGetAttribLocation(shaderProgram, "a_color");
+  // Specify the layout of the position vertex data...
+  GLint positionLocation = glGetAttribLocation(shaderProgram, "a_position");
+  glEnableVertexAttribArray(positionLocation);
+  glVertexAttribPointer(positionLocation, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), 0);
+
+  // ...and the color vertex data
+  GLint colorLocation = glGetAttribLocation(shaderProgram, "a_color");
+  glEnableVertexAttribArray(colorLocation);
+  glVertexAttribPointer(colorLocation, 4, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(2 * sizeof(GLfloat)));
 
   // Texture Shader //
 
@@ -149,20 +178,53 @@ int S2D_GLES_Init() {
   // Check if linked
   S2D_GL_CheckLinked(texShaderProgram, "GLES texture shader");
 
-  // Get the attribute locations
+  // Specify the layout of the position vertex data...
   texPositionLocation = glGetAttribLocation(texShaderProgram, "a_position");
-  texColorLocation    = glGetAttribLocation(texShaderProgram, "a_color");
-  texCoordLocation    = glGetAttribLocation(texShaderProgram, "a_texcoord");
+  glVertexAttribPointer(texPositionLocation, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), 0);
+  glEnableVertexAttribArray(texPositionLocation);
 
-  // Get the sampler location
-  samplerLocation = glGetUniformLocation(texShaderProgram, "s_texture");
+  // ...and the color vertex data...
+  texColorLocation = glGetAttribLocation(texShaderProgram, "a_color");
+  glVertexAttribPointer(texColorLocation, 4, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(2 * sizeof(GLfloat)));
+  glEnableVertexAttribArray(texColorLocation);
+
+  // ...and the texture coordinates
+  GLint texCoordLocation = glGetAttribLocation(texShaderProgram, "a_texcoord");
+  glVertexAttribPointer(texCoordLocation, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(6 * sizeof(GLfloat)));
+  glEnableVertexAttribArray(texCoordLocation);
+
+  // Get the 2D texture sampler location
+  texSamplerLocation = glGetUniformLocation(texShaderProgram, "s_texture");
 
   // Clean up
   glDeleteShader(vertexShader);
   glDeleteShader(fragmentShader);
   glDeleteShader(texFragmentShader);
 
+  // If successful, return true
   return GL_TRUE;
+}
+
+
+/*
+ * Render the vertex buffer and reset it
+ */
+void S2D_GLES_FlushBuffers() {
+
+  // Use the triangle shader program
+  glUseProgram(shaderProgram);
+
+  // Bind to the vertex buffer object and update its data
+  glBindBuffer(GL_ARRAY_BUFFER, vbo);
+  glBufferData(GL_ARRAY_BUFFER, vboSize, NULL, GL_DYNAMIC_DRAW);
+  glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLfloat) * vboDataIndex * 24, vboData);
+
+  // Render all the triangles in the buffer
+  glDrawArrays(GL_TRIANGLES, 0, (GLsizei)(vboDataIndex * 3));
+
+  // Reset the buffer object index and data pointer
+  vboDataIndex = 0;
+  vboDataCurrent = vboData;
 }
 
 
@@ -198,6 +260,27 @@ void S2D_GLES_DrawTriangle(GLfloat x1, GLfloat y1,
 
   // draw
   glDrawArrays(GL_TRIANGLES, 0, 3);
+
+
+
+  // LEFT OFF HERE //
+
+  // If buffer is full, flush it
+  if (vboDataIndex >= vboObjSize) S2D_GLES_FlushBuffers();
+
+  // Set the triangle data into a formatted array
+  GLfloat vertices[] =
+    { x1, y1, r1, g1, b1, a1, 0, 0,
+      x2, y2, r2, g2, b2, a2, 0, 0,
+      x3, y3, r3, g3, b3, a3, 0, 0 };
+
+  // Copy the vertex data into the current position of the buffer
+  memcpy(vboDataCurrent, vertices, sizeof(vertices));
+
+  // Increment the buffer object index and the vertex data pointer for next use
+  vboDataIndex++;
+  vboDataCurrent = (GLfloat *)((char *)vboDataCurrent + (sizeof(GLfloat) * 24));
+
 }
 
 
@@ -258,7 +341,7 @@ static void S2D_GLES_DrawTexture(int x, int y, int w, int h,
   glBindTexture(GL_TEXTURE_2D, texture_id);
 
   // Set the sampler texture unit to 0
-  glUniform1i(samplerLocation, 0);
+  glUniform1i(texSamplerLocation, 0);
 
   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, indices);
 }

@@ -703,6 +703,7 @@ void S2D_GL_Clear(S2D_Color clr);
   void S2D_GLES_DrawImage(S2D_Image *img);
   void S2D_GLES_DrawSprite(S2D_Sprite *spr);
   void S2D_GLES_DrawText(S2D_Text *txt);
+  void S2D_GLES_FlushBuffers();
 #else
   int S2D_GL2_Init();
   int S2D_GL3_Init();
