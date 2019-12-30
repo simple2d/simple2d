@@ -1,7 +1,8 @@
-// OpenGL 3.3
+// OpenGL 3.3+
 
 #include "../include/simple2d.h"
 
+// Skip this file if OpenGL ES
 #if !GLES
 
 static GLuint shaderProgram;
@@ -19,6 +20,7 @@ void S2D_GL3_ApplyProjection(GLfloat orthoMatrix[16]) {
   // Use the program object
   glUseProgram(shaderProgram);
 
+  // Apply the projection matrix to the triangle shader
   glUniformMatrix4fv(
     glGetUniformLocation(shaderProgram, "u_mvpMatrix"),
     1, GL_FALSE, orthoMatrix
@@ -27,6 +29,7 @@ void S2D_GL3_ApplyProjection(GLfloat orthoMatrix[16]) {
   // Use the texture program object
   glUseProgram(texShaderProgram);
 
+  // Apply the projection matrix to the triangle shader
   glUniformMatrix4fv(
     glGetUniformLocation(texShaderProgram, "u_mvpMatrix"),
     1, GL_FALSE, orthoMatrix
@@ -45,50 +48,61 @@ int S2D_GL3_Init() {
 
   // Vertex shader source string
   GLchar vertexSource[] =
-    "#version 150 core\n"
-    "uniform mat4 u_mvpMatrix;"
-    "in vec4 position;"
-    "in vec4 color;"
-    "in vec2 texcoord;"
-    "out vec4 Color;"
-    "out vec2 Texcoord;"
+    "#version 150 core\n"  // shader version
+
+    "uniform mat4 u_mvpMatrix;"  // projection matrix
+
+    // Input attributes to the vertex shader
+    "in vec4 position;"  // position value
+    "in vec4 color;"     // vertex color
+    "in vec2 texcoord;"  // texture coordinates
+
+    // Outputs to the fragment shader
+    "out vec4 Color;"     // vertex color
+    "out vec2 Texcoord;"  // texture coordinates
+
     "void main() {"
+    // Send the color and texture coordinates right through to the fragment shader
     "  Color = color;"
     "  Texcoord = texcoord;"
+    // Transform the vertex position using the projection matrix
     "  gl_Position = u_mvpMatrix * position;"
     "}";
 
   // Fragment shader source string
   GLchar fragmentSource[] =
-    "#version 150 core\n"
-    "in vec4 Color;"
-    "out vec4 outColor;"
+    "#version 150 core\n"  // shader version
+    "in vec4 Color;"       // input color from vertex shader
+    "out vec4 outColor;"   // output fragment color
+
     "void main() {"
-    "  outColor = Color;"
+    "  outColor = Color;"  // pass the color right through
     "}";
 
   // Fragment shader source string for textures
   GLchar texFragmentSource[] =
-    "#version 150 core\n"
-    "in vec4 Color;"
-    "in vec2 Texcoord;"
-    "out vec4 outColor;"
-    "uniform sampler2D tex;"
+    "#version 150 core\n"     // shader version
+    "in vec4 Color;"          // input color from vertex shader
+    "in vec2 Texcoord;"       // input texture coordinates
+    "out vec4 outColor;"      // output fragment color
+    "uniform sampler2D tex;"  // 2D texture unit
+
     "void main() {"
+    // Apply the texture unit, texture coordinates, and color
     "  outColor = texture(tex, Texcoord) * Color;"
     "}";
 
-  // Create Vertex Array Object
+  // Create a vertex array object
   GLuint vao;
   glGenVertexArrays(1, &vao);
   glBindVertexArray(vao);
 
-  // Create Vertex Buffer Object
+  // Create a vertex buffer object
   GLuint vbo;
   glGenBuffers(1, &vbo);
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
-  // Create an element array
+  // Create an element buffer object
   GLuint ebo;
   glGenBuffers(1, &ebo);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
@@ -97,6 +111,8 @@ int S2D_GL3_Init() {
   GLuint vertexShader      = S2D_GL_LoadShader(  GL_VERTEX_SHADER,      vertexSource, "GL3 Vertex");
   GLuint fragmentShader    = S2D_GL_LoadShader(GL_FRAGMENT_SHADER,    fragmentSource, "GL3 Fragment");
   GLuint texFragmentShader = S2D_GL_LoadShader(GL_FRAGMENT_SHADER, texFragmentSource, "GL3 Texture Fragment");
+
+  // Triangle Shader //
 
   // Create the shader program object
   shaderProgram = glCreateProgram();
@@ -111,7 +127,7 @@ int S2D_GL3_Init() {
   glAttachShader(shaderProgram, vertexShader);
   glAttachShader(shaderProgram, fragmentShader);
 
-  // Bind the varying out variables to the fragment shader color number
+  // Bind the output color variable to the fragment shader color number
   glBindFragDataLocation(shaderProgram, 0, "outColor");
 
   // Link the shader program
@@ -120,14 +136,17 @@ int S2D_GL3_Init() {
   // Check if linked
   S2D_GL_CheckLinked(shaderProgram, "GL3 shader");
 
-  // Specify the layout of the vertex data
+// Specify the layout of the position vertex data...
   GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
-  glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), 0);
   glEnableVertexAttribArray(posAttrib);
+  glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), 0);
 
+  // ...and the color vertex data
   GLint colAttrib = glGetAttribLocation(shaderProgram, "color");
-  glVertexAttribPointer(colAttrib, 4, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(2 * sizeof(GLfloat)));
   glEnableVertexAttribArray(colAttrib);
+  glVertexAttribPointer(colAttrib, 4, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(2 * sizeof(GLfloat)));
+
+  // Texture Shader //
 
   // Create the texture shader program object
   texShaderProgram = glCreateProgram();
@@ -138,25 +157,30 @@ int S2D_GL3_Init() {
     return GL_FALSE;
   }
 
+  // Attach the shader objects to the program object
   glAttachShader(texShaderProgram, vertexShader);
   glAttachShader(texShaderProgram, texFragmentShader);
 
+  // Bind the output color variable to the fragment shader color number
   glBindFragDataLocation(texShaderProgram, 0, "outColor");
 
+  // Link the shader program
   glLinkProgram(texShaderProgram);
 
   // Check if linked
   S2D_GL_CheckLinked(texShaderProgram, "GL3 texture shader");
 
-  // Specify the layout of the vertex data
+  // Specify the layout of the position vertex data...
   posAttrib = glGetAttribLocation(texShaderProgram, "position");
   glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), 0);
   glEnableVertexAttribArray(posAttrib);
 
+  // ...and the color vertex data...
   colAttrib = glGetAttribLocation(texShaderProgram, "color");
   glVertexAttribPointer(colAttrib, 4, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(2 * sizeof(GLfloat)));
   glEnableVertexAttribArray(colAttrib);
 
+  // ...and the texture coordinates
   GLint texAttrib = glGetAttribLocation(texShaderProgram, "texcoord");
   glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(6 * sizeof(GLfloat)));
   glEnableVertexAttribArray(texAttrib);
@@ -166,6 +190,7 @@ int S2D_GL3_Init() {
   glDeleteShader(fragmentShader);
   glDeleteShader(texFragmentShader);
 
+  // If successful, return true
   return GL_TRUE;
 }
 
@@ -180,6 +205,7 @@ void S2D_GL3_DrawTriangle(GLfloat x1, GLfloat y1,
                           GLfloat x3, GLfloat y3,
                           GLfloat r3, GLfloat g3, GLfloat b3, GLfloat a3) {
 
+  // Set the triangle data into a formatted array
   GLfloat vertices[] =
     { x1, y1, r1, g1, b1, a1, 0, 0,
       x2, y2, r2, g2, b2, a2, 0, 0,
@@ -201,6 +227,7 @@ static void S2D_GL3_DrawTexture(int x, int y, int w, int h,
                                 GLfloat tx3, GLfloat ty3, GLfloat tx4, GLfloat ty4,
                                 GLuint texture_id) {
 
+  // Set up the vertex points
   S2D_GL_Point v1 = { .x = x,     .y = y     };
   S2D_GL_Point v2 = { .x = x + w, .y = y     };
   S2D_GL_Point v3 = { .x = x + w, .y = y + h };
