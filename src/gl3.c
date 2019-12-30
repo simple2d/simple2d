@@ -29,7 +29,7 @@ void S2D_GL3_ApplyProjection(GLfloat orthoMatrix[16]) {
   // Use the texture program object
   glUseProgram(texShaderProgram);
 
-  // Apply the projection matrix to the triangle shader
+  // Apply the projection matrix to the texture shader
   glUniformMatrix4fv(
     glGetUniformLocation(texShaderProgram, "u_mvpMatrix"),
     1, GL_FALSE, orthoMatrix
@@ -136,7 +136,7 @@ int S2D_GL3_Init() {
   // Check if linked
   S2D_GL_CheckLinked(shaderProgram, "GL3 shader");
 
-// Specify the layout of the position vertex data...
+  // Specify the layout of the position vertex data...
   GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
   glEnableVertexAttribArray(posAttrib);
   glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), 0);
@@ -241,6 +241,7 @@ static void S2D_GL3_DrawTexture(int x, int y, int w, int h,
     v4 = S2D_RotatePoint(v4, angle, rx, ry);
   }
 
+  // Set the textured quad data into a formatted array
   GLfloat vertices[] =
   //  vertex coords | colors      | x, y texture coords
     { v1.x, v1.y,     r, g, b, a,   tx1, ty1,    // Top-left
@@ -248,12 +249,17 @@ static void S2D_GL3_DrawTexture(int x, int y, int w, int h,
       v3.x, v3.y,     r, g, b, a,   tx3, ty3,    // Bottom-right
       v4.x, v4.y,     r, g, b, a,   tx4, ty4 };  // Bottom-left
 
+  // Use the texture shader program
   glUseProgram(texShaderProgram);
+
+  // Bind the texture using the provided ID
   glBindTexture(GL_TEXTURE_2D, texture_id);
 
+  // Create and Initialize the vertex data and array indices
   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
+  // Render the textured quad
   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
