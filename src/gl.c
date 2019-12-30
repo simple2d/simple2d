@@ -47,6 +47,7 @@ void S2D_GL_PrintContextInfo(S2D_Window *window) {
  * Store info about the current OpenGL context
  */
 void S2D_GL_StoreContextInfo(S2D_Window *window) {
+
   window->S2D_GL_VENDOR   = glGetString(GL_VENDOR);
   window->S2D_GL_RENDERER = glGetString(GL_RENDERER);
   window->S2D_GL_VERSION  = glGetString(GL_VERSION);
@@ -70,11 +71,8 @@ void S2D_GL_StoreContextInfo(S2D_Window *window) {
  */
 GLuint S2D_GL_LoadShader(GLenum type, const GLchar *shaderSrc, char *shaderName) {
 
-  GLuint shader;
-  GLint compiled;
-
   // Create the shader object
-  shader = glCreateShader(type);
+  GLuint shader = glCreateShader(type);
 
   if (shader == 0) {
     S2D_GL_PrintError("Failed to create shader program");
@@ -88,21 +86,17 @@ GLuint S2D_GL_LoadShader(GLenum type, const GLchar *shaderSrc, char *shaderName)
   glCompileShader(shader);
 
   // Check the compile status
+  GLint compiled;
   glGetShaderiv(shader, GL_COMPILE_STATUS, &compiled);
 
   if (!compiled) {
-
     GLint infoLen = 0;
-
     glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLen);
 
     if (infoLen > 1) {
-
       char *infoLog = malloc(sizeof(char) * infoLen);
-
       glGetShaderInfoLog(shader, infoLen, NULL, infoLog);
       printf("Error compiling shader \"%s\":\n%s\n", shaderName, infoLog);
-
       free(infoLog);
     }
 
@@ -123,17 +117,13 @@ int S2D_GL_CheckLinked(GLuint program, char *name) {
   glGetProgramiv(program, GL_LINK_STATUS, &linked);
 
   if (!linked) {
-
     GLint infoLen = 0;
     glGetProgramiv(program, GL_INFO_LOG_LENGTH, &infoLen);
 
     if (infoLen > 1) {
-
       char *infoLog = malloc(sizeof(char) * infoLen);
-
       glGetProgramInfoLog(program, infoLen, NULL, infoLog);
       printf("Error linking program `%s`: %s\n", name, infoLog);
-
       free(infoLog);
     }
 
@@ -231,6 +221,7 @@ int S2D_GL_Init(S2D_Window *window) {
     if (FORCE_GL2) {
       SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
       SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+
     // Request an OpenGL 3.3 forward-compatible core profile
     } else {
       SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
