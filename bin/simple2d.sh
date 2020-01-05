@@ -1294,7 +1294,7 @@ case $1 in
     esac;;
   --libs)
     if [[ $platform == 'macos' ]]; then
-      FLAGS='-Wl,-framework,OpenGL'
+      FLAGS='-Wl,-framework,OpenGL -Wl,-framework,Foundation'
     elif [[ $platform == 'linux' || $platform == 'bsd' ]]; then
       FLAGS='-lGL -lm'
     elif [[ $platform == 'arm' ]]; then
