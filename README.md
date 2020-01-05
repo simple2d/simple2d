@@ -582,18 +582,18 @@ Play the sound like this:
 S2D_PlaySound(snd);
 ```
 
-The volume of all Sounds can be inspected and set with the following functions. Volume is expressed as range between 0 (softest) and 100 (loudest).
-
-```c
-int volume = S2D_GetSoundMixVolume();
-S2D_SetSoundMixVolume(50);  // set volume 50%
-```
-
-Similarly, the volume of a single S2D_Sound can be inspected and set as well
+You can get and set the volume of a sound like so:
 
 ```c
 int volume = S2D_GetSoundVolume(snd);
 S2D_SetSoundVolume(snd, 50);  // set volume 50%
+```
+
+In addition, get and set the volume of all sounds like this, where the volume is a range between 0 (softest) and 100 (loudest):
+
+```c
+int volume = S2D_GetSoundMixVolume();
+S2D_SetSoundMixVolume(50);  // set volume 50%
 ```
 
 Since sounds are allocated dynamically, free them using:
