@@ -687,6 +687,7 @@ void S2D_GL_DrawSprite(S2D_Sprite *spr);
 void S2D_GL_DrawText(S2D_Text *txt);
 void S2D_GL_FreeTexture(GLuint *id);
 void S2D_GL_Clear(S2D_Color clr);
+void S2D_GL_FlushBuffers();
 
 // OpenGL & GLES Internal Functions ////////////////////////////////////////////
 
@@ -728,6 +729,7 @@ void S2D_GL_Clear(S2D_Color clr);
   void S2D_GL3_DrawSprite(S2D_Sprite *spr);
   void S2D_GL2_DrawText(S2D_Text *txt);
   void S2D_GL3_DrawText(S2D_Text *txt);
+  void S2D_GL3_FlushBuffers();
 #endif
 
 #ifdef __cplusplus
