@@ -47,6 +47,43 @@ void S2D_PlaySound(S2D_Sound *snd) {
 
 
 /*
+ * Get the sound's volume
+ */
+int S2D_GetSoundVolume(S2D_Sound *snd) {
+  if (!snd) return -1;
+  return ceil(Mix_VolumeChunk(snd->data, -1) * (100.0 / MIX_MAX_VOLUME));
+}
+
+
+/*
+ * Set the sound's volume a given percentage
+ */
+void S2D_SetSoundVolume(S2D_Sound *snd, int volume) {
+  if (!snd) return;
+  // Set volume to be a percentage of the maximum mix volume
+  Mix_VolumeChunk(snd->data, (volume / 100.0) * MIX_MAX_VOLUME);
+}
+
+
+/*
+ * Get the sound mixer volume
+ */
+int S2D_GetSoundMixVolume() {
+  return ceil(Mix_Volume(-1, -1) * (100.0 / MIX_MAX_VOLUME));
+}
+
+
+/*
+ * Set the sound mixer volume a given percentage
+ */
+void S2D_SetSoundMixVolume(int volume) {
+  // This sets the volume value across all channels
+  // Set volume to be a percentage of the maximum mix volume
+  Mix_Volume(-1, (volume / 100.0) * MIX_MAX_VOLUME);
+}
+
+
+/*
  * Free the sound
  */
 void S2D_FreeSound(S2D_Sound *snd) {
