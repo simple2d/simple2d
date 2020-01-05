@@ -10,6 +10,9 @@ extern "C" {
 
 // Apple
 #ifdef __APPLE__
+void objc_say_hello();
+int objc_plus(int a, int b);
+void objc_matrix(float orthoMatrix[4]);
   #ifndef __TARGETCONDITIONALS__
   #include "TargetConditionals.h"
   #endif
