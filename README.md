@@ -802,13 +802,12 @@ If you _are_ a hardcore C and OS hacker, you should seriously consider contribut
 
 1. Update dependencies
     - Update SDL versions in [`simple2d.sh`](bin/simple2d.sh)
-    - Update SDL and other lib versions in [`deps/build.sh`](https://github.com/simple2d/deps), run `make` to rebuild
-    - Run `git submodule update --remote` to update submodules
+    - Make any updates to the `deps` repo (follow instructions [in the README](https://github.com/simple2d/deps)), and run `git submodule update --remote` in this repo to update the submodule
 2. [Run tests](#tests) on all supported platforms
 3. Update documentation to reflect the current API
-4. Update the version number in [`simple2d.sh`](bin/simple2d.sh) and [`simple2d.cmd`](bin/simple2d.cmd), commit changes
-5. Create Windows installers (for Visual C++ and MinGW) and Apple frameworks using the `release` make/nmake target
-6. Create a [new release](https://github.com/simple2d/simple2d/releases) in GitHub, with tag in the form `v#.#.#`; attach Windows installers and Apple frameworks to release notes
+4. Update the Simple 2D version number in [`simple2d.sh`](bin/simple2d.sh) and [`simple2d.cmd`](bin/simple2d.cmd), commit changes
+5. Create Windows installers (for Visual C++ and MinGW) and Apple libraries using the `release` make/nmake target
+6. Create a [new release](https://github.com/simple2d/simple2d/releases) in GitHub, with tag in the form `v#.#.#`; attach Windows installers and Apple libraries to release notes
 7. Update the [Homebrew tap](https://github.com/simple2d/homebrew-tap):
     - Update formula with new release archive and frameworks resource URLs
     - Calculate the new `sha256` checksums for the release and frameworks archive, using `shasum -a 256 <file>`
