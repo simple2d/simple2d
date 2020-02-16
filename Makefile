@@ -46,7 +46,7 @@ OBJECTS=$(addprefix build/,$(notdir $(SOURCES:.c=.o)))
 VERSION=$(shell bash bin/simple2d.sh -v)
 
 # Release directories and archive filenames
-APPLE_RELEASE=simple2d-apple-frameworks-$(VERSION)
+APPLE_RELEASE=simple2d-apple-$(VERSION)
 MINGW_RELEASE=simple2d-windows-mingw-$(VERSION)
 
 # Helper functions
@@ -124,8 +124,8 @@ endif
 	mkdir -p build/tvos/Simple2D.framework/Headers
 	cp include/simple2d.h build/ios/Simple2D.framework/Headers
 	cp include/simple2d.h build/tvos/Simple2D.framework/Headers
-	cp -R deps/ios/include/SDL2  build/ios/Simple2D.framework/Headers
-	cp -R deps/tvos/include/SDL2 build/tvos/Simple2D.framework/Headers
+	cp -R deps/headers/SDL2 build/ios/Simple2D.framework/Headers
+	cp -R deps/headers/SDL2 build/tvos/Simple2D.framework/Headers
 	cp deps/xcode/Info.plist build/ios/Simple2D.framework/Info.plist
 	cp deps/xcode/Info.plist build/tvos/Simple2D.framework/Info.plist
 	mv build/ios/Simple2D  build/ios/Simple2D.framework
@@ -148,13 +148,16 @@ endif
 
 ifeq ($(PLATFORM),apple)
 release: clean frameworks
+	$(call task_msg,Building macOS release)
+	mkdir -p build/$(APPLE_RELEASE)/macOS
+	cp build/libsimple2d.a build/$(APPLE_RELEASE)/macOS
 	$(call task_msg,Building iOS and tvOS release)
-	mkdir -p build/$(APPLE_RELEASE)/Simple2D/iOS
-	mkdir -p build/$(APPLE_RELEASE)/Simple2D/tvOS
-	cp -R build/ios/*  build/$(APPLE_RELEASE)/Simple2D/iOS/
-	cp -R build/tvos/* build/$(APPLE_RELEASE)/Simple2D/tvOS/
+	mkdir -p build/$(APPLE_RELEASE)/iOS
+	mkdir -p build/$(APPLE_RELEASE)/tvOS
+	cp -R build/ios/*  build/$(APPLE_RELEASE)/iOS/
+	cp -R build/tvos/* build/$(APPLE_RELEASE)/tvOS/
 	cd build; zip -rq $(APPLE_RELEASE).zip $(APPLE_RELEASE)
-	$(call info_msg,Frameworks zipped at \`build/$(APPLE_RELEASE).zip\`)
+	$(call info_msg,Apple release zipped at \`build/$(APPLE_RELEASE).zip\`)
 endif
 
 ifeq ($(PLATFORM),mingw)
