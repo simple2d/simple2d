@@ -376,7 +376,7 @@ void S2D_Windows_EnableTerminalColors();
 bool S2D_Init();
 
 /*
- * Gets the primary display's dimentions
+ * Gets the primary display's dimensions
  */
 void S2D_GetDisplayDimensions(int *w, int *h);
 
