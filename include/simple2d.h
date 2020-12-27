@@ -1,4 +1,7 @@
 // simple2d.h
+#ifdef _MSC_VER
+#pragma once
+#endif
 #ifdef __cplusplus
 extern "C" {
 #endif
