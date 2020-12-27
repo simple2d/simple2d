@@ -27,6 +27,8 @@ S2D_Window *S2D_CreateWindow(const char *title, int width, int height,
   window->height          = height;
   window->orig_width      = width;
   window->orig_height     = height;
+  window->posX            = SDL_WINDOWPOS_CENTERED;
+  window->posY            = SDL_WINDOWPOS_CENTERED;
   window->viewport.width  = width;
   window->viewport.height = height;
   window->viewport.mode   = S2D_SCALE;
@@ -36,6 +38,7 @@ S2D_Window *S2D_CreateWindow(const char *title, int width, int height,
   window->on_key          = NULL;
   window->on_mouse        = NULL;
   window->on_controller   = NULL;
+  window->on_close        = NULL;
   window->vsync           = true;
   window->fps_cap         = 60;
   window->background.r    = 0.0;
@@ -63,7 +66,7 @@ int S2D_Show(S2D_Window *window) {
   // Create SDL window
   window->sdl = SDL_CreateWindow(
     window->title,                                   // title
-    SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,  // window position
+    window->posX, window->posY,  // window position
     window->width, window->height,                   // window size
     SDL_WINDOW_OPENGL | window->flags                // flags
   );
@@ -118,6 +121,10 @@ int S2D_Show(S2D_Window *window) {
     if (!SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1")) {
       S2D_Log(S2D_WARN, "VSync cannot be enabled");
     }
+  } else {
+      if (!SDL_SetHint(SDL_HINT_RENDER_VSYNC, "0")) {
+          S2D_Log(S2D_WARN, "VSync cannot be disabled");
+      }
   }
 
   window->close = false;
@@ -165,7 +172,7 @@ int S2D_Show(S2D_Window *window) {
         case SDL_KEYDOWN:
           if (window->on_key && e.key.repeat == 0) {
             S2D_Event event = {
-              .type = S2D_KEY_DOWN, .key = SDL_GetScancodeName(e.key.keysym.scancode)
+              .type = S2D_KEY_DOWN, .key = SDL_GetScancodeName(e.key.keysym.scancode), .value=e.key.keysym.scancode
             };
             window->on_key(event);
           }
@@ -174,7 +181,7 @@ int S2D_Show(S2D_Window *window) {
         case SDL_KEYUP:
           if (window->on_key) {
             S2D_Event event = {
-              .type = S2D_KEY_UP, .key = SDL_GetScancodeName(e.key.keysym.scancode)
+              .type = S2D_KEY_UP, .key = SDL_GetScancodeName(e.key.keysym.scancode), .value= e.key.keysym.scancode
             };
             window->on_key(event);
           }
@@ -280,7 +287,13 @@ int S2D_Show(S2D_Window *window) {
           break;
 
         case SDL_QUIT:
-          S2D_Close(window);
+            if (window->on_close){
+                if (window->on_close()) {
+                    S2D_Close(window);
+                }
+            } else {
+                S2D_Close(window);
+            }
           break;
       }
     }
@@ -292,8 +305,9 @@ int S2D_Show(S2D_Window *window) {
     for (int i = 0; i < num_keys; i++) {
       if (window->on_key) {
         if (key_state[i] == 1) {
+
           S2D_Event event = {
-            .type = S2D_KEY_HELD, .key = SDL_GetScancodeName(i)
+            .type = S2D_KEY_HELD, .key = SDL_GetScancodeName(i), .value=i
           };
           window->on_key(event);
         }
@@ -401,6 +415,12 @@ int S2D_Close(S2D_Window *window) {
   return 0;
 }
 
+/*
+ * Set the position of the window
+ */
+void S2D_SetWindowPos(S2D_Window* window, int x, int y) {
+    SDL_SetWindowPosition(window->sdl, x, y);
+}
 
 /*
  * Free all resources

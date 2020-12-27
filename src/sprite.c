@@ -33,6 +33,7 @@ S2D_Sprite *S2D_CreateSprite(const char *path) {
   spr->path = path;
   spr->x = 0;
   spr->y = 0;
+  spr->num_images = 0;
   spr->color.r = 1.f;
   spr->color.g = 1.f;
   spr->color.b = 1.f;

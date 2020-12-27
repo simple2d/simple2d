@@ -1,5 +1,4 @@
 // simple2d.h
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -208,6 +207,7 @@ typedef void (*S2D_Render)();
 typedef void (*S2D_On_Key)(S2D_Event e);
 typedef void (*S2D_On_Mouse)(S2D_Event e);
 typedef void (*S2D_On_Controller)(S2D_Event e);
+typedef bool (*S2D_On_Close)();
 
 // S2D_GL_Point, for graphics calculations
 typedef struct {
@@ -250,11 +250,14 @@ typedef struct {
   const char *title;
   int width;
   int height;
+  int posX;
+  int posY;
   int orig_width;
   int orig_height;
   S2D_Viewport viewport;
   S2D_Update update;
   S2D_Render render;
+  S2D_On_Close on_close;
   int flags;
   S2D_Mouse mouse;
   S2D_On_Key on_key;
@@ -279,12 +282,12 @@ typedef struct {
   int format;
   GLuint texture_id;
   S2D_Color color;
-  int x;
-  int y;
-  int width;
-  int height;
-  int orig_width;
-  int orig_height;
+  double x;
+  double y;
+  double width;
+  double height;
+  double orig_width;
+  double orig_height;
   GLfloat rotate;  // Rotation angle in degrees
   GLfloat rx;      // X coordinate to be rotated around
   GLfloat ry;      // Y coordinate to be rotated around
@@ -295,12 +298,13 @@ typedef struct {
   const char *path;
   S2D_Image *img;
   S2D_Color color;
-  int x;
-  int y;
-  int width;
-  int height;
-  int clip_width;
-  int clip_height;
+  double x;
+  double y;
+  double num_images;
+  double width;
+  double height;
+  double clip_width;
+  double clip_height;
   GLfloat rotate;  // Rotation angle in degrees
   GLfloat rx;      // X coordinate to be rotated around
   GLfloat ry;      // Y coordinate to be rotated around
@@ -322,8 +326,8 @@ typedef struct {
   TTF_Font *font_data;
   S2D_Color color;
   char *msg;
-  int x;
-  int y;
+  double x;
+  double y;
   int width;
   int height;
   GLfloat rotate;  // Rotation angle in degrees
@@ -476,7 +480,6 @@ void S2D_FreeImage(S2D_Image *img);
  * Create a sprite, given an image file path
  */
 S2D_Sprite *S2D_CreateSprite(const char *path);
-
 /*
  * Clip a sprite
  */

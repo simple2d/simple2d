@@ -66,7 +66,7 @@ void S2D_GL2_DrawTriangle(GLfloat x1, GLfloat y1,
 /*
  * Draw texture
  */
-static void S2D_GL2_DrawTexture(int x, int y, int w, int h,
+static void S2D_GL2_DrawTexture(double x, double y, double w, double h,
                                 GLfloat angle, GLfloat rx, GLfloat ry,
                                 GLfloat r, GLfloat g, GLfloat b, GLfloat a,
                                 GLfloat tx1, GLfloat ty1, GLfloat tx2, GLfloat ty2,
