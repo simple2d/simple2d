@@ -172,7 +172,7 @@ int S2D_Show(S2D_Window *window) {
         case SDL_KEYDOWN:
           if (window->on_key && e.key.repeat == 0) {
             S2D_Event event = {
-              .type = S2D_KEY_DOWN, .key = SDL_GetScancodeName(e.key.keysym.scancode)
+              .type = S2D_KEY_DOWN, .key = SDL_GetScancodeName(e.key.keysym.scancode), .value=e.key.keysym.scancode
             };
             window->on_key(event);
           }
@@ -181,7 +181,7 @@ int S2D_Show(S2D_Window *window) {
         case SDL_KEYUP:
           if (window->on_key) {
             S2D_Event event = {
-              .type = S2D_KEY_UP, .key = SDL_GetScancodeName(e.key.keysym.scancode)
+              .type = S2D_KEY_UP, .key = SDL_GetScancodeName(e.key.keysym.scancode), .value= e.key.keysym.scancode
             };
             window->on_key(event);
           }
@@ -307,7 +307,7 @@ int S2D_Show(S2D_Window *window) {
         if (key_state[i] == 1) {
 
           S2D_Event event = {
-            .type = S2D_KEY_HELD, .key = SDL_GetScancodeName(i)
+            .type = S2D_KEY_HELD, .key = SDL_GetScancodeName(i), .value=i
           };
           window->on_key(event);
         }
