@@ -27,8 +27,8 @@ S2D_Window *S2D_CreateWindow(const char *title, int width, int height,
   window->height          = height;
   window->orig_width      = width;
   window->orig_height     = height;
-  window->posX            = SDL_WINDOWPOS_CENTERED;
-  window->posY            = SDL_WINDOWPOS_CENTERED;
+  window->pos_x            = SDL_WINDOWPOS_CENTERED;
+  window->pos_y            = SDL_WINDOWPOS_CENTERED;
   window->viewport.width  = width;
   window->viewport.height = height;
   window->viewport.mode   = S2D_SCALE;
@@ -66,7 +66,7 @@ int S2D_Show(S2D_Window *window) {
   // Create SDL window
   window->sdl = SDL_CreateWindow(
     window->title,                                   // title
-    window->posX, window->posY,  // window position
+    window->pos_x, window->pos_y,  // window position
     window->width, window->height,                   // window size
     SDL_WINDOW_OPENGL | window->flags                // flags
   );
