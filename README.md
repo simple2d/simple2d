@@ -675,7 +675,7 @@ To capture keyboard input, first define the `on_key()` function and read the eve
 ```c
 void on_key(S2D_Event e) {
   // Check `e.key` for the key being interacted with
-
+  // e.value will give the SDL_Scancode of the key, useful for identifying each key as a number
   switch (e.type) {
     case S2D_KEY_DOWN:
       // Key was pressed
