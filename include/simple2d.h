@@ -303,7 +303,7 @@ typedef struct {
   S2D_Color color;
   double x;
   double y;
-  double num_images;
+  int num_images;
   double width;
   double height;
   double clip_width;
