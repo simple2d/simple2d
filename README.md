@@ -251,6 +251,12 @@ Before showing the window, these attributes can be set:
 ```c
 window->vsync = false;     // set the vertical sync, true by default
 window->icon = "app.png";  // set the icon for the window
+
+// Set the initial position of the window on screen when it opens.
+// In fullscreen mode it will snap to fill whichever monitor it is "more in"
+// Defaults to center
+window->pos_x = 50; //left side of window is 50 pixels from left edge of screen
+window->pos_y = 0; //top of window is at top of screen
 ```
 
 Once your window is ready to go, show it using:
@@ -310,7 +316,21 @@ To exit the window loop at any time, use:
 ```c
 S2D_Close(window);
 ```
-
+Note, this does not call the `on_close` handler (see below), it closes the window immediately.
+#### Close button on window
+By  default, the window will always close when the `X` or close button is clicked on the window. This can be changed by adding a callback for `on_close` to the window. This function should look like this:
+```c
+bool on_close(){ return isReadyToQuit; } /* Return true for quit, false for stay open */
+```
+Then, to attach it to the window:
+```c
+window->on_close = on_close;
+```
+The function should return `true` if the window should close, or `false` if the window should stay open and the close button click should be ignored.
+A example use would be confirming a close with the user.
+```c
+bool on_close(){ return userConfirmQuitting(); } /* For example, ask the user before quitting */
+```
 ## Drawing
 
 All kinds of shapes and textures can be drawn in the window. Learn about each of them below.
@@ -440,6 +460,10 @@ S2D_Sprite *spr = S2D_CreateSprite("sprite_sheet.png");
 
 If the sprite image can't be found, it will return `NULL`.
 
+There is a handy `num_images` member available in a sprite struct. It can be used to remember how many images are on the sprite sheet for animationss. This is not used by Simple 2D itself, but is useful to you for making animated sprites.
+```c
+spr->num_images = 50; //remember that there are 50 different images in the sprite sheet.`_
+```
 Clip the sprite sheet to a single image by providing a clipping rectangle:
 
 ```c

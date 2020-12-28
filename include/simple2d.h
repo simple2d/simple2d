@@ -285,10 +285,10 @@ typedef struct {
   int format;
   GLuint texture_id;
   S2D_Color color;
-  double x;
-  double y;
-  double width;
-  double height;
+  GLfloat x;
+  GLfloat y;
+  GLfloat width;
+  GLfloat height;
   int orig_width;
   int orig_height;
   GLfloat rotate;  // Rotation angle in degrees
@@ -301,13 +301,13 @@ typedef struct {
   const char *path;
   S2D_Image *img;
   S2D_Color color;
-  double x;
-  double y;
+  GLfloat x;
+  GLfloat y;
   int num_images;
-  double width;
-  double height;
-  double clip_width;
-  double clip_height;
+  GLfloat width;
+  GLfloat height;
+  GLfloat clip_width;
+  GLfloat clip_height;
   GLfloat rotate;  // Rotation angle in degrees
   GLfloat rx;      // X coordinate to be rotated around
   GLfloat ry;      // Y coordinate to be rotated around
@@ -329,8 +329,8 @@ typedef struct {
   TTF_Font *font_data;
   S2D_Color color;
   char *msg;
-  double x;
-  double y;
+  GLfloat x;
+  GLfloat y;
   int width;
   int height;
   GLfloat rotate;  // Rotation angle in degrees
