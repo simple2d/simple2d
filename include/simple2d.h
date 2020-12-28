@@ -289,8 +289,8 @@ typedef struct {
   double y;
   double width;
   double height;
-  double orig_width;
-  double orig_height;
+  int orig_width;
+  int orig_height;
   GLfloat rotate;  // Rotation angle in degrees
   GLfloat rx;      // X coordinate to be rotated around
   GLfloat ry;      // Y coordinate to be rotated around
