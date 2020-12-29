@@ -322,7 +322,7 @@ By  default, the window will always close when the `X` or close button is clicke
 ```c
 bool on_close(){ return isReadyToQuit; } /* Return true for quit, false for stay open */
 ```
-Then, to attach it to the window:
+Then, attach the callback to the window:
 ```c
 window->on_close = on_close;
 ```
@@ -460,9 +460,9 @@ S2D_Sprite *spr = S2D_CreateSprite("sprite_sheet.png");
 
 If the sprite image can't be found, it will return `NULL`.
 
-There is a handy `num_images` member available in a sprite struct. It can be used to remember how many images are on the sprite sheet for animationss. This is not used by Simple 2D itself, but is useful to you for making animated sprites.
+There is a handy `num_images` member available in the sprite struct. It can be used to remember how many images are on the sprite sheet for animations. This is not used by Simple 2D itself, but is useful to you for making animated sprites.
 ```c
-spr->num_images = 50; //store the fact that there are 50 different images in the sprite sheet.`_
+spr->num_images = 50; //store the fact that there are 50 different images in the sprite sheet.`
 ```
 Clip the sprite sheet to a single image by providing a clipping rectangle:
 
