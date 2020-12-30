@@ -207,7 +207,7 @@ int S2D_GL3_Init() {
  * Render the vertex buffer and reset it
  */
 void S2D_GL3_FlushBuffers() {
-
+  if (vboDataIndex == 0) { return; } // no need to do anything if nothing in buffer
   // Use the triangle shader program
   glUseProgram(shaderProgram);
 
