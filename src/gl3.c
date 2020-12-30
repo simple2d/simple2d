@@ -207,7 +207,7 @@ int S2D_GL3_Init() {
  * Render the vertex buffer and reset it
  */
 void S2D_GL3_FlushBuffers() {
-
+  if (vboDataIndex == 0) { return; } // no need to do anything if nothing in buffer
   // Use the triangle shader program
   glUseProgram(shaderProgram);
 
@@ -256,7 +256,7 @@ void S2D_GL3_DrawTriangle(GLfloat x1, GLfloat y1,
 /*
  * Draw a texture
  */
-static void S2D_GL3_DrawTexture(int x, int y, int w, int h,
+static void S2D_GL3_DrawTexture(GLfloat x, GLfloat y, GLfloat w, GLfloat h,
                                 GLfloat angle, GLfloat rx, GLfloat ry,
                                 GLfloat r, GLfloat g, GLfloat b, GLfloat a,
                                 GLfloat tx1, GLfloat ty1, GLfloat tx2, GLfloat ty2,
