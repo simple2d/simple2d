@@ -67,7 +67,12 @@ endef
 # Targets
 
 all: prereqs install-deps $(SOURCES)
+ifeq ($(PLATFORM),apple)
+	clang src/metal.m -c -o build/metal.o
+	ar -vq build/libsimple2d.a $(OBJECTS) build/metal.o
+else
 	ar -vq build/libsimple2d.a $(OBJECTS)
+endif
 	cp bin/simple2d.sh build/simple2d
 	chmod 0777 build/simple2d
 	rm build/*.o
