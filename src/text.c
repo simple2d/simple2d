@@ -107,6 +107,17 @@ void S2D_DrawText(S2D_Text *txt) {
       S2D_Error("TTF_RenderText_Blended", TTF_GetError());
       return;
     }
+
+    Uint32 len = txt->surface->w * 4;  // GL_RGBA is 4 bytes per pixel
+    Uint8 *src = txt->surface->pixels;
+    Uint8 *dst = txt->surface->pixels;
+    for (int i = 0; i < txt->surface->h; i++) {
+      SDL_memmove(dst, src, len);
+      dst += len;
+      src += txt->surface->pitch;
+    }
+    txt->surface->pitch = len;
+
     S2D_GL_CreateTexture(&txt->texture_id, GL_RGBA,
                          txt->width, txt->height,
                          txt->surface->pixels, GL_NEAREST);
