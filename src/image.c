@@ -7,7 +7,6 @@
  * Create an image, given a file path
  */
 S2D_Image *S2D_CreateImage(const char *path) {
-  S2D_Init();
 
   // Check if image file exists
   if (!S2D_FileExists(path)) {
@@ -25,21 +24,14 @@ S2D_Image *S2D_CreateImage(const char *path) {
   // Load image from file as SDL_Surface
   img->surface = IMG_Load(path);
   if (!img->surface) {
-    S2D_Error("IMG_Load", IMG_GetError());
+    S2D_Error("IMG_Load", SDL_GetError());
     free(img);
     return NULL;
   }
 
-  int bits_per_color = img->surface->format->Amask == 0 ?
-    img->surface->format->BitsPerPixel / 3 :
-    img->surface->format->BitsPerPixel / 4;
-
-  if (bits_per_color < 8) {
-    S2D_Log(S2D_WARN, "`%s` has less than 8 bits per color and will likely not render correctly", path, bits_per_color);
-  }
-
   // Initialize values
-  img->path = path;
+  img->path = strdup(path);
+  img->texture = NULL;
   img->x = 0;
   img->y = 0;
   img->color.r = 1.f;
@@ -50,47 +42,14 @@ S2D_Image *S2D_CreateImage(const char *path) {
   img->orig_height = img->surface->h;
   img->width  = img->orig_width;
   img->height = img->orig_height;
-  img->rotate = 0;
-  img->rx = 0;
-  img->ry = 0;
-  img->texture_id = 0;
-
-  // Detect image mode
-  img->format = GL_RGB;
-  if (img->surface->format->BytesPerPixel == 4) {
-    img->format = GL_RGBA;
-  }
-
-  // Flip image bits if BGA
-
-  Uint32 r = img->surface->format->Rmask;
-  Uint32 g = img->surface->format->Gmask;
-  Uint32 a = img->surface->format->Amask;
-
-  if (r&0xFF000000 || r&0xFF0000) {
-    char *p = (char *)img->surface->pixels;
-    int bpp = img->surface->format->BytesPerPixel;
-    int w = img->surface->w;
-    int h = img->surface->h;
-    char tmp;
-    for (int i = 0; i < bpp * w * h; i += bpp) {
-      if (a&0xFF) {
-        tmp = p[i];
-        p[i] = p[i+3];
-        p[i+3] = tmp;
-      }
-      if (g&0xFF0000) {
-        tmp = p[i+1];
-        p[i+1] = p[i+2];
-        p[i+2] = tmp;
-      }
-      if (r&0xFF0000) {
-        tmp = p[i];
-        p[i] = p[i+2];
-        p[i+2] = tmp;
-      }
-    }
-  }
+  img->clipped = false;
+  img->clip_x = 0;
+  img->clip_y = 0;
+  img->clip_width = img->width;
+  img->clip_height = img->height;
+  img->rotate = 0.0;
+  img->rx = 0.0;
+  img->ry = 0.0;
 
   return img;
 }
@@ -99,10 +58,23 @@ S2D_Image *S2D_CreateImage(const char *path) {
 /*
  * Rotate an image
  */
-void S2D_RotateImage(S2D_Image *img, GLfloat angle, int position) {
+void S2D_RotateImage(S2D_Image *img, float angle, int position) {
+  float rect_x = img->x;
+  float rect_y = img->y;
+  float rect_w = img->width;
+  float rect_h = img->height;
 
-  S2D_GL_Point p = S2D_GetRectRotationPoint(
-    img->x, img->y, img->width, img->height, position
+  // If clipped, adjust the rotation center to be relative to the clipped region
+  if (img->clipped) {
+    // The drawn rectangle is the clipped region, scaled to img->width/height
+    // The rotation point should be within the drawn rectangle
+    // So, use the drawn rectangle's size and position
+    rect_w = img->width * ((float)img->clip_width / img->orig_width);
+    rect_h = img->height * ((float)img->clip_height / img->orig_height);
+  }
+
+  S2D_Point p = S2D_GetRectRotationPoint(
+    rect_x, rect_y, rect_w, rect_h, position
   );
 
   img->rotate = angle;
@@ -112,19 +84,86 @@ void S2D_RotateImage(S2D_Image *img, GLfloat angle, int position) {
 
 
 /*
+ * Set the clipping rectangle for an image
+ */
+void S2D_ClipImage(S2D_Image *img, int x, int y, int width, int height) {
+  if (!img) return;
+  img->clipped = true;
+  img->clip_x = x;
+  img->clip_y = y;
+  img->clip_width = width;
+  img->clip_height = height;
+}
+
+
+/*
+ * Remove the clipping rectangle from an image
+ */
+void S2D_UnclipImage(S2D_Image *img) {
+  if (!img) return;
+  img->clipped = false;
+  img->clip_x = 0;
+  img->clip_y = 0;
+  img->clip_width  = img->orig_width;
+  img->clip_height = img->orig_height;
+}
+
+
+/*
  * Draw an image
  */
 void S2D_DrawImage(S2D_Image *img) {
   if (!img) return;
 
-  if (img->texture_id == 0) {
-    S2D_GL_CreateTexture(&img->texture_id, img->format,
-                         img->orig_width, img->orig_height,
-                         img->surface->pixels, GL_NEAREST);
-    SDL_FreeSurface(img->surface);
+  if (img->texture == NULL) {
+    img->texture = SDL_CreateTextureFromSurface(s2d_app.window->sdl_renderer, img->surface);
+    if (!img->texture) {
+      S2D_Error("SDL_CreateTextureFromSurface", SDL_GetError());
+      return;
+    }
+    SDL_SetTextureBlendMode(img->texture, SDL_BLENDMODE_BLEND);
+    SDL_DestroySurface(img->surface);
+    img->surface = NULL;
   }
 
-  S2D_GL_DrawImage(img);
+  SDL_FRect dst_rect = {
+    img->x,
+    img->y,
+    img->width,
+    img->height
+  };
+
+  SDL_FRect clip_rect;
+  SDL_FRect *src_rect = NULL;
+
+  if (img->clipped) {
+    // Clamp clip_width and clip_height to not exceed the original image size
+    int clipped_w = img->clip_width  > img->orig_width  ? img->orig_width  : img->clip_width;
+    int clipped_h = img->clip_height > img->orig_height ? img->orig_height : img->clip_height;
+
+    clip_rect.x = img->clip_x;
+    clip_rect.y = img->clip_y;
+    clip_rect.w = clipped_w;
+    clip_rect.h = clipped_h;
+    src_rect = &clip_rect;
+
+    // Adjust dst_rect size to match the clipped region
+    dst_rect.w = img->width * ((float)clipped_w / img->orig_width);
+    dst_rect.h = img->height * ((float)clipped_h / img->orig_height);
+  }
+
+  S2D_WindowToRendererCoordinatesRect(&dst_rect);
+  SDL_SetTextureColorModFloat(img->texture, img->color.r, img->color.g, img->color.b);
+  SDL_SetTextureAlphaModFloat(img->texture, img->color.a);
+
+  float scale = s2d_app.window->display_scale;
+  SDL_FPoint center = {
+    (img->rx - img->x) * scale,
+    (img->ry - img->y) * scale
+  };
+  SDL_RenderTextureRotated(
+    s2d_app.window->sdl_renderer, img->texture, src_rect, &dst_rect, img->rotate, &center, SDL_FLIP_NONE
+  );
 }
 
 
@@ -133,6 +172,8 @@ void S2D_DrawImage(S2D_Image *img) {
  */
 void S2D_FreeImage(S2D_Image *img) {
   if (!img) return;
-  S2D_GL_FreeTexture(&img->texture_id);
+  free((void*)img->path);
+  if (img->surface) SDL_DestroySurface(img->surface);
+  if (img->texture) SDL_DestroyTexture(img->texture);
   free(img);
 }

@@ -1,10 +1,16 @@
 build/
-xcuserdata/
+
+deps/build/
+deps/include/
+deps/linux/
+deps/macos/
+deps/windows/
+deps/SDL*
+deps/test
 
 test/auto
 test/triangle
 test/testcard
-test/audio
+test/sounds
 test/controller
 test/*.exe
-test/screenshot.png
