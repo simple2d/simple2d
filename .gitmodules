@@ -1,6 +1,15 @@
 [submodule "test/media"]
 	path = test/media
 	url = https://github.com/simple2d/test_media.git
-[submodule "deps"]
-	path = deps
-	url = https://github.com/simple2d/deps.git
+[submodule "deps/SDL"]
+	path = deps/SDL
+	url = https://github.com/libsdl-org/SDL.git
+[submodule "deps/SDL_image"]
+	path = deps/SDL_image
+	url = https://github.com/libsdl-org/SDL_image.git
+[submodule "deps/SDL_mixer"]
+	path = deps/SDL_mixer
+	url = https://github.com/libsdl-org/SDL_mixer.git
+[submodule "deps/SDL_ttf"]
+	path = deps/SDL_ttf
+	url = https://github.com/libsdl-org/SDL_ttf.git

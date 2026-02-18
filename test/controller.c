@@ -8,26 +8,26 @@ double axis_LEFTX = 0;
 double axis_LEFTY = 0;
 double axis_RIGHTX = 0;
 double axis_RIGHTY = 0;
-double axis_TRIGGERLEFT = 0;
-double axis_TRIGGERRIGHT = 0;
-double axis_MAX = 0;
+double axis_LEFT_TRIGGER = 0;
+double axis_RIGHT_TRIGGER = 0;
+double axis_COUNT = 0;
 
-bool btn_A = false;
-bool btn_B = false;
-bool btn_X = false;
-bool btn_Y = false;
+bool btn_SOUTH = false;
+bool btn_EAST = false;
+bool btn_WEST = false;
+bool btn_NORTH = false;
 bool btn_BACK = false;
 bool btn_GUIDE = false;
 bool btn_START = false;
-bool btn_LEFTSTICK = false;
-bool btn_RIGHTSTICK = false;
-bool btn_LEFTSHOULDER = false;
-bool btn_RIGHTSHOULDER = false;
+bool btn_LEFT_STICK = false;
+bool btn_RIGHT_STICK = false;
+bool btn_LEFT_SHOULDER = false;
+bool btn_RIGHT_SHOULDER = false;
 bool btn_DPAD_UP = false;
 bool btn_DPAD_DOWN = false;
 bool btn_DPAD_LEFT = false;
 bool btn_DPAD_RIGHT = false;
-bool btn_MAX = false;
+bool btn_COUNT = false;
 
 
 // Normalize axis values to 0.0...1.0
@@ -36,7 +36,153 @@ double to_d(int val) {
 }
 
 
-void render() {
+
+
+void S2D_OnKey(S2D_Event e) {
+  if (e.type != S2D_KEY_DOWN) return;
+  if (strcmp(e.key, "Escape") == 0) {
+    S2D_Close();
+  }
+}
+
+
+void S2D_OnController(S2D_Event e) {
+  puts("=== Controller Event ===");
+  printf("Controller #%i\n", e.id);
+
+  // Axes
+  if (e.type == S2D_AXIS) {
+    printf("Axis movement: #%i ", e.axis);
+    switch (e.axis) {
+      case S2D_AXIS_INVALID:
+        S2D_Error("Controller", "Invalid axis!");
+        break;
+      case S2D_AXIS_LEFTX:
+        printf("(S2D_AXIS_LEFTX)");
+        axis_LEFTX = to_d(e.value) * scale;
+        break;
+      case S2D_AXIS_LEFTY:
+        printf("(S2D_AXIS_LEFTY)");
+        axis_LEFTY = to_d(e.value) * scale;
+        break;
+      case S2D_AXIS_RIGHTX:
+        printf("(S2D_AXIS_RIGHTX)");
+        axis_RIGHTX = to_d(e.value) * scale;
+        break;
+      case S2D_AXIS_RIGHTY:
+        printf("(S2D_AXIS_RIGHTY)");
+        axis_RIGHTY = to_d(e.value) * scale;
+        break;
+      case S2D_AXIS_LEFT_TRIGGER:
+        printf("(S2D_AXIS_LEFT_TRIGGER)");
+        axis_LEFT_TRIGGER = to_d(e.value) * scale;
+        break;
+      case S2D_AXIS_RIGHT_TRIGGER:
+        printf("(S2D_AXIS_RIGHT_TRIGGER)");
+        axis_RIGHT_TRIGGER = to_d(e.value) * scale;
+        break;
+      case S2D_AXIS_COUNT:
+        printf("(S2D_AXIS_COUNT)");
+        break;
+    }
+    printf(" Value: %i\n", e.value);
+
+  // Buttons
+  } else {
+    switch (e.type) {
+      case S2D_BUTTON_DOWN:
+        printf("S2D_BUTTON_DOWN: #%i ", e.button);
+        break;
+      case S2D_BUTTON_UP:
+        printf("S2D_BUTTON_UP: #%i ", e.button);
+        break;
+    }
+    bool pressed = e.type == S2D_BUTTON_DOWN ? true : false;
+    switch (e.button) {
+      case S2D_BUTTON_INVALID:
+        S2D_Error("Controller", "Invalid button!");
+        break;
+      case S2D_BUTTON_SOUTH:
+        puts("(SOUTH)");
+        btn_SOUTH = pressed;
+        break;
+      case S2D_BUTTON_EAST:
+        puts("(EAST)");
+        btn_EAST = pressed;
+        break;
+      case S2D_BUTTON_WEST:
+        puts("(WEST)");
+        btn_WEST = pressed;
+        break;
+      case S2D_BUTTON_NORTH:
+        puts("(NORTH)");
+        btn_NORTH = pressed;
+        break;
+      case S2D_BUTTON_BACK:
+        puts("(BACK)");
+        btn_BACK = pressed;
+        break;
+      case S2D_BUTTON_GUIDE:
+        puts("(GUIDE)");
+        btn_GUIDE = pressed;
+        break;
+      case S2D_BUTTON_START:
+        puts("(START)");
+        btn_START = pressed;
+        break;
+      case S2D_BUTTON_LEFT_STICK:
+        puts("(LEFT_STICK)");
+        btn_LEFT_STICK = pressed;
+        break;
+      case S2D_BUTTON_RIGHT_STICK:
+        puts("(RIGHT_STICK)");
+        btn_RIGHT_STICK = pressed;
+        break;
+      case S2D_BUTTON_LEFT_SHOULDER:
+        puts("(LEFT_SHOULDER)");
+        btn_LEFT_SHOULDER = pressed;
+        break;
+      case S2D_BUTTON_RIGHT_SHOULDER:
+        puts("(RIGHT_SHOULDER)");
+        btn_RIGHT_SHOULDER = pressed;
+        break;
+      case S2D_BUTTON_DPAD_UP:
+        puts("(DPAD_UP)");
+        btn_DPAD_UP = pressed;
+        break;
+      case S2D_BUTTON_DPAD_DOWN:
+        puts("(DPAD_DOWN)");
+        btn_DPAD_DOWN = pressed;
+        break;
+      case S2D_BUTTON_DPAD_LEFT:
+        puts("(DPAD_LEFT)");
+        btn_DPAD_LEFT = pressed;
+        break;
+      case S2D_BUTTON_DPAD_RIGHT:
+        puts("(DPAD_RIGHT)");
+        btn_DPAD_RIGHT = pressed;
+        break;
+      case S2D_BUTTON_COUNT:
+        puts("(COUNT)");
+        btn_COUNT = pressed;
+        break;
+    }
+  }
+}
+
+
+void S2D_Init() {
+  S2D_Diagnostics(true);
+
+  window = S2D_CreateWindow(
+    "Simple 2D — Controller", 600, 425
+  );
+
+  controller = S2D_CreateImage("media/controller.png");
+}
+
+
+void S2D_Render() {
 
   S2D_DrawImage(controller);
 
@@ -67,42 +213,42 @@ void render() {
     359, 229,               0, 1, 0, 1
   );
   S2D_DrawQuad(
-     8, 71 - axis_TRIGGERLEFT * .84, 0, 1, 0, 1,
-    42, 71 - axis_TRIGGERLEFT * .84, 0, 1, 0, 1,
-    42, 71,                          0, 1, 0, 1,
-     8, 71,                          0, 1, 0, 1
+     8, 71 - axis_LEFT_TRIGGER * .84, 0, 1, 0, 1,
+    42, 71 - axis_LEFT_TRIGGER * .84, 0, 1, 0, 1,
+    42, 71,                           0, 1, 0, 1,
+     8, 71,                           0, 1, 0, 1
   );
   S2D_DrawQuad(
-     8 + 550, 71 - axis_TRIGGERRIGHT * .84, 0, 1, 0, 1,
-    42 + 550, 71 - axis_TRIGGERRIGHT * .84, 0, 1, 0, 1,
-    42 + 550, 71,                           0, 1, 0, 1,
-     8 + 550, 71,                           0, 1, 0, 1
+     8 + 550, 71 - axis_RIGHT_TRIGGER * .84, 0, 1, 0, 1,
+    42 + 550, 71 - axis_RIGHT_TRIGGER * .84, 0, 1, 0, 1,
+    42 + 550, 71,                            0, 1, 0, 1,
+     8 + 550, 71,                            0, 1, 0, 1
   );
 
   // Buttons
 
-  if (btn_A)  // green
+  if (btn_SOUTH)  // green
     S2D_DrawQuad(
       426,      167,      0, 1, 0, 1,
       426 + 33, 167,      0, 1, 0, 1,
       426 + 33, 167 + 33, 0, 1, 0, 1,
       426,      167 + 33, 0, 1, 0, 1
     );
-  if (btn_B)  // red
+  if (btn_EAST)  // red
     S2D_DrawQuad(
       464,      129,      1, 0, 0, 1,
       464 + 33, 129,      1, 0, 0, 1,
       464 + 33, 129 + 33, 1, 0, 0, 1,
       464,      129 + 33, 1, 0, 0, 1
     );
-  if (btn_X)  // blue
+  if (btn_WEST)  // blue
     S2D_DrawQuad(
       388,      128,      0, .7, 1, 1,
       388 + 33, 128,      0, .7, 1, 1,
       388 + 33, 128 + 33, 0, .7, 1, 1,
       388,      128 + 33, 0, .7, 1, 1
     );
-  if (btn_Y)  // yellow
+  if (btn_NORTH)  // yellow
     S2D_DrawQuad(
       426,      91,      1, 1, 0, 1,
       426 + 33, 91,      1, 1, 0, 1,
@@ -130,28 +276,28 @@ void render() {
       331 + 23, 133 + 23, 1, .5, 0, 1,
       331,      133 + 23, 1, .5, 0, 1
     );
-  if (btn_LEFTSTICK)
+  if (btn_LEFT_STICK)
     S2D_DrawQuad(
       134,      122,      1, 0, 0, 1,
       134 + 45, 122,      1, 0, 0, 1,
       134 + 45, 122 + 45, 1, 0, 0, 1,
       134,      122 + 45, 1, 0, 0, 1
     );
-  if (btn_RIGHTSTICK)
+  if (btn_RIGHT_STICK)
     S2D_DrawQuad(
       351,      207,      1, 0, 0, 1,
       351 + 45, 207,      1, 0, 0, 1,
       351 + 45, 207 + 45, 1, 0, 0, 1,
       351,      207 + 45, 1, 0, 0, 1
     );
-  if (btn_LEFTSHOULDER)
+  if (btn_LEFT_SHOULDER)
     S2D_DrawQuad(
       111, 84, .5, 0, 1, 1,
       117, 64, .5, 0, 1, 1,
       198, 39, .5, 0, 1, 1,
       225, 52, .5, 0, 1, 1
     );
-  if (btn_RIGHTSHOULDER)
+  if (btn_RIGHT_SHOULDER)
     S2D_DrawQuad(
       494, 85, .5, 0, 1, 1,
       484, 64, .5, 0, 1, 1,
@@ -186,157 +332,4 @@ void render() {
       238 + 28, 221 + 22, 1, 0, .5, 1,
       238,      221 + 22, 1, 0, .5, 1
     );
-}
-
-
-void on_key(S2D_Event e) {
-  if (e.type != S2D_KEY_DOWN) return;
-  if (strcmp(e.key, "Escape") == 0) {
-    S2D_Close(window);
-  }
-}
-
-
-void on_controller(S2D_Event e) {
-  puts("=== Controller Event ===");
-  printf("Controller #%i\n", e.which);
-
-  // Axes
-  if (e.type == S2D_AXIS) {
-    printf("Axis movement: #%i ", e.axis);
-    switch (e.axis) {
-      case S2D_AXIS_INVALID:
-        S2D_Error("Controller", "Invalid axis!");
-        break;
-      case S2D_AXIS_LEFTX:
-        puts("(LEFTX)");
-        axis_LEFTX = to_d(e.value) * scale;
-        break;
-      case S2D_AXIS_LEFTY:
-        puts("(LEFTY)");
-        axis_LEFTY = to_d(e.value) * scale;
-        break;
-      case S2D_AXIS_RIGHTX:
-        puts("(RIGHTX)");
-        axis_RIGHTX = to_d(e.value) * scale;
-        break;
-      case S2D_AXIS_RIGHTY:
-        puts("(RIGHTY)");
-        axis_RIGHTY = to_d(e.value) * scale;
-        break;
-      case S2D_AXIS_TRIGGERLEFT:
-        puts("(TRIGGERLEFT)");
-        axis_TRIGGERLEFT = to_d(e.value) * scale;
-        break;
-      case S2D_AXIS_TRIGGERRIGHT:
-        puts("(TRIGGERRIGHT)");
-        axis_TRIGGERRIGHT = to_d(e.value) * scale;
-        break;
-      case S2D_AXIS_MAX:
-        puts("(MAX)");
-        break;
-    }
-    printf("Value: %i\n", e.value);
-
-  // Buttons
-  } else {
-    switch (e.type) {
-      case S2D_BUTTON_DOWN:
-        printf("Button down: #%i ", e.button);
-        break;
-      case S2D_BUTTON_UP:
-        printf("Button up: #%i ", e.button);
-        break;
-    }
-    bool pressed = e.type == S2D_BUTTON_DOWN ? true : false;
-    switch (e.button) {
-      case S2D_BUTTON_INVALID:
-        S2D_Error("Controller", "Invalid button!");
-      case S2D_BUTTON_A:
-        puts("(A)");
-        btn_A = pressed;
-        break;
-      case S2D_BUTTON_B:
-        puts("(B)");
-        btn_B = pressed;
-        break;
-      case S2D_BUTTON_X:
-        puts("(X)");
-        btn_X = pressed;
-        break;
-      case S2D_BUTTON_Y:
-        puts("(Y)");
-        btn_Y = pressed;
-        break;
-      case S2D_BUTTON_BACK:
-        puts("(BACK)");
-        btn_BACK = pressed;
-        break;
-      case S2D_BUTTON_GUIDE:
-        puts("(GUIDE)");
-        btn_GUIDE = pressed;
-        break;
-      case S2D_BUTTON_START:
-        puts("(START)");
-        btn_START = pressed;
-        break;
-      case S2D_BUTTON_LEFTSTICK:
-        puts("(LEFTSTICK)");
-        btn_LEFTSTICK = pressed;
-        break;
-      case S2D_BUTTON_RIGHTSTICK:
-        puts("(RIGHTSTICK)");
-        btn_RIGHTSTICK = pressed;
-        break;
-      case S2D_BUTTON_LEFTSHOULDER:
-        puts("(LEFTSHOULDER)");
-        btn_LEFTSHOULDER = pressed;
-        break;
-      case S2D_BUTTON_RIGHTSHOULDER:
-        puts("(RIGHTSHOULDER)");
-        btn_RIGHTSHOULDER = pressed;
-        break;
-      case S2D_BUTTON_DPAD_UP:
-        puts("(DPAD_UP)");
-        btn_DPAD_UP = pressed;
-        break;
-      case S2D_BUTTON_DPAD_DOWN:
-        puts("(DPAD_DOWN)");
-        btn_DPAD_DOWN = pressed;
-        break;
-      case S2D_BUTTON_DPAD_LEFT:
-        puts("(DPAD_LEFT)");
-        btn_DPAD_LEFT = pressed;
-        break;
-      case S2D_BUTTON_DPAD_RIGHT:
-        puts("(DPAD_RIGHT)");
-        btn_DPAD_RIGHT = pressed;
-        break;
-      case S2D_BUTTON_MAX:
-        puts("(MAX)");
-        btn_MAX = pressed;
-        break;
-    }
-  }
-}
-
-
-int main() {
-
-  S2D_Diagnostics(true);
-
-  S2D_AddControllerMappingsFromFile("media/controllerdb.txt");
-
-  window = S2D_CreateWindow(
-    "Simple 2D — Controller", 600, 425, NULL, render, 0
-  );
-
-  window->on_key        = on_key;
-  window->on_controller = on_controller;
-
-  controller = S2D_CreateImage("media/controller.png");
-
-  S2D_Show(window);
-  S2D_FreeWindow(window);
-  return 0;
 }
