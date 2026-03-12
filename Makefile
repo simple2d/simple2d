@@ -8,7 +8,6 @@ ARCH := $(shell uname -m)
 
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Darwin)
-	ARCH = universal
 	PLATFORM = macos
 	MACOS_FRAMEWORKS = \
 	  AppKit \
